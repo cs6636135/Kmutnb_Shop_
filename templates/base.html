@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <title>{% block title %}KMUTNB Shop{% endblock %}</title>
+</head>
+<body>
+
+    <!-- Navbar ลูกค้า -->
+    <nav>
+        <a href="{% url 'home' %}">หน้าแรก(ก็คือหน้านี้)</a>
+    </nav>
+    {% if messages %}
+        {% for message in messages %}
+            <script>
+                alert("{{ message }}");
+            </script>
+        {% endfor %}
+    {% endif %}
+    
+    {% block content %}
+    {% endblock %}
+
+</body>
+</html>

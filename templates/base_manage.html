@@ -1,0 +1,25 @@
+```html
+<nav>
+    <a href="{% url 'dashboard' %}">Dashboard</a>
+
+    <a href="">Stock</a>
+    <a href="">รายการจอง</a>
+    {% if request.user.role == "admin" %}
+        <a href="{% url 'products' %}">จัดการสินค้า</a>
+        <!--
+        <a href="">staff</a>
+        <a href="">หมวดหมู่สินค้า</a>
+        <a href="">สถานที่</a>
+          -->
+    {% endif %}
+</nav>
+{% if messages %}
+        {% for message in messages %}
+            <script>
+                alert("{{ message }}");
+            </script>
+        {% endfor %}
+{% endif %}
+{% block content %}
+{% endblock %}
+```
