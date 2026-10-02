@@ -11,7 +11,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-[#fff8f3]">
+<body class="min-h-screen flex flex-col bg-[#fff8f3]">
 
 <!-- Navbar -->
 <nav class="bg-white text-[#4b2424]">
@@ -137,8 +137,10 @@
     {% endif %}
 
     <!-- Page Content -->
-    {% block content %}
-    {% endblock %}
+    <div class="flex-1">
+        {% block content %}
+        {% endblock %}
+    </div>
 
     <footer class="bg-[#F8F5F0] text-[#30415D]">
         <div class="max-w-7xl mx-auto px-6 py-12 lg:px-8 lg:py-14">
