@@ -1,25 +1,32 @@
-
 {% extends "base.html" %}
 {% load static %}
 
 {% block title %}จอง {{ product.name }} | KMUTNB Shop{% endblock %}
 
 {% block content %}
-    <main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+<main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
 
     <!-- Breadcrumb -->
-    <nav aria-label="เส้นทางนำทาง" class="mb-6 text-sm text-gray-500">
-        <a href="{% url 'product_detail' product.id %}"
-           class="hover:text-[#c4471c]">
-            {{ product.name }}
-        </a>
-        <span class="mx-2">›</span>
-        <span class="text-gray-700">จองสินค้า</span>
-         <a href="{% url 'product_detail' product.id %}"
-               class="mt-4 inline-flex items-center gap-2 text-sm font-medium text-gray-500 transition hover:text-[#c4471c]">
-                <span aria-hidden="true">←</span>
-                กลับไปหน้ารายละเอียดสินค้า
+    <nav aria-label="เส้นทางนำทาง"
+         class="mb-6 flex items-center justify-between text-sm text-gray-500">
+
+        <div>
+            <a href="{% url 'product_detail' product.id %}"
+               class="hover:text-[#c4471c]">
+                {{ product.name }}
             </a>
+
+            <span class="mx-2">›</span>
+
+            <span class="text-gray-700">จองสินค้า</span>
+        </div>
+
+        <a href="{% url 'product_detail' product.id %}"
+           class="inline-flex items-center gap-2 font-medium text-gray-500 transition hover:text-[#c4471c]">
+            <span aria-hidden="true">←</span>
+            กลับไปหน้ารายละเอียดสินค้า
+        </a>
+
     </nav>
 
     {% if error %}
@@ -32,11 +39,12 @@
     {% if can_reserve %}
 
     <!-- Two-column layout -->
-    <div class="grid grid-cols-1 items-start gap-6 lg:grid-cols-5 lg:gap-8">
+    <div class="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-5 lg:gap-8">
 
         <!-- LEFT: Product Summary -->
-        <section class="lg:col-span-2">
-            <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white">
+        <section class="flex lg:col-span-2">
+
+            <div class="flex h-full w-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white">
 
                 <!-- Product Image -->
                 <div class="flex h-64 items-center justify-center bg-[#f7f7f7] p-5 sm:h-80">
@@ -56,7 +64,8 @@
                 </div>
 
                 <!-- Product Details -->
-                <div class="p-5 sm:p-6">
+                <div class="flex-1 p-5 sm:p-6">
+
                     <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">
                         สินค้าที่คุณเลือก
                     </p>
@@ -72,7 +81,10 @@
                     <div class="my-5 border-t border-gray-100"></div>
 
                     <div class="flex items-center justify-between gap-3 text-sm">
-                        <span class="text-gray-500">สินค้าคงเหลือรวม</span>
+                        <span class="text-gray-500">
+                            สินค้าคงเหลือรวม
+                        </span>
+
                         <span class="font-semibold text-gray-800">
                             {{ product.stock }} ชิ้น
                         </span>
@@ -80,41 +92,51 @@
 
                     <div class="mt-4 rounded-xl bg-orange-50 p-4">
                         <div class="flex items-start gap-3">
+
                             <svg xmlns="http://www.w3.org/2000/svg"
                                  fill="none"
                                  viewBox="0 0 24 24"
                                  stroke-width="1.7"
                                  stroke="currentColor"
                                  class="mt-0.5 h-5 w-5 shrink-0 text-[#F47745]">
+
                                 <path stroke-linecap="round"
                                       stroke-linejoin="round"
                                       d="M12 6v6l4 2m6-2a10 10 0 1 1-20 0 10 10 0 0 1 20 0Z"/>
+
                             </svg>
 
                             <div>
                                 <p class="text-sm font-semibold text-[#4a2114]">
                                     ระยะเวลาการจอง
                                 </p>
+
                                 <p class="mt-1 text-xs leading-5 text-gray-600">
                                     ระบบกันสินค้าไว้ 4 ชั่วโมงหลังยืนยันการจอง
                                 </p>
                             </div>
+
                         </div>
                     </div>
+
                 </div>
             </div>
+
         </section>
 
         <!-- RIGHT: Reservation Form -->
-        <section class="lg:col-span-3">
+        <section class="flex lg:col-span-3">
+
             <form method="post"
-                  class="space-y-3 rounded-2xl border border-gray-200 bg-white p-2 sm:p-6">
+                  class="flex h-full w-full flex-col space-y-4 rounded-2xl border border-gray-200 bg-white p-2 sm:p-6">
+
                 {% csrf_token %}
 
                 <div>
                     <h2 class="text-lg font-bold text-[#30415D]">
                         ข้อมูลสำหรับการจอง
                     </h2>
+
                     <p class="mt-1 text-sm text-gray-500">
                         กรุณากรอกข้อมูลให้ครบถ้วน
                     </p>
@@ -129,7 +151,9 @@
                     </legend>
 
                     <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+
                         <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-gray-200 p-4 transition hover:border-[#F47745] has-[:checked]:border-[#F47745] has-[:checked]:bg-orange-50">
+
                             <input
                                 type="radio"
                                 name="customer_type"
@@ -138,12 +162,15 @@
                                 class="h-4 w-4 accent-[#F47745]"
                                 onchange="toggleCustomerType()"
                             >
+
                             <span class="text-sm font-medium text-gray-800">
                                 นักศึกษา
                             </span>
+
                         </label>
 
                         <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-gray-200 p-4 transition hover:border-[#F47745] has-[:checked]:border-[#F47745] has-[:checked]:bg-orange-50">
+
                             <input
                                 type="radio"
                                 name="customer_type"
@@ -151,15 +178,19 @@
                                 class="h-4 w-4 accent-[#F47745]"
                                 onchange="toggleCustomerType()"
                             >
+
                             <span class="text-sm font-medium text-gray-800">
                                 บุคคลภายนอก
                             </span>
+
                         </label>
+
                     </div>
                 </fieldset>
 
                 <!-- Student ID -->
                 <div id="student-field">
+
                     <label for="customer-id"
                            class="mb-2 block text-sm font-semibold text-gray-800">
                         รหัสนักศึกษา
@@ -181,13 +212,11 @@
                         class="h-12 w-full rounded-xl border border-gray-300 px-4 text-sm outline-none transition focus:border-[#F47745] focus:ring-2 focus:ring-[#F47745]/20"
                     >
 
-                    <p class="mt-2 text-xs text-gray-500">
-                        กรุณากรอกตัวเลข 13 หลัก
-                    </p>
                 </div>
 
                 <!-- External Phone -->
                 <div id="external-field" hidden>
+
                     <label for="customer-phone"
                            class="mb-2 block text-sm font-semibold text-gray-800">
                         เบอร์โทรศัพท์
@@ -207,13 +236,11 @@
                         class="h-12 w-full rounded-xl border border-gray-300 px-4 text-sm outline-none transition focus:border-[#F47745] focus:ring-2 focus:ring-[#F47745]/20"
                     >
 
-                    <p class="mt-2 text-xs text-gray-500">
-                        กรุณากรอกตัวเลข 10 หลัก
-                    </p>
                 </div>
 
                 <!-- Quantity -->
                 <div>
+
                     <label for="reservation-quantity"
                            class="mb-2 block text-sm font-semibold text-gray-800">
                         จำนวนสินค้าที่ต้องการ
@@ -229,10 +256,12 @@
                         value="{{ quantity_value|default:'1' }}"
                         class="h-12 w-full rounded-xl border border-gray-300 px-4 text-sm outline-none transition focus:border-[#F47745] focus:ring-2 focus:ring-[#F47745]/20"
                     >
+
                 </div>
 
                 <!-- Pickup Location -->
                 <div>
+
                     <label for="reservation-location"
                            class="mb-2 block text-sm font-semibold text-gray-800">
                         จุดรับสินค้า
@@ -244,7 +273,10 @@
                         required
                         class="h-12 w-full rounded-xl border border-gray-300 bg-white px-4 text-sm outline-none transition focus:border-[#F47745] focus:ring-2 focus:ring-[#F47745]/20"
                     >
-                        <option value="">เลือกจุดรับสินค้า</option>
+
+                        <option value="">
+                            เลือกจุดรับสินค้า
+                        </option>
 
                         {% for product_location in available_locations %}
                             <option
@@ -254,11 +286,14 @@
                                 {{ product_location.location.name }} · เหลือ {{ product_location.stock }} ชิ้น
                             </option>
                         {% endfor %}
+
                     </select>
+
                 </div>
 
                 <!-- Submit -->
-                <div class="border-t border-gray-100 pt-5">
+                <div class="mt-auto border-t border-gray-100 pt-5">
+
                     <button
                         type="submit"
                         class="flex h-12 w-full items-center justify-center rounded-xl bg-[#F47745] px-6 text-sm font-semibold text-white transition hover:bg-[#e96836] focus:outline-none focus:ring-2 focus:ring-[#F47745] focus:ring-offset-2"
@@ -269,26 +304,35 @@
                     <p class="mt-3 text-center text-xs leading-5 text-gray-500">
                         กรุณาตรวจสอบข้อมูลก่อนยืนยันการจอง
                     </p>
+
                 </div>
+
             </form>
+
         </section>
+
     </div>
 
     {% else %}
+
         <div class="rounded-xl border border-red-200 bg-red-50 p-5 text-sm text-red-700"
              role="status">
+
             {% if product.stock == 0 %}
                 สินค้าหมด ไม่พร้อมจองในขณะนี้
             {% else %}
                 สินค้านี้ไม่เปิดให้จอง
             {% endif %}
+
         </div>
 
         <a href="{% url 'product_detail' product.id %}"
            class="mt-5 inline-flex text-sm font-semibold text-[#c4471c] hover:underline">
             กลับไปหน้าสินค้า
         </a>
+
     {% endif %}
+
 </main>
 
 <script>
@@ -319,4 +363,5 @@
 
     document.addEventListener("DOMContentLoaded", toggleCustomerType);
 </script>
+
 {% endblock %}
