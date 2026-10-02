@@ -17,62 +17,10 @@
         <!-- Filters -->
         <section class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
 
-            <!-- Category -->
-            <div>
-                <h2 class="text-xl font-bold mb-3">
-                    หมวดหมู่
-                </h2>
-
-                <select
-                    class="w-full h-12 px-4 rounded-xl
-                           bg-white
-                           border border-orange-100
-                           shadow-sm
-                           outline-none
-                           focus:ring-2
-                           focus:ring-[#c4471c]">
-
-                    <option value="">
-                        ทุกหมวดหมู่
-                    </option>
-
-                    {% for category in categories %}
-                        <option value="{{ category.id }}">
-                            {{ category.name }}
-                        </option>
-                    {% endfor %}
-
-                </select>
-            </div>
+             
 
 
-            <!-- Location -->
-            <div>
-                <h2 class="text-xl font-bold mb-3">
-                    จุดจำหน่าย
-                </h2>
-
-                <select
-                    class="w-full h-12 px-4 rounded-xl
-                           bg-white
-                           border border-orange-100
-                           shadow-sm
-                           outline-none
-                           focus:ring-2
-                           focus:ring-[#c4471c]">
-
-                    <option value="">
-                        ทุกจุดจำหน่าย
-                    </option>
-
-                    {% for location in locations %}
-                        <option value="{{ location.id }}">
-                            {{ location.name }}
-                        </option>
-                    {% endfor %}
-
-                </select>
-            </div>
+              
 
         </section>
 
@@ -86,10 +34,7 @@
                     สินค้า
                 </h2>
 
-                <a href="{% url 'public_products' %}"
-                   class="text-[#c4471c] font-medium hover:underline">
-                    ดูสินค้าทั้งหมด →
-                </a>
+  
 
             </div>
 
@@ -122,7 +67,7 @@
                         <div class="flex flex-1 flex-col p-4 sm:p-5">
                             <div class="flex min-h-5 items-start justify-between gap-3">
                                 <p class="min-w-0 truncate text-xs font-medium text-gray-500">{{ product.category.name }}</p>
-                                <span class="shrink-0 text-right text-xs font-medium {% if product.stock == 0 %}text-gray-500{% else %}text-gray-600{% endif %}">
+                                <span class="shrink-0 text-right text-xs font-medium {% if product.stock == 0 %}text-red-600{% else %}text-green-700{% endif %}">
                                     คงเหลือ {{ product.stock }}
                                 </span>
                             </div>
