@@ -1,8 +1,8 @@
 from django.contrib import messages
 from django.shortcuts import redirect
 from functools import wraps
-#permission หลังร้าน 
-#ไว้เชคสิทธิ์ 
+
+#ไว้เชคสิทธิ์ permission หลังร้าน
 def role_required(*roles):
     def decorator(view_func):
         @wraps(view_func)
@@ -16,7 +16,7 @@ def role_required(*roles):
             # Role ไม่มีสิทธิ์
             if request.user.role not in roles:
                 messages.error(request, "คุณไม่มีสิทธิ์เข้าถึง")
-                return redirect("home")
+                return redirect("dashboard")
 
             return view_func(request, *args, **kwargs)
 
