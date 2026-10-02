@@ -1,56 +1,502 @@
-```html
 {% extends "base_manage.html" %}
 
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h3>Staff / Admin Login</h3>
-                </div>
 
-                <div class="card-body">
-                    <form method="post" action="{% url 'login' %}">
-                        {% csrf_token %}
+<div class="min-h-screen bg-white flex items-center justify-center px-6 py-8">
 
-                        <div class="mb-3">
-                            <label for="id_username" class="form-label">
-                                Username
-                            </label>
-                            <input
-                                type="text"
-                                name="username"
-                                id="id_username"
-                                class="form-control"
-                                required
-                            >
-                        </div>
+    <div class="w-full max-w-7xl
+                min-h-[720px]
+                bg-white
+                rounded-[40px]
+                overflow-hidden
+                shadow-sm
+                grid grid-cols-1 lg:grid-cols-2">
 
-                        <div class="mb-3">
-                            <label for="id_password" class="form-label">
-                                Password
-                            </label>
-                            <input
-                                type="password"
-                                name="password"
-                                id="id_password"
-                                class="form-control"
-                                required
-                            >
-                        </div>
 
-                        <button type="submit" class="btn btn-primary w-100">
-                            Login
-                        </button>
-                    </form>
-                    <p>username: admin, staff</p>
-                    <p>password: 12345678</p>
-                </div>
+        <!-- ========================= -->
+        <!-- LEFT : PROMOTION -->
+        <!-- ========================= -->
+
+        <div class="hidden lg:flex
+                    relative
+                    m-6
+                    rounded-[35px]
+                    overflow-hidden
+                    bg-gradient-to-br
+                    from-[#ff7a1a]
+                    via-[#ff8125]
+                    to-[#ffb36b]
+                    text-white
+                    p-14
+                    flex-col
+                    justify-between">
+
+            <!-- Decorative circles -->
+            <div class="absolute
+                        -top-24
+                        -right-24
+                        w-72
+                        h-72
+                        rounded-full
+                        bg-white/10">
             </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
-```
 
+            <div class="absolute
+                        bottom-[-100px]
+                        left-[-80px]
+                        w-80
+                        h-80
+                        rounded-full
+                        bg-white/10">
+            </div>
+
+
+            <!-- Text -->
+            <div class="relative z-10">
+
+                <h1 class="text-5xl
+                           xl:text-6xl
+                           font-bold
+                           leading-tight
+                           tracking-tight">
+
+                    Simplify<br>
+                    management with<br>
+                    our dashboard.
+
+                </h1>
+
+
+                <!-- Underline -->
+                <div class="w-72
+                            h-1
+                            bg-white
+                            rounded-full
+                            mt-5
+                            rotate-[-2deg]">
+                </div>
+
+
+                <p class="mt-10
+                          text-lg
+                          xl:text-xl
+                          leading-relaxed
+                          max-w-lg
+                          text-white/95">
+
+                    Simplify your shop management
+                    with our user-friendly
+                    admin dashboard.
+
+                </p>
+
+            </div>
+
+
+            <!-- Illustration -->
+            <div class="relative z-10
+                        flex
+                        justify-center
+                        items-end
+                        h-72
+                        mt-10">
+
+                <!-- Person 1 -->
+                <div class="relative
+                            w-40
+                            h-64
+                            mr-8">
+
+                    <!-- Head -->
+                    <div class="absolute
+                                top-0
+                                left-10
+                                w-20
+                                h-20
+                                rounded-full
+                                bg-[#f2b58e]
+                                border-4
+                                border-[#493027]">
+
+                        <!-- Hair -->
+                        <div class="absolute
+                                    -top-3
+                                    left-0
+                                    w-full
+                                    h-8
+                                    rounded-t-full
+                                    bg-[#3d2923]">
+                        </div>
+
+                        <!-- Glasses -->
+                        <div class="absolute
+                                    top-8
+                                    left-3
+                                    flex
+                                    gap-1">
+
+                            <div class="w-6 h-5
+                                        border-2
+                                        border-[#333]
+                                        rounded-md">
+                            </div>
+
+                            <div class="w-6 h-5
+                                        border-2
+                                        border-[#333]
+                                        rounded-md">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Body -->
+                    <div class="absolute
+                                top-20
+                                left-3
+                                w-36
+                                h-40
+                                rounded-t-[50px]
+                                bg-[#eee8dd]">
+
+                        <!-- Shirt -->
+                        <div class="absolute
+                                    top-0
+                                    left-8
+                                    w-20
+                                    h-40
+                                    bg-[#d9cbb8]
+                                    rounded-t-[40px]">
+                        </div>
+
+                    </div>
+
+
+                    <!-- Pants -->
+                    <div class="absolute
+                                bottom-0
+                                left-10
+                                w-20
+                                h-28
+                                bg-[#8b6b43]
+                                rounded-t-xl">
+                    </div>
+
+                </div>
+
+
+                <!-- Person 2 -->
+                <div class="relative
+                            w-40
+                            h-64">
+
+                    <!-- Hair -->
+                    <div class="absolute
+                                top-0
+                                left-7
+                                w-24
+                                h-28
+                                rounded-t-[50px]
+                                bg-[#202020]">
+                    </div>
+
+
+                    <!-- Head -->
+                    <div class="absolute
+                                top-5
+                                left-12
+                                w-20
+                                h-20
+                                rounded-full
+                                bg-[#f0bd98]">
+
+                        <!-- Hair -->
+                        <div class="absolute
+                                    -top-3
+                                    left-0
+                                    w-full
+                                    h-7
+                                    rounded-t-full
+                                    bg-[#202020]">
+                        </div>
+
+                    </div>
+
+
+                    <!-- Body -->
+                    <div class="absolute
+                                top-24
+                                left-5
+                                w-32
+                                h-36
+                                rounded-t-[45px]
+                                bg-[#d8d34c]">
+                    </div>
+
+
+                    <!-- Pants -->
+                    <div class="absolute
+                                bottom-0
+                                left-8
+                                w-28
+                                h-28
+                                bg-[#f3f0eb]
+                                rounded-t-xl">
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ========================= -->
+        <!-- RIGHT : LOGIN -->
+        <!-- ========================= -->
+
+        <div class="flex
+                    items-center
+                    justify-center
+                    px-6
+                    sm:px-12
+                    lg:px-16
+                    py-12">
+
+            <div class="w-full max-w-lg">
+
+
+                <!-- Logo -->
+                <div class="flex
+                            items-center
+                            justify-center
+                            gap-4
+                            mb-10">
+
+                    <div class="w-16
+                                h-16
+                                rounded-full
+                                bg-[#ff7a1a]
+                                flex
+                                items-center
+                                justify-center">
+
+                        <span class="text-3xl">
+                            🛒
+                        </span>
+
+                    </div>
+
+
+                    <span class="text-3xl
+                                 font-bold
+                                 text-[#111]">
+
+                        KMUTNB Shop
+
+                    </span>
+
+                </div>
+
+
+
+                <!-- Heading -->
+                <div class="text-center mb-10">
+
+                    <h2 class="text-4xl
+                               sm:text-5xl
+                               font-bold
+                               text-[#111]
+                               tracking-tight">
+
+                        Welcome Back
+
+                    </h2>
+
+
+                    <p class="mt-3
+                              text-gray-400
+                              text-lg">
+
+                        Please login to your account
+
+                    </p>
+
+                </div>
+
+
+
+                <!-- Login Form -->
+                <form
+                    method="post"
+                    action="{% url 'login' %}"
+                    class="space-y-5">
+
+                    {% csrf_token %}
+
+
+                    <!-- Username -->
+                    <div>
+
+                        <label
+                            for="id_username"
+                            class="sr-only">
+
+                            Username
+
+                        </label>
+
+                        <input
+                            type="text"
+                            name="username"
+                            id="id_username"
+                            placeholder="Username"
+                            required
+                            class="w-full
+                                   h-16
+                                   px-6
+                                   rounded-2xl
+                                   bg-[#f5f6f7]
+                                   border-2
+                                   border-transparent
+                                   text-gray-800
+                                   placeholder-gray-400
+                                   outline-none
+                                   transition
+                                   focus:bg-white
+                                   focus:border-[#ff7a1a]
+                                   focus:ring-4
+                                   focus:ring-[#ff7a1a]/10"
+                        >
+
+                    </div>
+
+
+
+                    <!-- Password -->
+                    <div>
+
+                        <label
+                            for="id_password"
+                            class="sr-only">
+
+                            Password
+
+                        </label>
+
+                        <input
+                            type="password"
+                            name="password"
+                            id="id_password"
+                            placeholder="Password"
+                            required
+                            class="w-full
+                                   h-16
+                                   px-6
+                                   rounded-2xl
+                                   bg-[#f5f6f7]
+                                   border-2
+                                   border-transparent
+                                   text-gray-800
+                                   placeholder-gray-400
+                                   outline-none
+                                   transition
+                                   focus:bg-white
+                                   focus:border-[#ff7a1a]
+                                   focus:ring-4
+                                   focus:ring-[#ff7a1a]/10"
+                        >
+
+                    </div>
+
+
+
+                    <!-- Forgot Password -->
+                    <div class="flex justify-end">
+
+                        <a href="#"
+                           class="text-sm
+                                  text-gray-400
+                                  hover:text-[#ff7a1a]
+                                  transition">
+
+                            Forgot password?
+
+                        </a>
+
+                    </div>
+
+
+
+                    <!-- Login Button -->
+                    <button
+                        type="submit"
+                        class="w-full
+                               h-16
+                               rounded-2xl
+                               bg-[#ff7a1a]
+                               hover:bg-[#ed6b0d]
+                               text-white
+                               font-bold
+                               text-lg
+                               transition
+                               shadow-lg
+                               shadow-orange-200">
+
+                        Login
+
+                    </button>
+
+                </form>
+
+
+
+                <!-- Demo Account -->
+                <div class="mt-8
+                            p-4
+                            rounded-2xl
+                            bg-orange-50
+                            text-center">
+
+                    <p class="text-sm text-gray-500">
+                        Demo Account
+                    </p>
+
+                    <p class="text-sm
+                              text-[#ff7a1a]
+                              font-medium
+                              mt-1">
+
+                        username: admin / staff
+                        &nbsp; | &nbsp;
+                        password: 12345678
+
+                    </p>
+
+                </div>
+
+
+
+                <!-- Bottom -->
+                <div class="text-center mt-8">
+
+                    <p class="text-gray-400 text-sm">
+
+                        KMUTNB Shop Management System
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
