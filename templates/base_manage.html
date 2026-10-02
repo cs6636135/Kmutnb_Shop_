@@ -1,27 +1,37 @@
-<script src="https://cdn.tailwindcss.com"></script>
-
-{% if request.user.is_authenticated %}
-    <nav>
-        <a href="{% url 'dashboard' %}">Dashboard</a>
-
-        <a href="">Stock</a>
-        <a href="">รายการจอง</a>
-        {% if request.user.role == "admin" %}
-            <a href="{% url 'products' %}">จัดการสินค้า</a>
-            <!--
-            <a href="">staff</a>
-            <a href="">หมวดหมู่สินค้า</a>
-            <a href="">สถานที่</a>
-              -->
-        {% endif %}
-    </nav>
-{% endif %}
-{% if messages %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-[#fff8f3]" style="font-family: 'Noto Sans Thai', sans-serif;">
+    {% if request.user.is_authenticated %}
+        <nav>
+            <a href="{% url 'dashboard' %}">Dashboard</a>
+            <a href="">Stock</a>
+            <a href="">รายการจอง</a>
+            {% if request.user.role == "admin" %}
+                <a href="{% url 'products' %}">จัดการสินค้า</a>
+                <!--
+                <a href="">staff</a>
+                <a href="">หมวดหมู่สินค้า</a>
+                <a href="">สถานที่</a>
+                -->
+            {% endif %}
+        </nav>
+    {% endif %}
+    {% if messages %}
         {% for message in messages %}
             <script>
-                alert("{{ message }}");
+                alert("{{ message|escapejs }}");
             </script>
         {% endfor %}
-{% endif %}
-{% block content %}
-{% endblock %}
+    {% endif %}
+    {% block content %}
+    {% endblock %}
+</body>
+</html>
