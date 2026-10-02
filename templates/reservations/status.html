@@ -3,69 +3,202 @@
 {% block title %}ตรวจสอบการจอง | KMUTNB Shop{% endblock %}
 
 {% block content %}
-<main class="max-w-3xl mx-auto px-6 py-12 text-[#4a2114]">
-    <header class="mb-8">
-        <p class="text-sm font-semibold text-[#c4471c] mb-2">KMUTNB SHOP</p>
-        <h1 class="text-3xl font-bold">ตรวจสอบสถานะการจอง</h1>
-        <p class="mt-2 text-gray-600">กรอกรหัสการจองเพื่อตรวจสอบรายการของคุณ</p>
-    </header>
 
-    <form method="post" class="flex flex-col sm:flex-row gap-3">
-        {% csrf_token %}
-        <label for="reservation-code" class="sr-only">รหัสการจอง</label>
-        <input
-            id="reservation-code"
-            type="text"
-            name="reservation_code"
-            value="{{ request.POST.reservation_code }}"
-            placeholder="รหัสการจอง"
-            required
-            autocomplete="off"
-            class="flex-1 h-12 px-4 rounded-lg bg-white border border-orange-200 outline-none focus:ring-2 focus:ring-[#c4471c]"
-        >
-        <button
-            type="submit"
-            class="h-12 px-6 rounded-lg bg-[#c4471c] hover:bg-[#a93616] text-white font-semibold transition"
-        >
-            ตรวจสอบ
-        </button>
-    </form>
+<main class="min-h-[calc(100vh-72px)] bg-[#fff8f3] px-4 pt-8 pb-10 sm:px-6 sm:pt-10">
 
-    {% if error %}
-        <p role="alert" class="mt-4 text-sm text-red-700">{{ error }}</p>
-    {% endif %}
+    <!-- Main Card -->
+    <section class="mx-auto w-full max-w-[900px] rounded-2xl border border-orange-100 bg-white px-4 py-8 shadow-sm sm:px-8 sm:py-10">
 
-    {% if reservation %}
-        <section class="mt-8 bg-white border border-orange-100 rounded-lg p-6" aria-live="polite">
-            <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
-                <div>
-                    <p class="text-sm text-gray-500">รหัสการจอง</p>
-                    <p class="font-semibold">{{ reservation.reservation_code }}</p>
-                </div>
-                <span class="px-3 py-1 rounded-full bg-orange-50 text-[#9f3817] text-sm font-semibold">
-                    {{ reservation.get_status_display }}
-                </span>
+        <!-- Header -->
+        <header class="mb-6 sm:mb-8">
+            <h1 class="text-2xl font-bold text-[#30415D] sm:text-3xl">
+                ตรวจสอบสถานะการจอง
+            </h1>
+
+            <p class="mt-2 text-sm leading-6 text-gray-500 sm:text-base">
+                กรอกรหัสการจองเพื่อตรวจสอบรายการของคุณ
+            </p>
+        </header>
+
+        <!-- Search Form -->
+        <form method="post" class="flex flex-col gap-3 sm:flex-row">
+            {% csrf_token %}
+
+            <label for="reservation-code" class="sr-only">
+                รหัสการจอง
+            </label>
+
+            <input
+                id="reservation-code"
+                type="text"
+                name="reservation_code"
+                value="{{ request.POST.reservation_code }}"
+                placeholder="กรอกรหัสการจองของคุณ"
+                required
+                autocomplete="off"
+                class="h-12 min-w-0 flex-1 rounded-lg border border-orange-200 bg-white px-4 text-sm text-[#30415D] outline-none transition placeholder:text-gray-400 focus:border-[#F47745] focus:ring-2 focus:ring-[#F47745]/20"
+            >
+
+            <button
+                type="submit"
+                class="inline-flex h-12 items-center justify-center rounded-lg bg-[#F47745] px-7 text-sm font-semibold text-white transition hover:bg-[#E65F2B] focus:outline-none focus:ring-2 focus:ring-[#F47745] focus:ring-offset-2"
+            >
+                ตรวจสอบสถานะ
+            </button>
+        </form>
+
+        <!-- Error Message -->
+        {% if error %}
+            <div
+                role="alert"
+                class="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+            >
+                {{ error }}
             </div>
+        {% endif %}
 
-            <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
-                <div>
-                    <dt class="text-sm text-gray-500">สินค้า</dt>
-                    <dd class="font-medium">{{ reservation.product.name }}</dd>
+        <!-- Reservation Result -->
+        {% if reservation %}
+            <section
+                class="mt-6 rounded-xl border border-gray-200 bg-white p-4 sm:mt-8 sm:p-6"
+                aria-live="polite"
+            >
+
+                <!-- Reservation Code & Status -->
+                <div class="mb-5 flex flex-col gap-3 border-b border-gray-100 pb-5 sm:flex-row sm:items-start sm:justify-between">
+
+                    <div class="min-w-0">
+                        <p class="text-xs text-gray-500 sm:text-sm">
+                            รหัสการจอง
+                        </p>
+
+                        <p class="mt-1 break-all text-base font-bold text-[#30415D] sm:text-lg">
+                            {{ reservation.reservation_code }}
+                        </p>
+                    </div>
+
+                    <span class="inline-flex w-fit items-center rounded-full bg-orange-50 px-3 py-1.5 text-sm font-semibold text-[#c4471c]">
+                        {{ reservation.get_status_display }}
+                    </span>
+
                 </div>
-                <div>
-                    <dt class="text-sm text-gray-500">จำนวน</dt>
-                    <dd class="font-medium">{{ reservation.quantity }} ชิ้น</dd>
-                </div>
-                <div>
-                    <dt class="text-sm text-gray-500">จุดรับสินค้า</dt>
-                    <dd class="font-medium">{{ reservation.location.name }}</dd>
-                </div>
-                <div>
-                    <dt class="text-sm text-gray-500">วันหมดอายุการจอง</dt>
-                    <dd class="font-medium">{{ reservation.expires_at|date:"d/m/Y H:i" }}</dd>
-                </div>
-            </dl>
-        </section>
-    {% endif %}
+
+                <!-- Reservation Details -->
+                <h2 class="mb-4 text-base font-bold text-[#30415D] sm:text-lg">
+                    รายละเอียดการจอง
+                </h2>
+
+                <dl class="grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2">
+
+                    <!-- Product -->
+                    <div class="flex items-start gap-3">
+                        <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-orange-50 text-[#F47745]">
+                            <svg viewBox="0 0 24 24"
+                                 class="h-5 w-5"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="1.8">
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      d="m12 3 9 5-9 5-9-5 9-5Z"/>
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      d="m3 8 9 5 9-5M3 8v8l9 5 9-5V8M12 13v8"/>
+                            </svg>
+                        </div>
+
+                        <div class="min-w-0">
+                            <dt class="text-sm text-gray-500">
+                                สินค้า
+                            </dt>
+                            <dd class="mt-1 break-words text-sm font-semibold text-[#30415D]">
+                                {{ reservation.product.name }}
+                            </dd>
+                        </div>
+                    </div>
+
+                    <!-- Quantity -->
+                    <div class="flex items-start gap-3">
+                        <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-orange-50 text-[#F47745]">
+                            <svg viewBox="0 0 24 24"
+                                 class="h-5 w-5"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="1.8">
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      d="m4 7.5 8-4.5 8 4.5v9L12 21l-8-4.5v-9Z"/>
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      d="m4.5 7.75 7.5 4.5 7.5-4.5M12 12.25V21"/>
+                            </svg>
+                        </div>
+
+                        <div>
+                            <dt class="text-sm text-gray-500">
+                                จำนวนสินค้า
+                            </dt>
+                            <dd class="mt-1 text-sm font-semibold text-[#30415D]">
+                                {{ reservation.quantity }} ชิ้น
+                            </dd>
+                        </div>
+                    </div>
+
+                    <!-- Pickup Location -->
+                    <div class="flex items-start gap-3">
+                        <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-orange-50 text-[#F47745]">
+                            <svg viewBox="0 0 24 24"
+                                 class="h-5 w-5"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="1.8">
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/>
+                                <circle cx="12" cy="10" r="2.5"/>
+                            </svg>
+                        </div>
+
+                        <div class="min-w-0">
+                            <dt class="text-sm text-gray-500">
+                                จุดรับสินค้า
+                            </dt>
+                            <dd class="mt-1 break-words text-sm font-semibold text-[#30415D]">
+                                {{ reservation.location.name }}
+                            </dd>
+                        </div>
+                    </div>
+
+                    <!-- Expiration Date -->
+                    <div class="flex items-start gap-3">
+                        <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-orange-50 text-[#F47745]">
+                            <svg viewBox="0 0 24 24"
+                                 class="h-5 w-5"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="1.8">
+                                <circle cx="12" cy="12" r="9"/>
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      d="M12 7v5l3 2"/>
+                            </svg>
+                        </div>
+
+                        <div>
+                            <dt class="text-sm text-gray-500">
+                                วันหมดอายุการจอง
+                            </dt>
+                            <dd class="mt-1 text-sm font-semibold text-red-500">
+                                {{ reservation.expires_at|date:"d/m/Y H:i" }}
+                            </dd>
+                        </div>
+                    </div>
+
+                </dl>
+            </section>
+        {% endif %}
+
+    </section>
 </main>
+
 {% endblock %}
