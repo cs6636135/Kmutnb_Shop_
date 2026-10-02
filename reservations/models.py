@@ -18,3 +18,4 @@ class Reservation(models.Model):
     reserved_at = models.DateTimeField(auto_now_add=True)
     expires_at = models.DateTimeField()
     picked_up_at = models.DateTimeField(null=True, blank=True)
+    cancelled_at = models.DateTimeField(null=True, blank=True)
