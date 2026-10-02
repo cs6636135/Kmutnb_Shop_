@@ -1,476 +1,216 @@
 {% extends "base_manage.html" %}
+{% load static %}
 
 {% block title %}เข้าสู่ระบบเจ้าหน้าที่ | KMUTNB Shop{% endblock %}
 
 {% block content %}
 
-<main class="min-h-screen bg-[#F8F5F0] flex items-center justify-center px-4 py-8 sm:px-6">
+<main class="flex min-h-screen items-center justify-center bg-[#F8F5F0] px-4 py-8 sm:px-6 lg:py-10">
 
-    <div class="w-full max-w-6xl
-                min-h-[640px] lg:min-h-[700px]
-                bg-white
-                rounded-2xl
-                border border-[#30415D]/10
-                overflow-hidden
-                grid grid-cols-1 lg:grid-cols-2">
+    <!-- Main Container -->
+    <div class="grid w-full max-w-5xl grid-cols-1 overflow-hidden rounded-3xl border border-[#30415D]/10 bg-white shadow-xl shadow-[#30415D]/5 lg:min-h-[600px] lg:grid-cols-2">
 
+        <!-- Left: Branding Panel -->
+<section class="relative hidden flex-col justify-between overflow-hidden
+                bg-[#30415D]
+                p-10 text-white lg:flex xl:p-12">
+            <img src="{% static 'shop/kmutnb.png' %}"
+                 alt=""
+                 aria-hidden="true"
+                 class="absolute inset-0 z-0 h-full w-full object-cover">
+            <div class="absolute inset-0 z-[1] bg-gradient-to-b from-[#A9BBD0]/60 via-[#849BB5]/65 to-[#30415D]/75"></div>
 
-        <!-- ========================= -->
-        <!-- LEFT : PROMOTION -->
-        <!-- ========================= -->
+            <!-- Decorative Circles -->
+            <div class="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/5"></div>
+            <div class="absolute -bottom-24 -left-20 h-80 w-80 rounded-full bg-[#30415D]/15"></div>
+            <div class="absolute right-16 top-1/2 h-32 w-32 -translate-y-1/2 rounded-full border border-white/10"></div>
 
-        <div class="hidden lg:flex
-                    relative
-                    m-6
-                    rounded-[35px]
-                    overflow-hidden
-                    bg-[#30415D]
-                    text-white
-                    p-14
-                    flex-col
-                    justify-between">
-
-            <!-- Decorative circles -->
-            <div class="absolute
-                        -top-24
-                        -right-24
-                        w-72
-                        h-72
-                        rounded-full
-                        bg-white/10">
-            </div>
-
-            <div class="absolute
-                        bottom-[-100px]
-                        left-[-80px]
-                        w-80
-                        h-80
-                        rounded-full
-                        bg-white/10">
-            </div>
-
-
-            <!-- Text -->
+            <!-- Branding -->
             <div class="relative z-10">
-
-                <p class="mb-5 text-xs font-bold uppercase tracking-[0.16em] text-[#F47745]">
-                    KMUTNB Shop
+                <p class="mb-4 text-xs font-bold uppercase tracking-[0.22em] text-[#F47745]">
+                    Staff Portal
                 </p>
 
-                <h1 class="text-4xl
-                           xl:text-5xl
-                           font-bold
-                           leading-tight">
-
+                <h1 class="text-3xl font-bold leading-snug xl:text-4xl">
                     ระบบจัดการ<br>
                     ร้านค้าสวัสดิการ<br>
                     มจพ.
-
                 </h1>
 
-
-                <!-- Underline -->
-                <div class="w-20 h-1 bg-[#F47745] rounded-full mt-5">
-                </div>
+                <div class="mt-6 h-1 w-16 rounded-full bg-[#F47745]"></div>
 
 
-                <p class="mt-10
-                          text-lg
-                          xl:text-xl
-                          leading-relaxed
-                          max-w-lg
-                          text-white/95">
-
+                <p class="mt-7 max-w-sm text-sm leading-7 text-white/75 xl:text-base">
                     จัดการสินค้าและข้อมูลร้านค้า
                     สำหรับเจ้าหน้าที่มหาวิทยาลัยเทคโนโลยี
                     พระจอมเกล้าพระนครเหนือ
-
                 </p>
-
             </div>
 
-
-            <!-- Illustration -->
-            <div class="hidden">
-
-                <!-- Person 1 -->
-                <div class="relative
-                            w-40
-                            h-64
-                            mr-8">
-
-                    <!-- Head -->
-                    <div class="absolute
-                                top-0
-                                left-10
-                                w-20
-                                h-20
-                                rounded-full
-                                bg-[#f2b58e]
-                                border-4
-                                border-[#493027]">
-
-                        <!-- Hair -->
-                        <div class="absolute
-                                    -top-3
-                                    left-0
-                                    w-full
-                                    h-8
-                                    rounded-t-full
-                                    bg-[#3d2923]">
-                        </div>
-
-                        <!-- Glasses -->
-                        <div class="absolute
-                                    top-8
-                                    left-3
-                                    flex
-                                    gap-1">
-
-                            <div class="w-6 h-5
-                                        border-2
-                                        border-[#333]
-                                        rounded-md">
-                            </div>
-
-                            <div class="w-6 h-5
-                                        border-2
-                                        border-[#333]
-                                        rounded-md">
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- Body -->
-                    <div class="absolute
-                                top-20
-                                left-3
-                                w-36
-                                h-40
-                                rounded-t-[50px]
-                                bg-[#eee8dd]">
-
-                        <!-- Shirt -->
-                        <div class="absolute
-                                    top-0
-                                    left-8
-                                    w-20
-                                    h-40
-                                    bg-[#d9cbb8]
-                                    rounded-t-[40px]">
-                        </div>
-
-                    </div>
-
-
-                    <!-- Pants -->
-                    <div class="absolute
-                                bottom-0
-                                left-10
-                                w-20
-                                h-28
-                                bg-[#8b6b43]
-                                rounded-t-xl">
-                    </div>
-
-                </div>
-
-
-                <!-- Person 2 -->
-                <div class="relative
-                            w-40
-                            h-64">
-
-                    <!-- Hair -->
-                    <div class="absolute
-                                top-0
-                                left-7
-                                w-24
-                                h-28
-                                rounded-t-[50px]
-                                bg-[#202020]">
-                    </div>
-
-
-                    <!-- Head -->
-                    <div class="absolute
-                                top-5
-                                left-12
-                                w-20
-                                h-20
-                                rounded-full
-                                bg-[#f0bd98]">
-
-                        <!-- Hair -->
-                        <div class="absolute
-                                    -top-3
-                                    left-0
-                                    w-full
-                                    h-7
-                                    rounded-t-full
-                                    bg-[#202020]">
-                        </div>
-
-                    </div>
-
-
-                    <!-- Body -->
-                    <div class="absolute
-                                top-24
-                                left-5
-                                w-32
-                                h-36
-                                rounded-t-[45px]
-                                bg-[#d8d34c]">
-                    </div>
-
-
-                    <!-- Pants -->
-                    <div class="absolute
-                                bottom-0
-                                left-8
-                                w-28
-                                h-28
-                                bg-[#f3f0eb]
-                                rounded-t-xl">
-                    </div>
-
-                </div>
-
+            <!-- Bottom Information -->
+            <div class="relative z-10 mt-12 border-t border-white/10 pt-5">
+                <p class="text-xs leading-6 text-white/50">
+                    ระบบสำหรับเจ้าหน้าที่ร้านค้าสวัสดิการ มจพ.
+                </p>
             </div>
+        </section>
 
-        </div>
+        <!-- Right: Login Form -->
+        <section class="flex items-center justify-center px-5 py-9 sm:px-10 sm:py-12 lg:px-12 xl:px-14">
 
+            <div class="w-full max-w-md">
 
-
-        <!-- ========================= -->
-        <!-- RIGHT : LOGIN -->
-        <!-- ========================= -->
-
-        <div class="flex
-                    items-center
-                    justify-center
-                    px-6
-                    sm:px-12
-                    lg:px-16
-                    py-12">
-
-            <div class="w-full max-w-lg">
-
-
-                <!-- Logo -->
-                <div class="flex
-                            items-center
-                            justify-center
-                            gap-4
-                            mb-10">
-
-                    <div class="w-16
-                                h-16
-                                rounded-2xl
-                                bg-[#30415D]
-                                border-b-4 border-[#F47745]
-                                flex
-                                items-center
-                                justify-center">
-                        <svg viewBox="0 0 48 48" class="h-10 w-10" fill="none" aria-hidden="true">
-                            <path d="M24 3.5 40 9v13.2c0 10.2-6.7 17.4-16 22.3C14.7 39.6 8 32.4 8 22.2V9l16-5.5Z" stroke="white" stroke-width="1.8" />
-                            <path d="M14.5 18h2l2.4 11h13.2l2.4-8.2H19" stroke="#F47745" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-                            <circle cx="22" cy="33" r="1.7" fill="#F47745" />
-                            <circle cx="30" cy="33" r="1.7" fill="#F47745" />
+                <!-- Mobile Branding -->
+                <div class="mb-8 flex items-center justify-center gap-3 lg:hidden">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-[#30415D] text-white">
+                        <svg viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path d="M4 4v16M4 12l8-8M4 12l8 8M14 5h6M14 12h6M14 19h6" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </div>
 
-
-                    <span class="text-3xl
-                                 font-bold
-                                 text-[#30415D]">
-
-                        KMUTNB <span class="text-[#F47745]">SHOP</span>
-
-                    </span>
-
+                    <img src="{% static 'shop/logo_font.png' %}"
+                         alt="KMUTNB Shop"
+                         class="h-9 w-auto max-w-[190px] object-contain">
                 </div>
 
+<!-- Heading -->
+<header class="mb-8 text-center">
 
+    <!-- Logo: Centered and Larger -->
+    <div class="mb-8 flex items-center justify-center">
+        <img
+            src="{% static 'shop/logo_font.png' %}"
+            alt="KMUTNB Shop"
+            class="h-14 sm:h-18 w-auto max-w-[220px] object-contain"
+        >
+    </div>
+    <!-- Title -->
+    <h2 class="text-2xl font-bold text-[#30415D] sm:text-3xl">
+        เข้าสู่ระบบเจ้าหน้าที่
+    </h2>
 
-                <!-- Heading -->
-                <div class="text-center mb-10">
+    <!-- Description -->
+    <p class="mt-3 text-sm leading-6 text-gray-500">
+        กรุณากรอกชื่อผู้ใช้และรหัสผ่านเพื่อเข้าสู่ระบบ
+    </p>
 
-                          <h2 class="text-3xl
-                               sm:text-4xl
-                               font-bold
-                               text-[#30415D]">
+</header>
 
-                           เข้าสู่ระบบเจ้าหน้าที่
-
-                    </h2>
-    
-
-                </div>
-
+                <!-- Error -->
                 {% if error %}
-                    <p role="alert" class="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                        {{ error }}
-                    </p>
+                    <div role="alert" class="mb-5 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                        <svg viewBox="0 0 24 24" class="mt-0.5 h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <circle cx="12" cy="12" r="9"/>
+                            <path d="M12 8v5M12 16h.01" stroke-linecap="round"/>
+                        </svg>
+                        <p>{{ error }}</p>
+                    </div>
                 {% endif %}
 
-
-
                 <!-- Login Form -->
-                <form
-                    method="post"
-                    action="{% url 'login' %}"
-                    class="space-y-5">
-
+                <form method="post" action="{% url 'login' %}" class="space-y-5">
                     {% csrf_token %}
-
 
                     <!-- Username -->
                     <div>
-
-                        <label
-                            for="id_username"
-                            class="sr-only">
-
+                        <label for="id_username" class="mb-2 block text-sm font-semibold text-[#30415D]">
                             ชื่อผู้ใช้
-
                         </label>
 
-                        <input
-                            type="text"
-                            name="username"
-                            id="id_username"
-                            placeholder="ชื่อผู้ใช้"
-                            autocomplete="username"
-                            required
-                            class="w-full
-                                   h-16
-                                   px-6
-                                   rounded-2xl
-                                   bg-[#f5f6f7]
-                                   border-2
-                                   border-transparent
-                                   text-gray-800
-                                   placeholder-gray-400
-                                   outline-none
-                                   transition
-                                   focus:bg-white
-                                   focus:border-[#F47745]
-                                   focus:ring-4
-                                   focus:ring-[#F47745]/10"
-                        >
+                        <div class="relative">
+                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                                <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                                    <circle cx="12" cy="8" r="4"/>
+                                    <path d="M4 21v-2a8 8 0 0 1 16 0v2" stroke-linecap="round"/>
+                                </svg>
+                            </div>
 
+                            <input
+                                type="text"
+                                name="username"
+                                id="id_username"
+                                placeholder="กรอกชื่อผู้ใช้"
+                                autocomplete="username"
+                                autocapitalize="none"
+                                spellcheck="false"
+                                required
+                                class="h-12 w-full rounded-xl border border-gray-200 bg-gray-50 pl-12 pr-4 text-sm text-[#30415D] outline-none transition placeholder:text-gray-400 focus:border-[#F47745] focus:bg-white focus:ring-4 focus:ring-[#F47745]/10"
+                            >
+                        </div>
                     </div>
-
-
 
                     <!-- Password -->
                     <div>
-
-                        <label
-                            for="id_password"
-                            class="sr-only">
-
+                        <label for="id_password" class="mb-2 block text-sm font-semibold text-[#30415D]">
                             รหัสผ่าน
-
                         </label>
 
-                        <input
-                            type="password"
-                            name="password"
-                            id="id_password"
-                            placeholder="รหัสผ่าน"
-                            autocomplete="current-password"
-                            required
-                            class="w-full
-                                   h-16
-                                   px-6
-                                   rounded-2xl
-                                   bg-[#f5f6f7]
-                                   border-2
-                                   border-transparent
-                                   text-gray-800
-                                   placeholder-gray-400
-                                   outline-none
-                                   transition
-                                   focus:bg-white
-                                   focus:border-[#F47745]
-                                   focus:ring-4
-                                   focus:ring-[#F47745]/10"
-                        >
+                        <div class="relative">
+                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                                <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                                    <rect x="4" y="10" width="16" height="11" rx="2"/>
+                                    <path d="M8 10V7a4 4 0 0 1 8 0v3" stroke-linecap="round"/>
+                                </svg>
+                            </div>
 
+                            <input
+                                type="password"
+                                name="password"
+                                id="id_password"
+                                placeholder="กรอกรหัสผ่าน"
+                                autocomplete="current-password"
+                                required
+                                class="h-12 w-full rounded-xl border border-gray-200 bg-gray-50 pl-12 pr-4 text-sm text-[#30415D] outline-none transition placeholder:text-gray-400 focus:border-[#F47745] focus:bg-white focus:ring-4 focus:ring-[#F47745]/10"
+                            >
+                        </div>
                     </div>
 
-
-
-                    <!-- Login Button -->
+                    <!-- Submit -->
                     <button
                         type="submit"
-                        class="w-full
-                               h-14
-                               rounded-lg
-                               bg-[#30415D]
-                               hover:bg-[#25344B]
-                               text-white
-                               font-bold
-                               text-base
-                               transition">
-
+                        class="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#F47745] px-5 text-sm font-bold text-white shadow-sm shadow-[#F47745]/20 transition hover:bg-[#E65F2B] focus:outline-none focus:ring-4 focus:ring-[#F47745]/20 active:scale-[0.99]"
+                    >
                         เข้าสู่ระบบ
-
                     </button>
+                <!-- Back to Shop -->
+    <a
+        href="{% url 'home' %}"
+        class="inline-flex h-11 w-full items-center justify-center gap-2
+               rounded-xl border border-[#30415D]/15 bg-white px-5
+               text-sm font-semibold text-[#52627A] transition
+               hover:border-[#F47745]/50 hover:bg-orange-50
+               hover:text-[#c4471c]
+               focus:outline-none focus:ring-4 focus:ring-[#F47745]/10">
 
-                </form>
+            <path
+                d="M19 12H5M12 19l-7-7 7-7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            />
+        </svg>
 
+        กลับไปหน้าร้านค้า
+    </a>
 
-
-                <!-- Demo Account -->
-                <div class="mt-8
-                            p-4
-                            rounded-2xl
-                            bg-orange-50
-                            text-center">
-
-                    <p class="text-sm text-gray-500">
-                        Demo Account
-                    </p>
-
-                    <p class="text-sm
-                              text-[#ff7a1a]
-                              font-medium
-                              mt-1">
-
-                        username: admin / staff
-                        &nbsp; | &nbsp;
-                        password: 12345678
-
-                    </p>
-
-                </div>
-
-
-
-                <!-- Bottom -->
-                <div class="text-center mt-8">
-
-                    <p class="text-[#30415D]/60 text-sm">
-
-                        ระบบสำหรับเจ้าหน้าที่ร้านค้าสวัสดิการ มจพ.
-
-                    </p>
-
-                </div>
+                <!-- Demo Account: use only in development -->
+                {% if debug %}
+                    <div class="mt-6 rounded-xl border border-orange-100 bg-orange-50/70 p-4">
+                        <p class="text-xs font-bold uppercase tracking-wider text-[#c4471c]">
+                            Demo Account
+                        </p>
+                        <p class="mt-2 text-sm leading-6 text-[#30415D]">
+                            Username: <span class="font-semibold">admin / staff</span>
+                        </p>
+                        <p class="text-sm leading-6 text-[#30415D]">
+                            Password: <span class="font-semibold">12345678</span>
+                        </p>
+                    </div>
+                {% endif %}
 
             </div>
-
-        </div>
+        </section>
 
     </div>
-
 </main>
 
 {% endblock %}
