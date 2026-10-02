@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}ตรวจสอบการจอง | KMUTNB Shop{% endblock %}
+
+{% block content %}
+<main class="max-w-3xl mx-auto px-6 py-12 text-[#4a2114]">
+    <header class="mb-8">
+        <p class="text-sm font-semibold text-[#c4471c] mb-2">KMUTNB SHOP</p>
+        <h1 class="text-3xl font-bold">ตรวจสอบสถานะการจอง</h1>
+        <p class="mt-2 text-gray-600">กรอกรหัสการจองเพื่อตรวจสอบรายการของคุณ</p>
+    </header>
+
+    <form method="post" class="flex flex-col sm:flex-row gap-3">
+        {% csrf_token %}
+        <label for="reservation-code" class="sr-only">รหัสการจอง</label>
+        <input
+            id="reservation-code"
+            type="text"
+            name="reservation_code"
+            value="{{ request.POST.reservation_code }}"
+            placeholder="รหัสการจอง"
+            required
+            autocomplete="off"
+            class="flex-1 h-12 px-4 rounded-lg bg-white border border-orange-200 outline-none focus:ring-2 focus:ring-[#c4471c]"
+        >
+        <button
+            type="submit"
+            class="h-12 px-6 rounded-lg bg-[#c4471c] hover:bg-[#a93616] text-white font-semibold transition"
+        >
+            ตรวจสอบ
+        </button>
+    </form>
+
+    {% if error %}
+        <p role="alert" class="mt-4 text-sm text-red-700">{{ error }}</p>
+    {% endif %}
+
+    {% if reservation %}
+        <section class="mt-8 bg-white border border-orange-100 rounded-lg p-6" aria-live="polite">
+            <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+                <div>
+                    <p class="text-sm text-gray-500">รหัสการจอง</p>
+                    <p class="font-semibold">{{ reservation.reservation_code }}</p>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-orange-50 text-[#9f3817] text-sm font-semibold">
+                    {{ reservation.get_status_display }}
+                </span>
+            </div>
+
+            <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+                <div>
+                    <dt class="text-sm text-gray-500">สินค้า</dt>
+                    <dd class="font-medium">{{ reservation.product.name }}</dd>
+                </div>
+                <div>
+                    <dt class="text-sm text-gray-500">จำนวน</dt>
+                    <dd class="font-medium">{{ reservation.quantity }} ชิ้น</dd>
+                </div>
+                <div>
+                    <dt class="text-sm text-gray-500">จุดรับสินค้า</dt>
+                    <dd class="font-medium">{{ reservation.location.name }}</dd>
+                </div>
+                <div>
+                    <dt class="text-sm text-gray-500">วันหมดอายุการจอง</dt>
+                    <dd class="font-medium">{{ reservation.expires_at|date:"d/m/Y H:i" }}</dd>
+                </div>
+            </dl>
+        </section>
+    {% endif %}
+</main>
+{% endblock %}
