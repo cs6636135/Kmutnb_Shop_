@@ -61,8 +61,16 @@ def product_detail(request, product_id):
     product_locations = ProductLocation.objects.filter(
         product=product
     ).select_related("location").order_by("location__name")
+    related_products = Product.objects.filter(
+        category_id=product.category_id
+    ).exclude(
+        pk=product.pk
+    ).annotate(
+        stock=Sum("productlocation__stock", default=0)
+    ).order_by("-created_at")[:4]
 
     return render(request, "shop/product_detail.html", {
         "product": product,
         "product_locations": product_locations,
+        "related_products": related_products,
     })

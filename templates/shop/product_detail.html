@@ -333,56 +333,47 @@
             </div>
 
 
-            <!-- Placeholder for related products -->
-            <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
 
                 {% for related_product in related_products %}
 
-                    <a
-                        href="{% url 'product_detail' related_product.id %}"
-                        class="group overflow-hidden rounded-lg bg-white"
-                    >
+                    <a href="{% url 'product_detail' related_product.id %}"
+                       class="group block rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2">
+                        <article class="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition duration-200 group-hover:-translate-y-0.5 group-hover:shadow-md">
+                            <div class="relative aspect-[4/3] overflow-hidden bg-gray-100">
+                                {% if related_product.image_url %}
+                                    <img src="{{ related_product.image_url }}" alt="{{ related_product.name }}"
+                                         class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]">
+                                {% else %}
+                                    <img src="{% static 'shop/image.png' %}" alt="{{ related_product.name }}"
+                                         class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]">
+                                {% endif %}
+                            </div>
 
-                        <div class="aspect-square overflow-hidden rounded-lg bg-[#f7f7f7]">
+                            <div class="flex flex-1 flex-col p-4 sm:p-5">
+                                <div class="flex min-h-5 items-start justify-between gap-3">
+                                    {% if related_product.category %}
+                                        <span class="inline-flex min-w-0 max-w-[65%] truncate rounded-full bg-[#F47745] px-3 py-1 text-xs font-medium text-white shadow-sm">
+                                            {{ related_product.category.name }}
+                                        </span>
+                                    {% endif %}
+                                    <span class="shrink-0 text-right text-xs font-medium {% if related_product.stock == 0 %}text-red-600{% else %}text-green-700{% endif %}">
+                                        คงเหลือ {{ related_product.stock }}
+                                    </span>
+                                </div>
 
-                            {% if related_product.image_url %}
-
-                                <img
-                                    src="{{ related_product.image_url }}"
-                                    alt="{{ related_product.name }}"
-                                    class="h-full w-full object-contain transition duration-300 group-hover:scale-105"
-                                >
-
-                            {% else %}
-
-                                <img
-                                    src="{% static 'shop/image.png' %}"
-                                    alt="{{ related_product.name }}"
-                                    class="h-full w-full object-contain transition duration-300 group-hover:scale-105"
-                                >
-
-                            {% endif %}
-
-                        </div>
-
-                        <div class="pt-3">
-
-                            {% if related_product.category %}
-                                <p class="text-xs text-gray-500">
-                                    {{ related_product.category.name }}
+                                <h3 class="mt-2 break-words text-base font-bold leading-6 text-gray-900">
+                                    {{ related_product.name }}
+                                </h3>
+                                <p class="mt-2 mb-2 line-clamp-2 break-words text-sm leading-5 text-gray-500">
+                                    {{ related_product.description|default:"ไม่มีรายละเอียดสินค้า" }}
                                 </p>
-                            {% endif %}
 
-                            <h3 class="mt-1 line-clamp-2 text-sm font-semibold text-gray-800">
-                                {{ related_product.name }}
-                            </h3>
-
-                            <p class="mt-2 font-bold text-[#c4471c]">
-                                ฿{{ related_product.price }}
-                            </p>
-
-                        </div>
-
+                                <div class="mt-auto flex items-end justify-end border-t border-gray-200 pt-4">
+                                    <span class="text-xl font-bold leading-none text-gray-950">฿{{ related_product.price }}</span>
+                                </div>
+                            </div>
+                        </article>
                     </a>
 
                 {% empty %}
