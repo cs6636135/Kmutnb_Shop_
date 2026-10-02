@@ -77,9 +77,23 @@
                         </p>
                     </div>
 
-                    <span class="inline-flex w-fit items-center rounded-full bg-orange-50 px-3 py-1.5 text-sm font-semibold text-[#c4471c]">
-                        {{ reservation.get_status_display }}
-                    </span>
+                    {% if reservation.status == "pending" %}
+                        <span class="inline-flex w-fit items-center rounded-full bg-yellow-100 px-3 py-1.5 text-sm font-semibold text-[#92400E]">
+                            รอรับสินค้า
+                        </span>
+                    {% elif reservation.status == "picked_up" %}
+                        <span class="inline-flex w-fit items-center rounded-full bg-green-100 px-3 py-1.5 text-sm font-semibold text-[#166534]">
+                            รับสินค้าแล้ว
+                        </span>
+                    {% elif reservation.status == "expired" %}
+                        <span class="inline-flex w-fit items-center rounded-full bg-red-100 px-3 py-1.5 text-sm font-semibold text-[#991B1B]">
+                            หมดอายุ
+                        </span>
+                    {% elif reservation.status == "cancelled" %}
+                        <span class="inline-flex w-fit items-center rounded-full bg-gray-100 px-3 py-1.5 text-sm font-semibold text-[#4B5563]">
+                            ยกเลิก
+                        </span>
+                    {% endif %}
 
                 </div>
 

@@ -97,6 +97,24 @@
                         ตรวจสอบข้อมูลก่อนเข้ารับสินค้า
                     </p>
                 </div>
+
+                {% if reservation.status == "pending" %}
+                    <span class="ml-auto shrink-0 rounded-full bg-yellow-100 px-3 py-1.5 text-xs font-semibold text-[#92400E] sm:text-sm">
+                        รอรับสินค้า
+                    </span>
+                {% elif reservation.status == "picked_up" %}
+                    <span class="ml-auto shrink-0 rounded-full bg-green-100 px-3 py-1.5 text-xs font-semibold text-[#166534] sm:text-sm">
+                        รับสินค้าแล้ว
+                    </span>
+                {% elif reservation.status == "expired" %}
+                    <span class="ml-auto shrink-0 rounded-full bg-red-100 px-3 py-1.5 text-xs font-semibold text-[#991B1B] sm:text-sm">
+                        หมดอายุ
+                    </span>
+                {% elif reservation.status == "cancelled" %}
+                    <span class="ml-auto shrink-0 rounded-full bg-gray-100 px-3 py-1.5 text-xs font-semibold text-[#4B5563] sm:text-sm">
+                        ยกเลิก
+                    </span>
+                {% endif %}
             </div>
 
             <div class="border-t border-gray-100"></div>
