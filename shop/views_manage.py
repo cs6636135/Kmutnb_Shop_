@@ -1,12 +1,10 @@
 from django.shortcuts import render
-from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
-from accounts.permission import manage_required, admin_required
+from accounts.permission import role_required
 
 #ฝั่งคนจัดการร้านค้า ประมาณว่าเป็นหลังร้าน เกี่ยวกับทุกอย่างของหลังร้านยกเว้นการจองๆ
 # Create your views here.
-@manage_required
+@role_required("admin", "staff")
 def dashboard(request):
     print("DASHBOARD USER:", request.user)
     print("AUTHENTICATED:", request.user.is_authenticated)
@@ -16,7 +14,7 @@ def dashboard(request):
         "session_info": request.session.items()
     })
 
-@admin_required
+@role_required("admin")
 def products(request):
     return render(request, "manage/products.html", {
         "user": request.user,
