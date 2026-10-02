@@ -6,8 +6,10 @@ class User(AbstractUser):
      class Role(models.TextChoices):
         ADMIN = "admin", "Admin"
         STAFF = "staff", "Staff"
+     phone = models.CharField(max_length=10, blank=True)
      role = models.CharField(max_length=30, choices=Role.choices, default=Role.STAFF) #แอดมินเพิ่มสต๊าฟเข้าระบบ 
      location = models.ForeignKey("shop.Location",on_delete=models.SET_NULL, null=True, blank=True)
+
 #ถ้าลบโลเคชั่นออก user staff จะยังคงอยู่ แต่ location จะเป็น null 
 # choice .do_nothing คือ location ข้อมุลสถานที่ยังอยู่ในนี้
 # หรือจะลบ location แล้วเอา staff หายไปเลย .cascade ??
