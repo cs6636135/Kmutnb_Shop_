@@ -1,7 +1,7 @@
 #ฝั่งลูกค้า ประมาณว่าเป็นหน้าร้าน
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.db.models import Q, Sum
-from shop.models import Category, Location, Product
+from shop.models import Category, Location, Product, ProductLocation
 
 def home(request):
     products = Product.objects.annotate(
@@ -48,4 +48,21 @@ def product_list(request):
         "search_query": search_query,
         "selected_category": category_id,
         "selected_location": location_id,
+    })
+
+
+def product_detail(request, product_id):
+    product = get_object_or_404(
+        Product.objects.select_related("category").annotate(
+            stock=Sum("productlocation__stock", default=0)
+        ),
+        pk=product_id,
+    )
+    product_locations = ProductLocation.objects.filter(
+        product=product
+    ).select_related("location").order_by("location__name")
+
+    return render(request, "shop/product_detail.html", {
+        "product": product,
+        "product_locations": product_locations,
     })

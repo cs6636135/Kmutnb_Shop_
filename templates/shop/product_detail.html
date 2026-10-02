@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ product.name }} | KMUTNB Shop{% endblock %}
+
+{% block content %}
+<div class="bg-[#fff8f3] text-[#4a2114]">
+    <main class="mx-auto max-w-6xl px-6 py-10">
+        <nav aria-label="เส้นทางนำทาง" class="mb-7 text-sm text-gray-500">
+            <a href="{% url 'public_products' %}" class="hover:text-[#c4471c]">สินค้า</a>
+            <span class="px-2" aria-hidden="true">/</span>
+            <span class="text-[#4a2114]">{{ product.name }}</span>
+        </nav>
+
+        <section class="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
+            <div class="flex min-h-[320px] items-center justify-center overflow-hidden rounded-xl border border-orange-100 bg-orange-50 sm:min-h-[460px]">
+                {% if product.image_url %}
+                    <img src="{{ product.image_url }}" alt="{{ product.name }}" class="h-full max-h-[560px] w-full object-cover">
+                {% else %}
+                    <img src="{% static 'shop/image.png' %}" alt="{{ product.name }}" class="h-full max-h-[560px] w-full object-cover">
+                {% endif %}
+            </div>
+
+            <div class="py-2">
+                <p class="text-sm font-semibold text-[#c4471c]">{{ product.category.name }}</p>
+                <h1 class="mt-2 text-3xl font-bold sm:text-4xl">{{ product.name }}</h1>
+                <p class="mt-5 whitespace-pre-line leading-7 text-gray-600">
+                    {{ product.description|default:"ไม่มีรายละเอียดสินค้า" }}
+                </p>
+
+                <div class="mt-7 flex flex-wrap items-center justify-between gap-4 border-y border-orange-200 py-5">
+                    <p class="text-2xl font-bold text-[#c4471c]">฿{{ product.price }}</p>
+                    {% if product.reservable %}
+                        <span class="rounded-full bg-green-50 px-3 py-1 text-sm font-semibold text-green-700">สามารถจองได้</span>
+                    {% else %}
+                        <span class="rounded-full bg-gray-100 px-3 py-1 text-sm font-semibold text-gray-600">ไม่เปิดให้จอง</span>
+                    {% endif %}
+                </div>
+
+                <section class="mt-7" aria-labelledby="availability-heading">
+                    <div class="mb-3 flex items-center justify-between">
+                        <h2 id="availability-heading" class="text-lg font-bold">จำนวนสินค้าคงเหลือ</h2>
+                        <span class="text-sm text-gray-600">รวม {{ product.stock }} ชิ้น</span>
+                    </div>
+                    <ul class="divide-y divide-orange-100 rounded-lg border border-orange-100 bg-white">
+                        {% for product_location in product_locations %}
+                            <li class="flex items-center justify-between gap-4 px-4 py-3 text-sm">
+                                <span>{{ product_location.location.name }}</span>
+                                <span class="font-semibold {% if product_location.stock > 0 %}text-green-700{% else %}text-red-600{% endif %}">
+                                    {{ product_location.stock }} ชิ้น
+                                </span>
+                            </li>
+                        {% empty %}
+                            <li class="px-4 py-3 text-sm text-gray-500">ยังไม่มีข้อมูลจุดจำหน่าย</li>
+                        {% endfor %}
+                    </ul>
+                </section>
+
+                <a href="{% url 'public_products' %}" class="mt-8 inline-flex h-11 items-center rounded-lg bg-[#30415D] px-5 text-sm font-semibold text-white transition hover:bg-[#25344B]">
+                    กลับไปหน้าสินค้า
+                </a>
+            </div>
+        </section>
+    </main>
+</div>
+{% endblock %}
