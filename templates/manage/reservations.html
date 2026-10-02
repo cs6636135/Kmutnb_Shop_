@@ -1,0 +1,29 @@
+{% extends "base_manage.html" %}
+
+{% block content %}
+<main class="min-h-[calc(100vh-4rem)] bg-[#F8F5F0] text-[#30415D]">
+    <div class="mx-auto max-w-7xl px-6 py-10 lg:px-8">
+
+        <header class="mb-8">
+            <p class="text-sm font-semibold tracking-widest text-[#F47745]">
+                KMUTNB SHOP
+            </p>
+            <h1 class="mt-2 text-3xl font-bold">
+                จัดการการจอง
+            </h1>
+            <p class="mt-2 text-[#30415D]/70">
+                ตรวจสอบและจัดการรายการจองสินค้าของลูกค้า
+            </p>
+        </header>
+
+        <!-- พื้นที่สำหรับตารางรายการจอง -->
+        <section class="rounded-2xl bg-white p-6 shadow-sm">
+            <h2 class="mb-4 text-xl font-bold">รายการจองทั้งหมด</h2>
+            <p class="text-sm text-gray-500">
+                ยังไม่ได้เชื่อมต่อข้อมูลการจองจากฐานข้อมูล
+            </p>
+        </section>
+
+    </div>
+</main>
+{% endblock %}

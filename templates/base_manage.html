@@ -1,50 +1,156 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>{% block title %}KMUTNB SHOP{% endblock %}</title>
+
+    <!-- Google Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&display=swap" rel="stylesheet">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="min-h-screen bg-[#fff8f3]" style="font-family: 'Noto Sans Thai', sans-serif;">
+
+<body
+    class="min-h-screen bg-[#fff8f3]"
+    style="font-family: 'Noto Sans Thai', sans-serif;"
+>
+
     {% if request.user.is_authenticated %}
-        <nav class="bg-[#30415D] text-white" aria-label="เมนูจัดการ">
-            <div class="mx-auto flex min-h-16 max-w-7xl flex-wrap items-center justify-between gap-3 px-6 py-3">
-                <a href="{% url 'dashboard' %}" class="flex items-center gap-3">
-                    <span class="flex h-10 w-10 items-center justify-center rounded-lg border-b-2 border-[#F47745] bg-white/10 font-bold">K</span>
-                    <span>
-                        <span class="block text-sm font-bold">KMUTNB</span>
-                        <span class="block text-[10px] uppercase tracking-[0.12em] text-white/65">Shop</span>
-                    </span>
-                </a>
-                <div class="flex flex-wrap items-center gap-x-1 gap-y-1 text-sm">
-                    <a href="{% url 'dashboard' %}" class="rounded-md px-3 py-2 hover:bg-white/10 transition">ภาพรวม</a>
-                    <a href="" class="rounded-md px-3 py-2 hover:bg-white/10 transition">Stock</a>
-                    <a href="" class="rounded-md px-3 py-2 hover:bg-white/10 transition">รายการจอง</a>
+
+        <!-- =========================
+             Navigation
+        ========================== -->
+        <nav
+            class="bg-[#30415D] text-white"
+            aria-label="เมนูจัดการ"
+        >
+            <div
+                class="mx-auto flex min-h-16 max-w-7xl flex-wrap items-center justify-between gap-3 px-6 py-3"
+            >
+
+                <!-- Left: Dashboard + Logo -->
+                <div class="flex items-center gap-3">
+                    <!-- Shop Logo -->
+                    <a
+                        href="{% url 'home' %}"
+                        class="flex shrink-0 items-center"
+                        aria-label="กลับไปหน้าร้านค้า"
+                    >
+                        <img
+                            src="{% static 'shop/logo_font.png' %}"
+                            alt="KMUTNB Shop"
+                            class="h-9 w-auto object-contain sm:h-11"
+                        >
+                    </a>
+
+                </div>
+
+
+                <!-- Right: Menu -->
+                <div
+                    class="flex flex-wrap items-center gap-x-1 gap-y-1 text-sm"
+                >
+
+                    <!-- Dashboard -->
+                    <a
+                        href="{% url 'dashboard' %}"
+                        class="rounded-md px-3 py-2 transition hover:bg-white/10"
+                    >
+                        แดชบอร์ด
+                    </a>
+
+
+                    <!-- Stock -->
+                    <a
+                        href="#"
+                        class="rounded-md px-3 py-2 transition hover:bg-white/10"
+                    >
+                        จัดการการจอง
+                    </a>
+
+
+                    <!-- Reservations -->
+                    <a
+                        href="#"
+                        class="rounded-md px-3 py-2 transition hover:bg-white/10"
+                    >
+                        รายการจอง
+                    </a>
+
+
+                    <!-- Admin: Product Management -->
                     {% if request.user.role == "admin" %}
-                        <a href="{% url 'products' %}" class="rounded-md bg-[#F47745] px-3 py-2 font-semibold text-white hover:bg-[#e86736] transition">จัดการสินค้า</a>
+
+                        <a
+                            href="{% url 'products' %}"
+                            class="rounded-md bg-[#F47745] px-3 py-2 font-semibold text-white transition hover:bg-[#e86736]"
+                        >
+                            จัดการสินค้า
+                        </a>
+
                     {% endif %}
-                    <form method="post" action="{% url 'logout' %}" class="ml-2">
+
+
+                    <!-- Logout -->
+                    <form
+                        method="post"
+                        action="{% url 'logout' %}"
+                        class="ml-2"
+                    >
                         {% csrf_token %}
-                        <button type="submit" class="rounded-md border border-white/30 px-3 py-2 font-semibold text-white transition hover:border-[#F47745] hover:bg-[#F47745]">
+
+                        <button
+                            type="submit"
+                            class="rounded-md border border-white/30 px-3 py-2 font-semibold text-white transition hover:border-[#F47745] hover:bg-[#F47745]"
+                        >
                             ออกจากระบบ
                         </button>
+
                     </form>
+
                 </div>
+
             </div>
         </nav>
+
     {% endif %}
+
+
+    <!-- =========================
+         Django Messages
+    ========================== -->
     {% if messages %}
+
         {% for message in messages %}
+
             <script>
                 alert("{{ message|escapejs }}");
             </script>
+
         {% endfor %}
+
     {% endif %}
+
+
+    <!-- =========================
+         Page Content
+    ========================== -->
     {% block content %}
+
     {% endblock %}
+
 </body>
+
 </html>

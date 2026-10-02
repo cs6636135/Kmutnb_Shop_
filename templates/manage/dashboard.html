@@ -1,24 +1,211 @@
+
 {% extends "base_manage.html" %}
 
+{% block title %}ภาพรวมระบบ | KMUTNB Shop{% endblock %}
+
 {% block content %}
-<main class="min-h-[calc(100vh-4rem)] bg-[#F8F5F0] text-[#30415D]">
-    <div class="mx-auto max-w-7xl px-6 py-10 lg:px-8">
-        <header class="flex flex-col gap-5 border-b border-[#30415D]/15 pb-8 sm:flex-row sm:items-end sm:justify-between">
+<main class="min-h-screen bg-[#F8F5F0] text-[#30415D]">
+    <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+
+        <!-- Header -->
+        <header class="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-                <p class="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-[#F47745]">KMUTNB SHOP</p>
-                <h1 class="text-3xl font-bold sm:text-4xl">ยินดีต้อนรับ, {{ request.user.username }}</h1>
-                <p class="mt-2 text-sm text-[#30415D]/70">สถานะ session: {{ request.session.role }}</p>
+                <p class="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-[#F47745]">
+                    KMUTNB SHOP
+                </p>
+                <h1 class="text-3xl font-bold sm:text-4xl">ภาพรวมระบบ</h1>
+                <p class="mt-2 text-sm text-[#30415D]/65">
+                    ยินดีต้อนรับ {{ request.user.username }}
+                    · {{ now|date:"d/m/Y" }}
+                </p>
             </div>
 
-    
+            <span class="inline-flex w-fit items-center rounded-full bg-white px-4 py-2 text-sm font-medium text-[#30415D] border border-[#30415D]/10">
+                {{ request.session.role|default:"เจ้าหน้าที่" }}
+            </span>
         </header>
 
-        <section class="py-8" aria-labelledby="account-heading">
+        <!-- Summary Cards -->
+        <section class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+
+            <div class="rounded-2xl border border-[#30415D]/10 bg-white p-5 shadow-sm">
+                <div class="flex items-center justify-between">
+                    <p class="text-sm text-[#30415D]/65">การจองทั้งหมด</p>
+                    <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50 text-[#F47745]">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>
+                        </svg>
+                    </span>
+                </div>
+                <p class="mt-4 text-3xl font-bold">{{ total_reservations }}</p>
+                <p class="mt-1 text-xs text-[#30415D]/50">รายการในระบบ</p>
+            </div>
+
+            <div class="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
+                <div class="flex items-center justify-between">
+                    <p class="text-sm text-[#30415D]/65">รอรับสินค้า</p>
+                    <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="9" stroke-width="1.8"/>
+                            <path stroke-linecap="round" stroke-width="1.8" d="M12 7v5l3 2"/>
+                        </svg>
+                    </span>
+                </div>
+                <p class="mt-4 text-3xl font-bold">{{ pending_reservations }}</p>
+                <p class="mt-1 text-xs text-[#30415D]/50">สถานะ Pending</p>
+            </div>
+
+            <div class="rounded-2xl border border-green-200 bg-white p-5 shadow-sm">
+                <div class="flex items-center justify-between">
+                    <p class="text-sm text-[#30415D]/65">รับสินค้าแล้ว</p>
+                    <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-green-50 text-green-600">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="m5 12 4 4L19 6"/>
+                        </svg>
+                    </span>
+                </div>
+                <p class="mt-4 text-3xl font-bold">{{ picked_up_reservations }}</p>
+                <p class="mt-1 text-xs text-[#30415D]/50">สถานะ Picked up</p>
+            </div>
+
+            <div class="rounded-2xl border border-[#30415D]/10 bg-white p-5 shadow-sm">
+                <div class="flex items-center justify-between">
+                    <p class="text-sm text-[#30415D]/65">สินค้าทั้งหมด</p>
+                    <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-[#526D91]">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="m12 3 9 5-9 5-9-5 9-5Zm-9 5v8l9 5 9-5V8M12 13v8"/>
+                        </svg>
+                    </span>
+                </div>
+                <p class="mt-4 text-3xl font-bold">{{ total_products }}</p>
+                <p class="mt-1 text-xs text-[#30415D]/50">
+                    เปิดจองได้ {{ reservable_products }} รายการ
+                </p>
+            </div>
+
+        </section>
+
+        <!-- Secondary Stats -->
+        <section class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+
+            <div class="rounded-xl border border-[#30415D]/10 bg-white p-4">
+                <p class="text-sm text-[#30415D]/60">รายการหมดอายุ</p>
+                <p class="mt-2 text-2xl font-bold">{{ expired_reservations }}</p>
+            </div>
+
+            <div class="rounded-xl border border-[#30415D]/10 bg-white p-4">
+                <p class="text-sm text-[#30415D]/60">รายการยกเลิก</p>
+                <p class="mt-2 text-2xl font-bold">{{ cancelled_reservations }}</p>
+            </div>
+
+            <div class="rounded-xl border border-[#30415D]/10 bg-white p-4">
+                <p class="text-sm text-[#30415D]/60">จำนวนสินค้าคงเหลือรวม</p>
+                <p class="mt-2 text-2xl font-bold">{{ total_stock }}</p>
+            </div>
+
+        </section>
+
+        <!-- Recent Reservations -->
+        <section class="mb-8 overflow-hidden rounded-2xl border border-[#30415D]/10 bg-white shadow-sm">
+            <div class="flex items-center justify-between border-b border-[#30415D]/10 px-5 py-4">
+                <div>
+                    <h2 class="font-bold">รายการจองล่าสุด</h2>
+                    <p class="mt-1 text-xs text-[#30415D]/55">รายการจอง 5 รายการล่าสุด</p>
+                </div>
+                <a href="{% url 'reservation_status' %}"
+                   class="text-sm font-semibold text-[#C4471C] hover:text-[#F47745]">
+                    ตรวจสอบการจอง →
+                </a>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-[650px] text-left text-sm">
+                    <thead class="bg-[#F8F5F0] text-[#30415D]/70">
+                        <tr>
+                            <th class="px-5 py-3 font-semibold">รหัสการจอง</th>
+                            <th class="px-5 py-3 font-semibold">สินค้า</th>
+                            <th class="px-5 py-3 font-semibold">จำนวน</th>
+                            <th class="px-5 py-3 font-semibold">จุดรับสินค้า</th>
+                            <th class="px-5 py-3 font-semibold">สถานะ</th>
+                            <th class="px-5 py-3 font-semibold">วันที่จอง</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[#30415D]/10">
+                        {% for reservation in recent_reservations %}
+                        <tr class="hover:bg-[#F8F5F0]/70">
+                            <td class="whitespace-nowrap px-5 py-4 font-semibold">
+                                {{ reservation.reservation_code }}
+                            </td>
+                            <td class="px-5 py-4">{{ reservation.product.name }}</td>
+                            <td class="px-5 py-4">{{ reservation.quantity }}</td>
+                            <td class="px-5 py-4">{{ reservation.location.name }}</td>
+                            <td class="px-5 py-4">
+                                {% if reservation.status == "pending" %}
+                                    <span class="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700">รอรับสินค้า</span>
+                                {% elif reservation.status == "picked_up" %}
+                                    <span class="rounded-full bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">รับแล้ว</span>
+                                {% elif reservation.status == "expired" %}
+                                    <span class="rounded-full bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700">หมดอายุ</span>
+                                {% elif reservation.status == "cancelled" %}
+                                    <span class="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-600">ยกเลิก</span>
+                                {% endif %}
+                            </td>
+                            <td class="whitespace-nowrap px-5 py-4 text-[#30415D]/65">
+                                {{ reservation.reserved_at|date:"d/m/Y H:i" }}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="px-5 py-10 text-center text-[#30415D]/50">
+                                ยังไม่มีรายการจอง
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Upcoming Expirations -->
+        <section class="mb-10 rounded-2xl border border-orange-200 bg-white p-5 shadow-sm">
+            <div class="mb-4">
+                <h2 class="font-bold">รายการรอรับสินค้าที่ใกล้หมดอายุ</h2>
+                <p class="mt-1 text-sm text-[#30415D]/60">
+                    เรียงตามเวลาหมดอายุจากใกล้ที่สุด
+                </p>
+            </div>
+
+            <div class="space-y-3">
+                {% for reservation in expiring_reservations %}
+                <div class="flex flex-col gap-2 rounded-xl bg-orange-50/70 p-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <p class="font-semibold">{{ reservation.product.name }}</p>
+                        <p class="mt-1 text-xs text-[#30415D]/60">
+                            รหัส {{ reservation.reservation_code }} ·
+                            {{ reservation.location.name }} ·
+                            จำนวน {{ reservation.quantity }} ชิ้น
+                        </p>
+                    </div>
+                    <div class="text-sm font-semibold text-[#C4471C]">
+                        หมดอายุ {{ reservation.expires_at|date:"d/m/Y H:i" }}
+                    </div>
+                </div>
+                {% empty %}
+                <p class="rounded-xl bg-green-50 p-4 text-sm text-green-700">
+                    ไม่มีรายการจองที่รอรับสินค้าในขณะนี้
+                </p>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Existing Account Information: retained -->
+        <section class="mb-8" aria-labelledby="account-heading">
             <div class="mb-4">
                 <h2 id="account-heading" class="text-lg font-bold">ข้อมูลบัญชี</h2>
                 <p class="mt-1 text-sm text-[#30415D]/65">รายละเอียดบัญชีที่กำลังใช้งาน</p>
             </div>
-            <dl class="grid grid-cols-1 divide-y divide-[#30415D]/10 rounded-lg border border-[#30415D]/10 bg-white sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-4 lg:divide-x">
+
+            <dl class="grid grid-cols-1 divide-y divide-[#30415D]/10 rounded-xl border border-[#30415D]/10 bg-white sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-4 lg:divide-x">
                 <div class="p-5">
                     <dt class="text-xs font-semibold text-[#30415D]/55">ID</dt>
                     <dd class="mt-2 font-semibold">{{ user.id }}</dd>
@@ -38,37 +225,41 @@
             </dl>
         </section>
 
+        <!-- Existing Session Information: retained -->
         <section aria-labelledby="session-heading">
             <div class="mb-4">
                 <h2 id="session-heading" class="text-lg font-bold">ข้อมูล Session</h2>
-                <p class="mt-1 text-sm text-[#30415D]/65">ข้อมูล session ที่ view ส่งมา</p>
+                <p class="mt-1 text-sm text-[#30415D]/65">ข้อมูล session ที่ใช้งานอยู่</p>
             </div>
-            <div class="overflow-hidden rounded-lg border border-[#30415D]/10 bg-white">
+
+            <div class="overflow-hidden rounded-xl border border-[#30415D]/10 bg-white">
                 <div class="overflow-x-auto">
                     <table class="w-full min-w-[360px] border-collapse text-left text-sm">
                         <thead class="bg-[#30415D] text-white">
                             <tr>
-                                <th scope="col" class="px-5 py-3 font-semibold">Key</th>
-                                <th scope="col" class="px-5 py-3 font-semibold">Value</th>
+                                <th class="px-5 py-3 font-semibold">Key</th>
+                                <th class="px-5 py-3 font-semibold">Value</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-[#30415D]/10">
                             {% for key, value in session_info %}
-                                <tr class="hover:bg-[#F8F5F0]">
-                                    <td class="px-5 py-3 font-medium">{{ key }}</td>
-                                    <td class="break-all px-5 py-3 text-[#30415D]/75">{{ value }}</td>
-                                </tr>
+                            <tr class="hover:bg-[#F8F5F0]">
+                                <td class="px-5 py-3 font-medium">{{ key }}</td>
+                                <td class="break-all px-5 py-3 text-[#30415D]/75">{{ value }}</td>
+                            </tr>
                             {% empty %}
-                                <tr>
-                                    <td colspan="2" class="px-5 py-6 text-center text-[#30415D]/55">ไม่มีข้อมูล session</td>
-                                </tr>
+                            <tr>
+                                <td colspan="2" class="px-5 py-6 text-center text-[#30415D]/55">
+                                    ไม่มีข้อมูล session
+                                </td>
+                            </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
             </div>
         </section>
+
     </div>
 </main>
 {% endblock %}
-
