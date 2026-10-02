@@ -15,6 +15,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.conf import settings
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import include, path
 
 urlpatterns = [
@@ -22,7 +24,7 @@ urlpatterns = [
 
     # ฝั่ง Public หน้าการจอง
     path("", include("shop.urls")),
-    #path("", include("reservations.urls")),
+    path("", include("reservations.urls")),
 
     # ฝั่ง Manage คนทำหลังบ้าน
     path("manage/", include("shop.manage_urls")),
@@ -32,3 +34,6 @@ urlpatterns = [
     path("", include("accounts.urls")),
    
 ]
+
+if settings.DEBUG:
+    urlpatterns += staticfiles_urlpatterns()
