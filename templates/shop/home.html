@@ -1,9 +1,235 @@
 {% extends "base.html" %}
 
-{% block content %}
-<h1>Welcome to KMUTNB Shop!</h1>
+{% block title %}หน้าแรก | KMUTNB Shop{% endblock %}
 
-<a href="{% url 'login' %}">
-    (แอบๆ) Login เพื่อเข้าสู่ระบบส่วนจัดการ
-</a>
+{% block content %}
+
+<div class="min-h-screen bg-[#fff8f3] text-[#4a2114]">
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-6 py-8">
+
+        <!-- Search Section -->
+        <section id="product-search" class="bg-[#9f3817] rounded-2xl px-8 py-10">
+
+            <h1 class="text-4xl font-bold text-white mb-2">
+                หาของที่ต้องการ ก่อนเดินไปซื้อ
+            </h1>
+
+            <p class="text-lg text-orange-100 mb-6">
+                ดูราคา จำนวนคงเหลือ และจองสินค้าภายในมหาวิทยาลัย
+            </p>
+
+            <!-- Search Form -->
+            <form method="GET"
+                action="{% url 'public_products' %}"
+                  class="flex gap-3">
+
+                <input
+                    type="text"
+                    name="q"
+                    placeholder="ค้นหาสินค้า..."
+                    class="flex-1 h-14 px-5 rounded-xl
+                           bg-white text-gray-800
+                           outline-none
+                           focus:ring-4 focus:ring-orange-200"
+                >
+
+                <button
+                    type="submit"
+                    class="h-14 px-8 rounded-xl
+                           bg-[#c4471c]
+                           hover:bg-[#b33d18]
+                           text-white
+                           font-semibold
+                           transition">
+                    ค้นหา
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- Filters -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+
+            <!-- Category -->
+            <div>
+                <h2 class="text-xl font-bold mb-3">
+                    หมวดหมู่
+                </h2>
+
+                <select
+                    class="w-full h-12 px-4 rounded-xl
+                           bg-white
+                           border border-orange-100
+                           shadow-sm
+                           outline-none
+                           focus:ring-2
+                           focus:ring-[#c4471c]">
+
+                    <option value="">
+                        ทุกหมวดหมู่
+                    </option>
+
+                    {% for category in categories %}
+                        <option value="{{ category.id }}">
+                            {{ category.name }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+            </div>
+
+
+            <!-- Location -->
+            <div>
+                <h2 class="text-xl font-bold mb-3">
+                    จุดจำหน่าย
+                </h2>
+
+                <select
+                    class="w-full h-12 px-4 rounded-xl
+                           bg-white
+                           border border-orange-100
+                           shadow-sm
+                           outline-none
+                           focus:ring-2
+                           focus:ring-[#c4471c]">
+
+                    <option value="">
+                        ทุกจุดจำหน่าย
+                    </option>
+
+                    {% for location in locations %}
+                        <option value="{{ location.id }}">
+                            {{ location.name }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+            </div>
+
+        </section>
+
+
+        <!-- Products -->
+        <section id="products" class="mt-10">
+
+            <div class="flex items-center justify-between mb-5">
+
+                <h2 class="text-2xl font-bold">
+                    สินค้า
+                </h2>
+
+                <a href="{% url 'public_products' %}"
+                   class="text-[#c4471c] font-medium hover:underline">
+                    ดูสินค้าทั้งหมด →
+                </a>
+
+            </div>
+
+
+            <!-- Product Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                {% for product in products %}
+
+                    <div class="bg-white rounded-2xl
+                                border border-orange-100
+                                overflow-hidden
+                                shadow-sm">
+
+                        <div class="h-48 bg-orange-50
+                                    flex items-center justify-center">
+
+                            {% if product.image_url %}
+                                <img
+                                    src="{{ product.image_url }}"
+                                    alt="{{ product.name }}"
+                                    class="w-full h-full object-cover"
+                                >
+                            {% else %}
+                                <span class="text-5xl" aria-hidden="true">📦</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="p-5">
+                            <h3 class="text-lg font-bold mb-2">
+                                {{ product.name }}
+                            </h3>
+
+                            <p class="text-sm text-gray-500 mb-4">
+                                {{ product.description|default:"ไม่มีรายละเอียดสินค้า" }}
+                            </p>
+
+                            <div class="flex items-center justify-between">
+                                <span class="text-lg font-bold text-[#c4471c]">
+                                    ฿{{ product.price }}
+                                </span>
+
+                                {% if product.stock > 0 %}
+                                    <span class="text-sm text-green-600">
+                                        เหลือ {{ product.stock }} ชิ้น
+                                    </span>
+                                {% else %}
+                                    <span class="text-sm text-red-500">
+                                        สินค้าหมด
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                {% empty %}
+                    <div class="col-span-full bg-white rounded-2xl
+                                border border-orange-100 p-10
+                                text-center text-gray-500">
+                        ยังไม่มีสินค้าในระบบ
+                    </div>
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+
+        <!-- Reservation Status -->
+        {% url 'reservation_status' as reservation_status_url %}
+        {% if reservation_status_url %}
+        <section id="reservation-status" class="mt-10 mb-10">
+
+            <a href="{{ reservation_status_url }}"
+               class="block w-full
+                      bg-[#fde3d5]
+                      hover:bg-[#fbd8c7]
+                      rounded-2xl
+                      px-6 py-5
+                      text-center
+                      text-[#b7471d]
+                      font-semibold
+                      transition">
+
+                ตรวจสอบสถานะการจองของคุณ
+
+            </a>
+
+        </section>
+        {% endif %}
+
+
+    </main>
+
+    <footer class="border-t border-orange-100 bg-white/70">
+        <div class="max-w-6xl mx-auto px-6 py-6 text-center">
+            <a href="{% url 'login' %}"
+               class="text-sm text-gray-500 hover:text-[#c4471c] transition">
+                เข้าสู่ระบบจัดการ
+            </a>
+        </div>
+    </footer>
+
+</div>
+
 {% endblock %}
