@@ -9,46 +9,8 @@
     <!-- Main Content -->
     <main class="max-w-6xl mx-auto px-6 py-8">
 
-        <!-- Search Section -->
-        <section id="product-search" class="bg-[#9f3817] rounded-2xl px-8 py-10">
+       
 
-            <h1 class="text-4xl font-bold text-white mb-2">
-                หาของที่ต้องการ ก่อนเดินไปซื้อ
-            </h1>
-
-            <p class="text-lg text-orange-100 mb-6">
-                ดูราคา จำนวนคงเหลือ และจองสินค้าภายในมหาวิทยาลัย
-            </p>
-
-            <!-- Search Form -->
-            <form method="GET"
-                action="{% url 'public_products' %}"
-                  class="flex gap-3">
-
-                <input
-                    type="text"
-                    name="q"
-                    placeholder="ค้นหาสินค้า..."
-                    class="flex-1 h-14 px-5 rounded-xl
-                           bg-white text-gray-800
-                           outline-none
-                           focus:ring-4 focus:ring-orange-200"
-                >
-
-                <button
-                    type="submit"
-                    class="h-14 px-8 rounded-xl
-                           bg-[#c4471c]
-                           hover:bg-[#b33d18]
-                           text-white
-                           font-semibold
-                           transition">
-                    ค้นหา
-                </button>
-
-            </form>
-
-        </section>
 
 
         <!-- Filters -->
@@ -198,24 +160,8 @@
         <!-- Reservation Status -->
         {% url 'reservation_status' as reservation_status_url %}
         {% if reservation_status_url %}
-        <section id="reservation-status" class="mt-10 mb-10">
+        
 
-            <a href="{{ reservation_status_url }}"
-               class="block w-full
-                      bg-[#fde3d5]
-                      hover:bg-[#fbd8c7]
-                      rounded-2xl
-                      px-6 py-5
-                      text-center
-                      text-[#b7471d]
-                      font-semibold
-                      transition">
-
-                ตรวจสอบสถานะการจองของคุณ
-
-            </a>
-
-        </section>
         {% endif %}
 
 
