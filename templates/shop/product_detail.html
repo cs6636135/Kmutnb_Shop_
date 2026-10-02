@@ -1,0 +1,389 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ product.name }} | KMUTNB Shop{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-white text-[#222]">
+
+    <main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+
+       <!-- Breadcrumb -->
+<nav aria-label="เส้นทางนำทาง"
+     class="mb-6 flex items-center justify-between text-sm text-gray-500">
+
+    <!-- Breadcrumb -->
+    <div class="flex items-center">
+        <a href="{% url 'public_products' %}"
+           class="transition hover:text-[#c4471c]">
+            สินค้า
+        </a>
+
+        <span class="mx-2 text-gray-400">›</span>
+
+        {% if product.category %}
+            <span>{{ product.category.name }}</span>
+            <span class="mx-2 text-gray-400">›</span>
+        {% endif %}
+
+        <span class="font-medium text-gray-700">
+            {{ product.name }}
+        </span>
+    </div>
+
+    <!-- Back Button -->
+    <a href="{% url 'public_products' %}"
+       class="inline-flex items-center gap-2 text-sm font-medium text-gray-500
+              transition hover:text-[#c4471c]">
+        <span class="text-lg">←</span>
+        <span>กลับไปหน้าสินค้า</span>
+    </a>
+
+</nav>
+
+
+
+
+        <!-- ================= PRODUCT DETAIL ================= -->
+        <section class="grid grid-cols-1 gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
+
+            <!-- ================= LEFT : IMAGE ================= -->
+          
+<div>
+    <!-- Main image -->
+    <div class="relative h-[420px] w-full overflow-hidden rounded-xl bg-[#f7f7f7] sm:h-[540px]">
+
+        {% if product.image_url %}
+            <img
+                src="{{ product.image_url }}"
+                alt="{{ product.name }}"
+                class="h-full w-full object-cover"
+            >
+        {% else %}
+            <img
+                src="{% static 'shop/image.png' %}"
+                alt="{{ product.name }}"
+                class="h-full w-full object-cover"
+            >
+        {% endif %}
+
+        <!-- Share button -->
+        <button
+            type="button"
+            aria-label="แชร์สินค้า"
+            class="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-lg bg-white shadow-sm ring-1 ring-gray-200 transition hover:bg-gray-50"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 fill="none"
+                 viewBox="0 0 24 24"
+                 stroke-width="1.7"
+                 stroke="currentColor"
+                 class="h-5 w-5">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186 7.566-4.292m-7.566 6.478 7.566 4.292m0 0a2.25 2.25 0 1 0 2.224-3.874 2.25 2.25 0 0 0-2.224 3.874Zm0-9.916a2.25 2.25 0 1 0 2.224-3.874 2.25 2.25 0 0 0-2.224 3.874Z" />
+            </svg>
+        </button>
+
+        <!-- Wishlist -->
+        <button
+            type="button"
+            aria-label="เพิ่มสินค้ารายการโปรด"
+            class="absolute right-4 top-16 flex h-11 w-11 items-center justify-center rounded-lg bg-white shadow-sm ring-1 ring-gray-200 transition hover:bg-gray-50"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 fill="none"
+                 viewBox="0 0 24 24"
+                 stroke-width="1.7"
+                 stroke="currentColor"
+                 class="h-5 w-5">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M21 8.25c0 5.25-9 10.5-9 10.5S3 13.5 3 8.25A4.25 4.25 0 0 1 11.25 6.1L12 7l.75-.9A4.25 4.25 0 0 1 21 8.25Z" />
+            </svg>
+        </button>
+    </div>
+
+    <!-- Image thumbnail -->
+    <div class="mt-4 flex gap-3">
+        <div class="h-20 w-20 overflow-hidden rounded-lg border-2 border-[#4a2114] bg-[#f7f7f7]">
+            {% if product.image_url %}
+                <img
+                    src="{{ product.image_url }}"
+                    alt="{{ product.name }}"
+                    class="h-full w-full object-cover"
+                >
+            {% else %}
+                <img
+                    src="{% static 'shop/image.png' %}"
+                    alt="{{ product.name }}"
+                    class="h-full w-full object-cover"
+                >
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+            <!-- ================= RIGHT : PRODUCT INFO ================= -->
+            <div class="lg:pt-2">
+
+                <div class="flex items-center justify-between gap-4">
+                    {% if product.category %}
+                        <p class="min-w-0 truncate text-sm font-medium text-gray-500">
+                            {{ product.category.name }}
+                        </p>
+                    {% endif %}
+
+                    {% if product.reservable and product.stock > 0 %}
+                        <span class="shrink-0 rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
+                            พร้อมจอง
+                        </span>
+                    {% elif product.stock == 0 %}
+                        <span class="shrink-0 rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">
+                            ไม่พร้อมจอง
+                        </span>
+                    {% else %}
+                        <span class="shrink-0 rounded-full bg-gray-200 px-3 py-1 text-xs font-semibold text-gray-600">
+                            ปิดการจอง
+                        </span>
+                    {% endif %}
+                </div>
+
+
+                <!-- Product name -->
+                <h1 class="mt-2 text-3xl font-bold leading-tight text-[#222] sm:text-4xl">
+                    {{ product.name }}
+                </h1>
+
+
+                <!-- Price -->
+                <div class="mt-5">
+                    <p class="text-3xl font-bold text-[#c4471c]">
+                        ฿{{ product.price }}
+                    </p>
+                </div>
+
+
+                <!-- Divider -->
+                <div class="my-6 border-t border-gray-200"></div>
+
+
+                <!-- Description -->
+                <section>
+                    <h2 class="text-lg font-bold text-[#222]">
+                        รายละเอียดสินค้า
+                    </h2>
+
+                    <p class="mt-3 whitespace-normal text-[15px] leading-7 text-gray-600">
+                        {{ product.description|default:"ไม่มีรายละเอียดสินค้า" }}
+                    </p>
+                </section>
+
+
+                <!-- ================= STOCK ================= -->
+                <section class="mt-7"
+                         aria-labelledby="availability-heading">
+
+                    <div class="mb-3 flex items-center justify-between">
+
+                        <h2 id="availability-heading"
+                            class="text-lg font-bold">
+                            จำนวนสินค้าคงเหลือ
+                        </h2>
+
+                        <span class="text-sm text-gray-500">
+                            รวม {{ product.stock }} ชิ้น
+                        </span>
+
+                    </div>
+
+
+                    <div class="overflow-hidden rounded-lg border border-gray-200">
+
+                        {% for product_location in product_locations %}
+
+                            <div class="flex items-center justify-between border-b border-gray-100 bg-white px-4 py-3 last:border-b-0">
+
+                                <div class="flex items-center gap-3">
+
+                                    <!-- Location icon -->
+                                    <div class="flex h-9 w-9 items-center justify-center rounded-full bg-orange-50 text-[#c4471c]">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                             fill="none"
+                                             viewBox="0 0 24 24"
+                                             stroke-width="1.7"
+                                             stroke="currentColor"
+                                             class="h-4 w-4">
+                                            <path stroke-linecap="round"
+                                                  stroke-linejoin="round"
+                                                  d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                            <path stroke-linecap="round"
+                                                  stroke-linejoin="round"
+                                                  d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                                        </svg>
+                                    </div>
+
+                                    <span class="text-sm font-medium text-gray-700">
+                                        {{ product_location.location.name }}
+                                    </span>
+
+                                </div>
+
+
+                                {% if product_location.stock > 0 %}
+
+                                    <span class="text-sm font-semibold text-green-700">
+                                        {{ product_location.stock }} ชิ้น
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="text-sm font-semibold text-red-600">
+                                        สินค้าหมด
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        {% empty %}
+
+                            <div class="px-4 py-5 text-sm text-gray-500">
+                                ยังไม่มีข้อมูลจุดจำหน่าย
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </section>
+
+
+                <!-- ================= ACTION BUTTONS ================= -->
+                <div class="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-1">
+
+                    {% if product.reservable and product.stock > 0 %}
+
+                        <a
+                            href="{% url 'reservation_create' product.id %}"
+                            class="flex h-12 items-center justify-center rounded-lg bg-[#F47745] px-6 text-sm font-semibold text-white transition hover:bg-[#c4471c]"
+                        >
+                            จองสินค้า
+                        </a>
+   
+
+                    {% else %}
+
+                        <button
+                            type="button"
+                            disabled
+                            class="flex h-12 cursor-not-allowed items-center justify-center rounded-lg bg-gray-200 px-6 text-sm font-semibold text-gray-500 sm:col-span-2"
+                        >
+                            {% if product.stock == 0 %}
+                                ไม่พร้อมจอง
+                            {% else %}
+                                ไม่สามารถจองสินค้าได้
+                            {% endif %}
+                        </button>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Delivery T&C -->
+                <div class="mt-6 border-t border-gray-200 pt-5">
+
+                    <button
+                        type="button"
+                        class="text-sm text-gray-600 underline underline-offset-2 hover:text-[#c4471c]"
+                    >
+                        เงื่อนไขการรับสินค้าและการจอง
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= RELATED PRODUCTS ================= -->
+        <section class="mt-20 border-t border-gray-200 pt-10">
+
+            <div class="mb-6 flex items-center justify-between">
+
+                <h2 class="text-2xl font-bold text-[#222]">
+                    สินค้าที่เกี่ยวข้อง
+                </h2>
+
+                <a
+                    href="{% url 'public_products' %}"
+                    class="text-sm font-medium text-gray-600 hover:text-[#c4471c]"
+                >
+                    ดูทั้งหมด
+                </a>
+
+            </div>
+
+
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+
+                {% for related_product in related_products %}
+
+                    <a href="{% url 'product_detail' related_product.id %}"
+                       class="group block rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2">
+                        <article class="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition duration-200 group-hover:-translate-y-0.5 group-hover:shadow-md">
+                            <div class="relative aspect-[4/3] overflow-hidden bg-gray-100">
+                                {% if related_product.image_url %}
+                                    <img src="{{ related_product.image_url }}" alt="{{ related_product.name }}"
+                                         class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]">
+                                {% else %}
+                                    <img src="{% static 'shop/image.png' %}" alt="{{ related_product.name }}"
+                                         class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]">
+                                {% endif %}
+                            </div>
+
+                            <div class="flex flex-1 flex-col p-4 sm:p-5">
+                                <div class="flex min-h-5 items-start justify-between gap-3">
+                                    {% if related_product.category %}
+                                        <span class="inline-flex min-w-0 max-w-[65%] truncate rounded-full bg-[#F47745] px-3 py-1 text-xs font-medium text-white shadow-sm">
+                                            {{ related_product.category.name }}
+                                        </span>
+                                    {% endif %}
+                                    <span class="shrink-0 text-right text-xs font-medium {% if related_product.stock == 0 %}text-red-600{% else %}text-green-700{% endif %}">
+                                        คงเหลือ {{ related_product.stock }}
+                                    </span>
+                                </div>
+
+                                <h3 class="mt-2 break-words text-base font-bold leading-6 text-gray-900">
+                                    {{ related_product.name }}
+                                </h3>
+                                <p class="mt-2 mb-2 line-clamp-2 break-words text-sm leading-5 text-gray-500">
+                                    {{ related_product.description|default:"ไม่มีรายละเอียดสินค้า" }}
+                                </p>
+
+                                <div class="mt-auto flex items-end justify-end border-t border-gray-200 pt-4">
+                                    <span class="text-xl font-bold leading-none text-gray-950">฿{{ related_product.price }}</span>
+                                </div>
+                            </div>
+                        </article>
+                    </a>
+
+                {% empty %}
+
+                    <div class="col-span-full py-10 text-center text-sm text-gray-500">
+                        ยังไม่มีสินค้าที่เกี่ยวข้อง
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+{% endblock %}

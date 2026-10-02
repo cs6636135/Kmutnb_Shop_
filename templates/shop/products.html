@@ -1,62 +1,175 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}สินค้า | KMUTNB Shop{% endblock %}
 
 {% block content %}
 <div class="bg-[#fff8f3] text-[#4a2114]">
-    <main class="max-w-6xl mx-auto px-6 py-10">
-        <header class="mb-8">
-            <p class="text-sm font-semibold text-[#c4471c] mb-2">KMUTNB SHOP</p>
-            <h1 class="text-3xl font-bold">สินค้าทั้งหมด</h1>
-            <p class="mt-2 text-gray-600">ค้นหาและเลือกดูสินค้าตามหมวดหมู่หรือจุดจำหน่าย</p>
-        </header>
+    <main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <header class="mb-7">
+    <h1 class="text-3xl font-bold text-gray-900">สินค้าทั้งหมด</h1>
+    <p class="mt-2 text-sm text-gray-600">
+        ค้นหาและเลือกดูสินค้าตามหมวดหมู่หรือจุดจำหน่าย
+    </p>
+</header>
 
-        <form method="get" action="{% url 'public_products' %}"
-              class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end mb-8">
-            <div class="md:col-span-2">
-                <label for="product-query" class="block text-sm font-semibold mb-2">ค้นหาสินค้า</label>
-                <input id="product-query" type="search" name="q" value="{{ search_query }}"
-                       placeholder="ชื่อสินค้า หรือรายละเอียด"
-                       class="w-full h-12 px-4 rounded-lg bg-white border border-orange-200 outline-none focus:ring-2 focus:ring-[#c4471c]">
-            </div>
+<!-- Search Form -->
+<form method="get" class="mb-5 space-y-4">
 
-            <div>
-                <label for="product-category" class="block text-sm font-semibold mb-2">หมวดหมู่</label>
-                <select id="product-category" name="category"
-                        class="w-full h-12 px-4 rounded-lg bg-white border border-orange-200 outline-none focus:ring-2 focus:ring-[#c4471c]">
-                    <option value="">ทุกหมวดหมู่</option>
-                    {% for category in categories %}
-                        <option value="{{ category.id }}" {% if selected_category == category.id|stringformat:"s" %}selected{% endif %}>
-                            {{ category.name }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
+    <!-- Search + Location -->
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-end">
 
-            <div>
-                <label for="product-location" class="block text-sm font-semibold mb-2">จุดจำหน่าย</label>
-                <select id="product-location" name="location"
-                        class="w-full h-12 px-4 rounded-lg bg-white border border-orange-200 outline-none focus:ring-2 focus:ring-[#c4471c]">
-                    <option value="">ทุกจุดจำหน่าย</option>
-                    {% for location in locations %}
-                        <option value="{{ location.id }}" {% if selected_location == location.id|stringformat:"s" %}selected{% endif %}>
-                            {{ location.name }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
+        <!-- Search -->
+        <div class="min-w-0 flex-1">
 
-            <div class="md:col-span-4 flex items-center gap-4">
-                <button type="submit"
-                        class="h-11 px-6 rounded-lg bg-[#c4471c] hover:bg-[#a93616] text-white font-semibold transition">
-                    ค้นหา
-                </button>
-                <a href="{% url 'public_products' %}"
-                   class="text-sm text-gray-600 hover:text-[#c4471c] transition">
-                    ล้างตัวกรอง
-                </a>
-            </div>
-        </form>
+            <input
+                id="product-search"
+                type="text"
+                name="q"
+                value="{{ request.GET.q }}"
+                placeholder="ค้นหาชื่อสินค้า..."
+                class="w-full rounded-lg border border-gray-300 px-4 py-3
+                       text-sm outline-none transition
+                       focus:border-[#c4471c] focus:ring-1 focus:ring-[#c4471c]"
+            >
+        </div>
+
+        <!-- Location -->
+        <div class="w-full sm:w-56">
+
+            <select
+                id="product-location"
+                name="location"
+                class="w-full rounded-lg border border-gray-300 px-4 py-3
+                       text-sm outline-none transition
+                       focus:border-[#c4471c] focus:ring-1 focus:ring-[#c4471c]"
+            >
+                <option value="">ทุกสถานที่</option>
+
+                {% for location in locations %}
+                    <option
+                        value="{{ location.id }}"
+                        {% if request.GET.location == location.id|stringformat:"s" %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ location.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Submit -->
+        <button
+            type="submit"
+            class="shrink-0 rounded-lg bg-[#c4471c] px-6 py-3
+                   text-sm font-semibold text-white transition
+                   hover:bg-[#a83b18]
+                   focus-visible:outline-none focus-visible:ring-2
+                   focus-visible:ring-[#c4471c] focus-visible:ring-offset-2"
+        >
+            ค้นหา
+        </button>
+
+    </div>
+
+ 
+
+<!-- Category Section -->
+<div>
+    <div
+        class="flex w-full flex-nowrap items-center gap-3"
+        role="group"
+        aria-label="เลือกหมวดหมู่สินค้า"
+    >
+        <!-- All Categories -->
+        <button
+            type="submit"
+            name="category"
+            value=""
+            class="flex-1 min-w-0 rounded-xl border px-8 py-3
+                   text-center text-sm font-medium whitespace-nowrap
+                   transition duration-200
+                   {% if not request.GET.category %}
+                       border-[#c4471c] bg-[#c4471c] text-white shadow-sm
+                   {% else %}
+                       border-gray-200 bg-white text-gray-700
+                       hover:border-[#c4471c] hover:text-[#c4471c]
+                   {% endif %}"
+        >
+            ทั้งหมด
+        </button>
+
+        <!-- Category Buttons -->
+        {% for category in categories %}
+        <button
+            type="submit"
+            name="category"
+            value="{{ category.id }}"
+            class="flex-1 min-w-0 rounded-xl border px-8 py-3
+                   text-center text-sm font-medium whitespace-nowrap
+                   transition duration-200
+                   {% if request.GET.category == category.id|stringformat:'s' %}
+                       border-[#c4471c] bg-[#c4471c] text-white shadow-sm
+                   {% else %}
+                       border-gray-200 bg-white text-gray-700
+                       hover:border-[#c4471c] hover:text-[#c4471c]
+                   {% endif %}"
+            aria-pressed="{% if request.GET.category == category.id|stringformat:'s' %}true{% else %}false{% endif %}"
+        >
+            {{ category.name }}
+        </button>
+        {% endfor %}
+    </div>
+</div>
+
+
+</form>
+
+<script>
+(function () {
+    const form = document.getElementById('product-filter-form');
+    const searchInput = document.getElementById('product-query');
+    const category = document.getElementById('product-category');
+    const location = document.getElementById('product-location');
+    const loading = document.getElementById('search-loading');
+
+    if (!form || !searchInput) return;
+
+    let searchTimer;
+
+    // ค้นหาอัตโนมัติหลังหยุดพิมพ์ 400ms
+    searchInput.addEventListener('input', function () {
+        clearTimeout(searchTimer);
+
+        loading?.classList.remove('hidden');
+
+        searchTimer = setTimeout(function () {
+            form.submit();
+        }, 400);
+    });
+
+    // เปลี่ยน filter แล้วค้นหาทันที
+    category?.addEventListener('change', function () {
+        form.submit();
+    });
+
+    location?.addEventListener('change', function () {
+        form.submit();
+    });
+
+    // กด Enter ค้นหาทันที
+    searchInput.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+
+            clearTimeout(searchTimer);
+            form.submit();
+        }
+    });
+})();
+</script>
+
 
         <section aria-label="รายการสินค้า">
             <div class="flex items-center justify-between border-b border-orange-200 pb-3 mb-5">
@@ -64,22 +177,32 @@
                 <span class="text-sm text-gray-500">{{ products|length }} รายการ</span>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {% for product in products %}
-                    <article class="bg-white rounded-lg border border-orange-100 overflow-hidden">
-                        <div class="h-48 bg-orange-50 flex items-center justify-center">
+                    <a href="{% url 'product_detail' product.id %}"
+                       class="group block rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2">
+                    <article class="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition duration-200 group-hover:-translate-y-0.5 group-hover:shadow-md">
+                        <div class="relative aspect-[4/3] overflow-hidden bg-gray-100">
                             {% if product.image_url %}
                                 <img src="{{ product.image_url }}" alt="{{ product.name }}"
-                                     class="w-full h-full object-cover">
+                                     class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]">
                             {% else %}
-                                <span class="text-5xl" aria-hidden="true">📦</span>
+                                <img src="{% static 'shop/image.png' %}" alt="{{ product.name }}"
+                                     class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]">
                             {% endif %}
                         </div>
 
-                        <div class="p-5">
-                            <p class="text-xs font-semibold text-[#9f3817] mb-2">{{ product.category.name }}</p>
-                            <h3 class="text-lg font-bold">{{ product.name }}</h3>
-                            <p class="text-sm text-gray-600 mt-2 min-h-10">
+                        <div class="flex flex-1 flex-col p-4 sm:p-5">
+                            <div class="flex min-h-5 items-start justify-between gap-3">
+                                <span class="inline-flex min-w-0 max-w-[65%] truncate rounded-full bg-[#F47745] px-3 py-1 text-xs font-medium text-white shadow-sm">{{ product.category.name }}</span>
+                                <span class="shrink-0 text-right text-xs font-medium {% if product.stock == 0 %}text-red-600{% else %}text-green-700{% endif %}">
+                                    คงเหลือ {{ product.stock }}
+                                </span>
+                            </div>
+                            <h3 class="mt-2 break-words text-base font-bold leading-6 text-gray-900">
+                                {{ product.name }}
+                            </h3>
+                            <p class="mt-2 mb-2 line-clamp-2 break-words text-sm leading-5 text-gray-500">
                                 {{ product.description|default:"ไม่มีรายละเอียดสินค้า" }}
                             </p>
                             {% if selected_location %}
@@ -89,16 +212,13 @@
                                     {% endif %}
                                 {% endfor %}
                             {% endif %}
-                            <div class="flex items-center justify-between mt-4 pt-4 border-t border-orange-100">
-                                <span class="text-lg font-bold text-[#c4471c]">฿{{ product.price }}</span>
-                                {% if product.stock > 0 %}
-                                    <span class="text-sm text-green-700">เหลือ {{ product.stock }} ชิ้น</span>
-                                {% else %}
-                                    <span class="text-sm text-red-600">สินค้าหมด</span>
-                                {% endif %}
+                            <div class="mt-auto flex items-end justify-end border-t border-gray-200 pt-4">
+                                <span class="text-xl font-bold leading-none text-gray-950">฿{{ product.price }}</span>
                             </div>
+
                         </div>
                     </article>
+                    </a>
                 {% empty %}
                     <div class="col-span-full bg-white border border-orange-100 rounded-lg p-10 text-center text-gray-600">
                         ไม่พบสินค้าที่ตรงกับเงื่อนไข
