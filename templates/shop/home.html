@@ -42,7 +42,7 @@
             <!-- Product Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
-                {% for product in products %}
+                {% for product in products|slice:":8" %}
 
                     <a href="{% url 'product_detail' product.id %}"
                        class="group block rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2">

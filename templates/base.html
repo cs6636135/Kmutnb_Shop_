@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="th">
 
 <head>
@@ -22,17 +23,10 @@
         <div class="h-24 flex items-center justify-between">
 
             <!-- Logo -->
-            <a href="{% url 'home' %}"
-               class="flex flex-col leading-none">
-
-                <span class="text-4xl font-black tracking-tight">
-                    KMUTNB
-                </span>
-
-                <span class="text-xs tracking-[0.25em] mt-1">
-                    SHOP
-                </span>
-
+            <a href="{% url 'home' %}" class="flex shrink-0 items-center">
+                <img src="{% static 'shop/logo_font.png' %}"
+                     alt="KMUTNB Shop"
+                     class="h-10 w-auto object-contain sm:h-12">
             </a>
 
 
