@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}สินค้า | KMUTNB Shop{% endblock %}
 
@@ -68,12 +69,13 @@
                 {% for product in products %}
                     <article class="bg-white rounded-lg border border-orange-100 overflow-hidden">
                         <div class="h-48 bg-orange-50 flex items-center justify-center">
-                            {% if product.image_url %}
-                                <img src="{{ product.image_url }}" alt="{{ product.name }}"
-                                     class="w-full h-full object-cover">
-                            {% else %}
-                                <span class="text-5xl" aria-hidden="true">📦</span>
-                            {% endif %}
+                               {% if product.image_url %}
+                                  <img src="{{ product.image_url }}" alt="{{ product.name }}"
+                                      class="w-full h-full object-cover">
+                               {% else %}
+                                  <img src="{% static 'shop/image.png' %}" alt="{{ product.name }}"
+                                      class="w-full h-full object-cover">
+                               {% endif %}
                         </div>
 
                         <div class="p-5">
