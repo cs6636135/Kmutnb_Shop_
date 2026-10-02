@@ -48,86 +48,81 @@
         <section class="grid grid-cols-1 gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
 
             <!-- ================= LEFT : IMAGE ================= -->
-            <div>
+          
+<div>
+    <!-- Main image -->
+    <div class="relative h-[420px] w-full overflow-hidden rounded-xl bg-[#f7f7f7] sm:h-[540px]">
 
-                <!-- Main image -->
-                <div class="relative flex min-h-[420px] items-center justify-center overflow-hidden rounded-xl bg-[#f7f7f7] sm:min-h-[540px]">
+        {% if product.image_url %}
+            <img
+                src="{{ product.image_url }}"
+                alt="{{ product.name }}"
+                class="h-full w-full object-cover"
+            >
+        {% else %}
+            <img
+                src="{% static 'shop/image.png' %}"
+                alt="{{ product.name }}"
+                class="h-full w-full object-cover"
+            >
+        {% endif %}
 
-                    {% if product.image_url %}
-                        <img
-                            src="{{ product.image_url }}"
-                            alt="{{ product.name }}"
-                            class="h-full max-h-[620px] w-full object-contain"
-                        >
-                    {% else %}
-                        <img
-                            src="{% static 'shop/image.png' %}"
-                            alt="{{ product.name }}"
-                            class="h-full max-h-[620px] w-full object-contain"
-                        >
-                    {% endif %}
+        <!-- Share button -->
+        <button
+            type="button"
+            aria-label="แชร์สินค้า"
+            class="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-lg bg-white shadow-sm ring-1 ring-gray-200 transition hover:bg-gray-50"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 fill="none"
+                 viewBox="0 0 24 24"
+                 stroke-width="1.7"
+                 stroke="currentColor"
+                 class="h-5 w-5">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186 7.566-4.292m-7.566 6.478 7.566 4.292m0 0a2.25 2.25 0 1 0 2.224-3.874 2.25 2.25 0 0 0-2.224 3.874Zm0-9.916a2.25 2.25 0 1 0 2.224-3.874 2.25 2.25 0 0 0-2.224 3.874Z" />
+            </svg>
+        </button>
 
-                    <!-- Share button -->
-                    <button
-                        type="button"
-                        aria-label="แชร์สินค้า"
-                        class="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-lg bg-white shadow-sm ring-1 ring-gray-200 transition hover:bg-gray-50"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             fill="none"
-                             viewBox="0 0 24 24"
-                             stroke-width="1.7"
-                             stroke="currentColor"
-                             class="h-5 w-5">
-                            <path stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186 7.566-4.292m-7.566 6.478 7.566 4.292m0 0a2.25 2.25 0 1 0 2.224-3.874 2.25 2.25 0 0 0-2.224 3.874Zm0-9.916a2.25 2.25 0 1 0 2.224-3.874 2.25 2.25 0 0 0-2.224 3.874Z" />
-                        </svg>
-                    </button>
+        <!-- Wishlist -->
+        <button
+            type="button"
+            aria-label="เพิ่มสินค้ารายการโปรด"
+            class="absolute right-4 top-16 flex h-11 w-11 items-center justify-center rounded-lg bg-white shadow-sm ring-1 ring-gray-200 transition hover:bg-gray-50"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 fill="none"
+                 viewBox="0 0 24 24"
+                 stroke-width="1.7"
+                 stroke="currentColor"
+                 class="h-5 w-5">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M21 8.25c0 5.25-9 10.5-9 10.5S3 13.5 3 8.25A4.25 4.25 0 0 1 11.25 6.1L12 7l.75-.9A4.25 4.25 0 0 1 21 8.25Z" />
+            </svg>
+        </button>
+    </div>
 
-                    <!-- Wishlist -->
-                    <button
-                        type="button"
-                        aria-label="เพิ่มสินค้ารายการโปรด"
-                        class="absolute right-4 top-16 flex h-11 w-11 items-center justify-center rounded-lg bg-white shadow-sm ring-1 ring-gray-200 transition hover:bg-gray-50"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             fill="none"
-                             viewBox="0 0 24 24"
-                             stroke-width="1.7"
-                             stroke="currentColor"
-                             class="h-5 w-5">
-                            <path stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  d="M21 8.25c0 5.25-9 10.5-9 10.5S3 13.5 3 8.25A4.25 4.25 0 0 1 11.25 6.1L12 7l.75-.9A4.25 4.25 0 0 1 21 8.25Z" />
-                        </svg>
-                    </button>
-
-                </div>
-
-
-                <!-- Image thumbnail -->
-                <div class="mt-4 flex gap-3">
-
-                    <div class="flex h-20 w-20 items-center justify-center overflow-hidden rounded-lg border-2 border-[#4a2114] bg-[#f7f7f7]">
-                        {% if product.image_url %}
-                            <img
-                                src="{{ product.image_url }}"
-                                alt="{{ product.name }}"
-                                class="h-full w-full object-contain"
-                            >
-                        {% else %}
-                            <img
-                                src="{% static 'shop/image.png' %}"
-                                alt="{{ product.name }}"
-                                class="h-full w-full object-contain"
-                            >
-                        {% endif %}
-                    </div>
-
-                </div>
-
-            </div>
+    <!-- Image thumbnail -->
+    <div class="mt-4 flex gap-3">
+        <div class="h-20 w-20 overflow-hidden rounded-lg border-2 border-[#4a2114] bg-[#f7f7f7]">
+            {% if product.image_url %}
+                <img
+                    src="{{ product.image_url }}"
+                    alt="{{ product.name }}"
+                    class="h-full w-full object-cover"
+                >
+            {% else %}
+                <img
+                    src="{% static 'shop/image.png' %}"
+                    alt="{{ product.name }}"
+                    class="h-full w-full object-cover"
+                >
+            {% endif %}
+        </div>
+    </div>
+</div>
 
 
             <!-- ================= RIGHT : PRODUCT INFO ================= -->
@@ -270,12 +265,12 @@
 
                     {% if product.reservable and product.stock > 0 %}
 
-                        <button
-                            type="button"
-                            class="flex h-12 items-center justify-center rounded-lg bg-[#151515] px-6 text-sm font-semibold text-white transition hover:bg-[#2c2c2c]"
+                        <a
+                            href="{% url 'reservation_create' product.id %}"
+                            class="flex h-12 items-center justify-center rounded-lg bg-[#F47745] px-6 text-sm font-semibold text-white transition hover:bg-[#c4471c]"
                         >
                             จองสินค้า
-                        </button>
+                        </a>
    
 
                     {% else %}

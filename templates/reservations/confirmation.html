@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}ยืนยันการจอง | KMUTNB Shop{% endblock %}
+
+{% block content %}
+    <main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+    <section class="rounded-2xl border border-green-200 bg-white p-6 text-center shadow-sm sm:p-9">
+        <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-green-100 text-green-700" aria-hidden="true">
+            <svg viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        </div>
+        <p class="mt-5 text-xs font-bold uppercase tracking-[0.15em] text-[#F47745]">KMUTNB SHOP</p>
+        <h1 class="mt-2 text-2xl font-bold">จองสินค้าสำเร็จ</h1>
+        <p class="mt-2 text-sm text-gray-600">กรุณาเก็บรหัสการจองไว้สำหรับตรวจสอบและรับสินค้า</p>
+
+        <div class="mt-6 rounded-xl bg-gray-50 p-5 text-left">
+            <div class="border-b border-gray-200 pb-4 text-center">
+                <p class="text-xs text-gray-500">รหัสการจอง</p>
+                <p class="mt-1 break-all text-xl font-bold tracking-wider text-[#30415D]">{{ reservation.reservation_code }}</p>
+            </div>
+            <dl class="mt-4 grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
+                <div>
+                    <dt class="text-gray-500">สินค้า</dt>
+                    <dd class="mt-1 font-semibold">{{ reservation.product.name }}</dd>
+                </div>
+                <div>
+                    <dt class="text-gray-500">จำนวน</dt>
+                    <dd class="mt-1 font-semibold">{{ reservation.quantity }} ชิ้น</dd>
+                </div>
+                <div>
+                    <dt class="text-gray-500">จุดรับสินค้า</dt>
+                    <dd class="mt-1 font-semibold">{{ reservation.location.name }}</dd>
+                </div>
+                <div>
+                    <dt class="text-gray-500">รหัสนักศึกษา</dt>
+                    <dd class="mt-1 font-semibold">{{ reservation.customer_id }}</dd>
+                </div>
+                <div class="sm:col-span-2">
+                    <dt class="text-gray-500">หมดอายุการจอง</dt>
+                    <dd class="mt-1 font-semibold">{{ reservation.expires_at|date:"d/m/Y H:i" }}</dd>
+                </div>
+            </dl>
+        </div>
+
+        <p class="mt-4 text-xs leading-5 text-gray-500">การจองมีอายุ 4 ชั่วโมง กรุณารับสินค้าก่อนเวลาหมดอายุ</p>
+        <div class="mt-7 flex flex-col gap-3 sm:flex-row sm:justify-center">
+            <a href="{% url 'reservation_status' %}" class="inline-flex h-11 items-center justify-center rounded-lg border border-gray-300 px-5 text-sm font-semibold hover:bg-gray-50">
+                ตรวจสอบสถานะการจอง
+            </a>
+            <a href="{% url 'public_products' %}" class="inline-flex h-11 items-center justify-center rounded-lg bg-[#30415D] px-5 text-sm font-semibold text-white hover:bg-[#25344B]">
+                กลับไปเลือกสินค้า
+            </a>
+        </div>
+    </section>
+</main>
+{% endblock %}

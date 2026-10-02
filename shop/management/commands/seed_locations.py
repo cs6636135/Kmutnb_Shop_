@@ -109,7 +109,7 @@ LOCATIONS = (
 
 
 class Command(BaseCommand):
-    help = "Seed welfare shop locations."
+    help = "Seed shop locations."
 
     def add_arguments(self, parser):
         parser.add_argument(
