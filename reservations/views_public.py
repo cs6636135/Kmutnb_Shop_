@@ -36,7 +36,7 @@ def reservation_create(request, product_id):
 			error = "สินค้าหมด ไม่พร้อมจอง"
 		elif not customer_id:
 			error = "กรุณากรอกรหัสนักศึกษา"
-		elif len(customer_id) > 20:
+		elif len(customer_id) > 20: #6604062636127 - 13?
 			error = "รหัสนักศึกษาต้องมีความยาวไม่เกิน 20 ตัวอักษร"
 		elif not quantity_value.isdigit() or int(quantity_value) < 1:
 			error = "กรุณาระบุจำนวนสินค้าอย่างน้อย 1 ชิ้น"
