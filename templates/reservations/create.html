@@ -158,7 +158,7 @@
                                 type="radio"
                                 name="customer_type"
                                 value="student"
-                                checked
+                                {% if customer_type == "student" %}checked{% endif %}
                                 class="h-4 w-4 accent-[#F47745]"
                                 onchange="toggleCustomerType()"
                             >
@@ -175,6 +175,7 @@
                                 type="radio"
                                 name="customer_type"
                                 value="external"
+                                {% if customer_type == "external" %}checked{% endif %}
                                 class="h-4 w-4 accent-[#F47745]"
                                 onchange="toggleCustomerType()"
                             >
@@ -204,9 +205,9 @@
                         pattern="[0-9]{13}"
                         minlength="13"
                         maxlength="13"
-                        required
+                        {% if customer_type != "external" %}required{% else %}disabled{% endif %}
                         autocomplete="username"
-                        value="{{ customer_id|default:'' }}"
+                        value="{{ student_id|default:'' }}"
                         placeholder="กรอกรหัสนักศึกษา 13 หลัก"
                         title="กรุณากรอกรหัสนักศึกษาเป็นตัวเลข 13 หลัก"
                         class="h-12 w-full rounded-xl border border-gray-300 px-4 text-sm outline-none transition focus:border-[#F47745] focus:ring-2 focus:ring-[#F47745]/20"
@@ -230,7 +231,8 @@
                         pattern="[0-9]{10}"
                         minlength="10"
                         maxlength="10"
-                        disabled
+                        value="{{ customer_phone|default:'' }}"
+                        {% if customer_type == "external" %}required{% else %}disabled{% endif %}
                         placeholder="กรอกเบอร์โทรศัพท์ 10 หลัก"
                         title="กรุณากรอกเบอร์โทรศัพท์เป็นตัวเลข 10 หลัก"
                         class="h-12 w-full rounded-xl border border-gray-300 px-4 text-sm outline-none transition focus:border-[#F47745] focus:ring-2 focus:ring-[#F47745]/20"

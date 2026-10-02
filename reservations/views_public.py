@@ -1,3 +1,4 @@
+import re
 import secrets
 from datetime import timedelta
 
@@ -24,7 +25,10 @@ def reservation_create(request, product_id):
 		).select_related("location").order_by("location__name")
 	)
 	error = None
-	customer_id = request.POST.get("customer_id", "").strip()
+	customer_type = request.POST.get("customer_type", "student")
+	student_id = request.POST.get("customer_id", "").strip()
+	customer_phone = request.POST.get("customer_phone", "").strip()
+	customer_id = student_id if customer_type == "student" else customer_phone
 	quantity_value = request.POST.get("quantity", "1")
 	selected_location_id = request.POST.get("location", "")
 	can_reserve = product.reservable and product.stock > 0 and bool(available_locations)
@@ -34,10 +38,12 @@ def reservation_create(request, product_id):
 			error = "สินค้านี้ไม่เปิดให้จอง"
 		elif product.stock <= 0:
 			error = "สินค้าหมด ไม่พร้อมจอง"
-		elif not customer_id:
-			error = "กรุณากรอกรหัสนักศึกษา"
-		elif len(customer_id) > 20:
-			error = "รหัสนักศึกษาต้องมีความยาวไม่เกิน 20 ตัวอักษร"
+		elif customer_type not in {"student", "external"}:
+			error = "กรุณาเลือกประเภทผู้จอง"
+		elif customer_type == "student" and not re.fullmatch(r"[0-9]{13}", student_id):
+			error = "กรุณากรอกรหัสนักศึกษาเป็นตัวเลข 13 หลัก"
+		elif customer_type == "external" and not re.fullmatch(r"[0-9]{10}", customer_phone):
+			error = "กรุณากรอกเบอร์โทรศัพท์เป็นตัวเลข 10 หลัก"
 		elif not quantity_value.isdigit() or int(quantity_value) < 1:
 			error = "กรุณาระบุจำนวนสินค้าอย่างน้อย 1 ชิ้น"
 		elif not selected_location_id.isdigit():
@@ -97,7 +103,10 @@ def reservation_create(request, product_id):
 		"available_locations": available_locations,
 		"can_reserve": can_reserve,
 		"error": error,
+		"customer_type": customer_type,
 		"customer_id": customer_id,
+		"student_id": student_id,
+		"customer_phone": customer_phone,
 		"quantity_value": quantity_value,
 		"selected_location_id": selected_location_id,
 	})
