@@ -12,79 +12,117 @@
         ค้นหาและเลือกดูสินค้าตามหมวดหมู่หรือจุดจำหน่าย
     </p>
 </header>
-<form method="get" class="flex items-end gap-3 mb-3">
 
-    <!-- Search -->
-    <div class="flex-1">
+<!-- Search Form -->
+<form method="get" class="mb-5 space-y-4">
 
-        <input
-            type="text"
-            name="q"
-            value="{{ request.GET.q }}"
-            placeholder="ค้นหาชื่อสินค้า..."
-            class="w-full rounded-lg border border-gray-300 px-4 py-3
-                   text-sm outline-none transition
-                   focus:border-[#c4471c] focus:ring-1 focus:ring-[#c4471c]"
+    <!-- Search + Location -->
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-end">
+
+        <!-- Search -->
+        <div class="min-w-0 flex-1">
+
+            <input
+                id="product-search"
+                type="text"
+                name="q"
+                value="{{ request.GET.q }}"
+                placeholder="ค้นหาชื่อสินค้า..."
+                class="w-full rounded-lg border border-gray-300 px-4 py-3
+                       text-sm outline-none transition
+                       focus:border-[#c4471c] focus:ring-1 focus:ring-[#c4471c]"
+            >
+        </div>
+
+        <!-- Location -->
+        <div class="w-full sm:w-56">
+
+            <select
+                id="product-location"
+                name="location"
+                class="w-full rounded-lg border border-gray-300 px-4 py-3
+                       text-sm outline-none transition
+                       focus:border-[#c4471c] focus:ring-1 focus:ring-[#c4471c]"
+            >
+                <option value="">ทุกสถานที่</option>
+
+                {% for location in locations %}
+                    <option
+                        value="{{ location.id }}"
+                        {% if request.GET.location == location.id|stringformat:"s" %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ location.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Submit -->
+        <button
+            type="submit"
+            class="shrink-0 rounded-lg bg-[#c4471c] px-6 py-3
+                   text-sm font-semibold text-white transition
+                   hover:bg-[#a83b18]
+                   focus-visible:outline-none focus-visible:ring-2
+                   focus-visible:ring-[#c4471c] focus-visible:ring-offset-2"
         >
+            ค้นหา
+        </button>
+
     </div>
 
-    <!-- Category -->
-    <div class="w-56">
+ 
 
-        <select
-            name="category"
-            class="w-full rounded-lg border border-gray-300 px-4 py-3
-                   text-sm outline-none transition
-                   focus:border-[#c4471c] focus:ring-1 focus:ring-[#c4471c]"
-        >
-            <option value="">ทุกหมวดหมู่</option>
-
-            {% for category in categories %}
-                <option
-                    value="{{ category.id }}"
-                    {% if request.GET.category == category.id|stringformat:"s" %}
-                        selected
-                    {% endif %}
-                >
-                    {{ category.name }}
-                </option>
-            {% endfor %}
-        </select>
-    </div>
-
-    <!-- Location -->
-    <div class="w-56">
-
-        <select
-            name="location"
-            class="w-full rounded-lg border border-gray-300 px-4 py-3
-                   text-sm outline-none transition
-                   focus:border-[#c4471c] focus:ring-1 focus:ring-[#c4471c]"
-        >
-            <option value="">ทุกสถานที่</option>
-
-            {% for location in locations %}
-                <option
-                    value="{{ location.id }}"
-                    {% if request.GET.location == location.id|stringformat:"s" %}
-                        selected
-                    {% endif %}
-                >
-                    {{ location.name }}
-                </option>
-            {% endfor %}
-        </select>
-    </div>
-
-    <!-- Submit -->
-    <button
-        type="submit"
-        class="h-[46px] shrink-0 rounded-lg bg-[#c4471c]
-               px-6 text-sm font-semibold text-white
-               transition hover:bg-[#a83b18]"
+<!-- Category Section -->
+<div>
+    <div
+        class="flex w-full flex-nowrap items-center gap-3"
+        role="group"
+        aria-label="เลือกหมวดหมู่สินค้า"
     >
-        ค้นหา
-    </button>
+        <!-- All Categories -->
+        <button
+            type="submit"
+            name="category"
+            value=""
+            class="flex-1 min-w-0 rounded-xl border px-8 py-3
+                   text-center text-sm font-medium whitespace-nowrap
+                   transition duration-200
+                   {% if not request.GET.category %}
+                       border-[#c4471c] bg-[#c4471c] text-white shadow-sm
+                   {% else %}
+                       border-gray-200 bg-white text-gray-700
+                       hover:border-[#c4471c] hover:text-[#c4471c]
+                   {% endif %}"
+        >
+            ทั้งหมด
+        </button>
+
+        <!-- Category Buttons -->
+        {% for category in categories %}
+        <button
+            type="submit"
+            name="category"
+            value="{{ category.id }}"
+            class="flex-1 min-w-0 rounded-xl border px-8 py-3
+                   text-center text-sm font-medium whitespace-nowrap
+                   transition duration-200
+                   {% if request.GET.category == category.id|stringformat:'s' %}
+                       border-[#c4471c] bg-[#c4471c] text-white shadow-sm
+                   {% else %}
+                       border-gray-200 bg-white text-gray-700
+                       hover:border-[#c4471c] hover:text-[#c4471c]
+                   {% endif %}"
+            aria-pressed="{% if request.GET.category == category.id|stringformat:'s' %}true{% else %}false{% endif %}"
+        >
+            {{ category.name }}
+        </button>
+        {% endfor %}
+    </div>
+</div>
+
 
 </form>
 

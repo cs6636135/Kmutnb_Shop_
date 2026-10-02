@@ -18,72 +18,73 @@
 <body class="min-h-screen flex flex-col bg-[#fff8f3]" style="font-family: 'Noto Sans Thai', sans-serif;">
 
 <!-- Navbar -->
+
+<!-- Navbar -->
 <nav class="bg-white text-[#4b2424]">
     <div class="max-w-7xl mx-auto px-8">
-        <div class="h-24 flex items-center justify-between">
+        <div class="h-20 flex items-center justify-between">
 
             <!-- Logo -->
-            <a href="{% url 'home' %}" class="flex shrink-0 items-center">
+            <a href="{% url 'home' %}"
+               class="flex shrink-0 items-center">
                 <img src="{% static 'shop/logo_font.png' %}"
                      alt="KMUTNB Shop"
-                     class="h-10 w-auto object-contain sm:h-12">
+                     class="h-9 w-auto object-contain sm:h-11">
             </a>
-
 
             <!-- Menu -->
             <div class="flex items-center gap-2">
 
+                <!-- หน้าแรก -->
                 <a href="{% url 'home' %}"
-                   class="px-5 py-3
-                          text-base
-                          hover:underline
-                          underline-offset-4
-                          transition">
-
+                   class="px-5 py-3 text-base underline-offset-4
+                          transition
+                          {% if request.resolver_match.url_name == 'home' %}
+                              underline decoration-2 font-semibold
+                          {% else %}
+                              hover:underline
+                          {% endif %}">
                     หน้าแรก
-
                 </a>
 
-
+                <!-- สินค้า -->
                 <a href="{% url 'public_products' %}"
-                   class="px-5 py-3
-                          text-base
-                          hover:underline
-                          underline-offset-4
-                          transition">
-
+                   class="px-5 py-3 text-base underline-offset-4
+                          transition
+                          {% if request.resolver_match.url_name == 'public_products' or request.resolver_match.url_name == 'product_detail' %}
+                              underline decoration-2 font-semibold
+                          {% else %}
+                              hover:underline
+                          {% endif %}">
                     สินค้า
-
                 </a>
 
-
+                <!-- ตรวจสอบการจอง -->
                 {% url 'reservation_status' as reservation_status_url %}
                 {% if reservation_status_url %}
-
                     <a href="{{ reservation_status_url }}"
-                       class="px-5 py-3
-                              text-base
-                              hover:underline
-                              underline-offset-4
-                              transition">
-
+                       class="px-5 py-3 text-base underline-offset-4
+                              transition
+                              {% if request.resolver_match.url_name == 'reservation_status' %}
+                                  underline decoration-2 font-semibold
+                              {% else %}
+                                  hover:underline
+                              {% endif %}">
                         ตรวจสอบการจอง
-
                     </a>
-
                 {% endif %}
 
             </div>
 
-
             <!-- Right side -->
             <div class="flex items-center gap-5">
 
+                <!-- Search Icon -->
                 <a href="{% url 'home' %}#product-search"
                    aria-label="ค้นหาสินค้า"
                    title="ค้นหาสินค้า"
-                   class="w-10 h-10 flex items-center justify-center rounded-full
-                          hover:bg-orange-50 transition">
+                   class="w-10 h-10 flex items-center justify-center
+                          rounded-full hover:bg-orange-50 transition">
                     <svg xmlns="http://www.w3.org/2000/svg"
                          fill="none"
                          viewBox="0 0 24 24"
@@ -91,31 +92,24 @@
                          stroke="currentColor"
                          class="w-6 h-6"
                          aria-hidden="true">
-                        <circle cx="10.8" cy="10.8" r="6.3" />
-                        <path stroke-linecap="round" d="m16 16 4 4" />
+                        <circle cx="10.8" cy="10.8" r="6.3"/>
+                        <path stroke-linecap="round" d="m16 16 4 4"/>
                     </svg>
                 </a>
 
-
                 <!-- Cart Icon -->
                 <div class="w-9 h-9 flex items-center justify-center">
-
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        class="w-7 h-7">
-
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25h9.75l3-9H5.106m2.394 9L6.375 17.25h11.25M7.5 14.25 5.106 5.272M9 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm9 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1-1.5 0Z"
-                        />
-
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke-width="1.5"
+                         stroke="currentColor"
+                         class="w-7 h-7"
+                         aria-hidden="true">
+                        <path stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25h9.75l3-9H5.106m2.394 9L6.375 17.25h11.25M7.5 14.25 5.106 5.272M9 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm9 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1-1.5 0Z"/>
                     </svg>
-
                 </div>
 
             </div>
@@ -123,6 +117,7 @@
         </div>
     </div>
 </nav>
+
 
     <!-- Django Messages -->
     {% if messages %}
@@ -144,20 +139,12 @@
             <div class="grid grid-cols-1 gap-9 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-[1.2fr_1fr_1.45fr_0.9fr_1.2fr] xl:gap-0">
                 <section id="about-shop" class="xl:pr-7">
                     <div class="flex items-center gap-3">
-                        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#F47745]/10 text-[#30415D]">
-                            <svg viewBox="0 0 48 48" class="h-10 w-10" fill="none" aria-hidden="true">
-                                <path d="M24 3.5 40 9v13.2c0 10.2-6.7 17.4-16 22.3C14.7 39.6 8 32.4 8 22.2V9l16-5.5Z" stroke="currentColor" stroke-width="1.8" />
-                                <path d="M14.5 18h2l2.4 11h13.2l2.4-8.2H19" stroke="#F47745" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-                                <circle cx="22" cy="33" r="1.7" fill="#F47745" />
-                                <circle cx="30" cy="33" r="1.7" fill="#F47745" />
-                                <path d="M25.7 15.5c-1.5-2-4.8-.8-4.8 1.7 0 2.2 3.1 4 4.8 5 1.7-1 4.8-2.8 4.8-5 0-2.5-3.3-3.7-4.8-1.7Z" fill="#F47745" />
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-[#F47745]">KMUTNB</p>
-                            <h2 class="text-sm font-extrabold leading-tight">SHOP</h2>
-                        </div>
-                    </div>
+    <img
+        src="{% static 'shop/logo_font.png' %}"
+        alt="KMUTNB Shop"
+        class="h-10 w-auto object-contain"
+    >
+</div>
                     <p class="mt-4 max-w-xs text-sm leading-6 text-[#30415D]/75">
                         ร้านค้าสวัสดิการ มจพ. สินค้าคุณภาพ บริการด้วยใจ เพื่อชาว มจพ. ทุกคน
                     </p>
