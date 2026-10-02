@@ -1,12 +1,24 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>{% block title %}KMUTNB SHOP{% endblock %}</title>
+
+    <!-- Google Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&display=swap" rel="stylesheet">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/htmx.org@2.0.4"></script>
 </head>
@@ -56,24 +68,56 @@
                             จัดการบัญชี Staff
                         </a>
                     {% endif %}
-                    <form method="post" action="{% url 'logout' %}" class="ml-2">
+
+
+                    <!-- Logout -->
+                    <form
+                        method="post"
+                        action="{% url 'logout' %}"
+                        class="ml-2"
+                    >
                         {% csrf_token %}
-                        <button type="submit" class="rounded-md border border-white/30 px-3 py-2 font-semibold text-white transition hover:border-[#F47745] hover:bg-[#F47745]">
+
+                        <button
+                            type="submit"
+                            class="rounded-md border border-white/30 px-3 py-2 font-semibold text-white transition hover:border-[#F47745] hover:bg-[#F47745]"
+                        >
                             ออกจากระบบ
                         </button>
+
                     </form>
+
                 </div>
+
             </div>
         </nav>
+
     {% endif %}
+
+
+    <!-- =========================
+         Django Messages
+    ========================== -->
     {% if messages %}
+
         {% for message in messages %}
+
             <script>
                 alert("{{ message|escapejs }}");
             </script>
+
         {% endfor %}
+
     {% endif %}
+
+
+    <!-- =========================
+         Page Content
+    ========================== -->
     {% block content %}
+
     {% endblock %}
+
 </body>
+
 </html>
