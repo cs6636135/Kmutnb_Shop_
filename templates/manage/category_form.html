@@ -1,0 +1,26 @@
+{% extends "base_manage.html" %}
+
+{% block title %}{% if category %}แก้ไขหมวดหมู่สินค้า{% else %}เพิ่มหมวดหมู่สินค้า{% endif %} | KMUTNB SHOP{% endblock %}
+
+{% block content %}
+<main class="min-h-[calc(100vh-4rem)] bg-[#F8F5F0] text-[#30415D]">
+    <div class="mx-auto max-w-3xl px-6 py-10 lg:px-8">
+
+        {% if category %}
+            {% include "manage/partials/page_header.html" with heading="แก้ไขหมวดหมู่สินค้า" subtitle=category.name link_url="categories" link_label="← กลับรายการหมวดหมู่สินค้า" %}
+        {% else %}
+            {% include "manage/partials/page_header.html" with heading="เพิ่มหมวดหมู่สินค้า" subtitle="กรอกข้อมูลหมวดหมู่สินค้าใหม่" link_url="categories" link_label="← กลับรายการหมวดหมู่สินค้า" %}
+        {% endif %}
+
+        <section class="py-8">
+            <form method="post" enctype="multipart/form-data" novalidate
+                  class="rounded-lg border border-[#30415D]/10 bg-white p-6 sm:p-8">
+                {% csrf_token %}
+
+                {% include "manage/partials/form_content.html" with error_box_class="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800" list_url="categories" object_pk=category.pk %}
+            </form>
+        </section>
+
+    </div>
+</main>
+{% endblock %}

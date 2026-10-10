@@ -84,34 +84,38 @@ class ProductModelForm(ImageUpload, CleanName, ModelForm):
 
 
 class LocationModelForm(ImageUpload, CleanName, ModelForm):
-    name_required_msg = "กรุณากรอกชื่อสถานที่"
+    name_required_msg = "กรุณากรอกชื่อจุดจำหน่าย"
     image_folder = "locations"
 
     class Meta:
         model = Location
         fields = ["name", "building", "floor", "room", "description"]
         labels = {
-            "name": "ชื่อสถานที่",
+            "name": "ชื่อจุดจำหน่าย",
             "building": "ตึก",
             "floor": "ชั้น",
             "room": "ห้อง",
-            "description": "รายละเอียดสถานที่",
+            "description": "รายละเอียดจุดจำหน่าย",
         }
         widgets = {
-            "name": forms.TextInput(attrs={"class": INPUT, "placeholder": "ชื่อสถานที่"}),
+            "name": forms.TextInput(attrs={"class": INPUT, "placeholder": "ชื่อจุดจำหน่าย"}),
             "building": forms.TextInput(attrs={"class": INPUT, "placeholder": "ชื่อตึก"}),
             "floor": forms.TextInput(attrs={"class": INPUT, "placeholder": "ชั้น"}),
             "room": forms.TextInput(attrs={"class": INPUT, "placeholder": "ห้อง"}),
-            "description": forms.Textarea(attrs={"class": INPUT, "placeholder": "รายละเอียดสถานที่", "rows": 4}),
+            "description": forms.Textarea(attrs={"class": INPUT, "placeholder": "รายละเอียดจุดจำหน่าย", "rows": 4}),
         }
 
 class CategoryModelForm(ModelForm,CleanName):
-    name_required_msg = "กรุณากรอกชื่อประเภทสินค้า"
+    name_required_msg = "กรุณากรอกชื่อหมวดหมู่สินค้า"
+
     class Meta:
         model = Category
-        fields = ["name", "description", "parent"]
-        widgets = {
-             "name": TextInput(attrs={"class": "w-full rounded border px-3 py-2", "placeholder": "ชื่อประเภทสินค้า"}),
+        fields = ["name", "description"]
+        labels = {
+            "name": "ชื่อหมวดหมู่สินค้า",
+            "description": "รายละเอียด",
         }
-
-   
+        widgets = {
+            "name": forms.TextInput(attrs={"class": INPUT, "placeholder": "ชื่อหมวดหมู่สินค้า"}),
+            "description": forms.Textarea(attrs={"class": INPUT, "placeholder": "รายละเอียดหมวดหมู่สินค้า", "rows": 4}),
+        }

@@ -11,7 +11,7 @@ class User(AbstractUser):
      role = models.CharField(max_length=30, choices=Role.choices, default=Role.STAFF) #แอดมินเพิ่มสต๊าฟเข้าระบบ 
      location = models.ForeignKey("shop.Location",on_delete=models.PROTECT, null=True, blank=True)
 
-     def clean(self):                                          #Staff ต้องมีสถานที่
+     def clean(self):                                          #Staff ต้องมีสถานที่หรือจุดจำหน่าย
         super().clean()
         if self.role == self.Role.STAFF and not self.location_id:
             raise ValidationError({"location": "Staff ต้องมีสถานที่รับผิดชอบ"})

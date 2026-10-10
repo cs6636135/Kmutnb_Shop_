@@ -70,10 +70,23 @@ def products(request):
             return redirect("products")
 
     search_query = request.GET.get("q", "").strip()          # search
+    category_query = request.GET.get("category", "").strip()
+    categories = Category.objects.order_by("name")
 
     qs = Product.objects.select_related("category").order_by("-created_at")
     for term in search_query.split():
         qs = qs.filter(name__icontains=term)
+
+    if category_query:
+        try:
+            category_id = int(category_query)
+        except ValueError:
+            category_query = ""
+        else:
+            if categories.filter(pk=category_id).exists():
+                qs = qs.filter(category_id=category_id)
+            else:
+                category_query = ""
 
     paginator = Paginator(qs, 10)                            # หน้าละ 10 อัน
     page_obj = paginator.get_page(request.GET.get("page"))   # เลขหน้าจากลิงก์ ?page=2
@@ -81,6 +94,8 @@ def products(request):
     return render(request, "manage/products.html", {
         "page_obj": page_obj,
         "search_query": search_query,
+        "categories": categories,
+        "category_query": category_query,
     })
 
 @role_required("admin")
@@ -113,7 +128,7 @@ def locations(request):
                 except IntegrityError:
                     form.add_error(None, "บันทึกไม่สำเร็จ ข้อมูลอาจซ้ำหรือไม่ครบ")
                 else:
-                    messages.success(request, "บันทึกสถานที่เรียบร้อยแล้ว")
+                    messages.success(request, "บันทึกจุดจำหน่ายเรียบร้อยแล้ว")
                     return redirect("locations")
 
             return render(request, "manage/location_form.html", {
@@ -124,7 +139,7 @@ def locations(request):
         elif "delete" in request.POST:
             location = get_object_or_404(Location, pk=request.POST["delete"])
             location.delete()
-            messages.success(request, "ลบสถานที่เรียบร้อยแล้ว")
+            messages.success(request, "ลบจุดจำหน่ายเรียบร้อยแล้ว")
             return redirect("locations")
 
     search_query = request.GET.get("q", "").strip()
@@ -137,6 +152,68 @@ def locations(request):
     page_obj = paginator.get_page(request.GET.get("page"))
 
     return render(request, "manage/locations.html", {
+        "page_obj": page_obj,
+        "search_query": search_query,
+    })
+
+@role_required("admin")
+def categories(request):
+    if request.method == "POST":
+
+        if "add" in request.POST:
+            return render(request, "manage/category_form.html", {
+                "form": CategoryModelForm(),
+            })
+
+        elif "edit" in request.POST:
+            category = get_object_or_404(Category, pk=request.POST["edit"])
+            return render(request, "manage/category_form.html", {
+                "form": CategoryModelForm(instance=category),
+                "category": category,
+            })
+
+        elif "save" in request.POST:
+            pk = request.POST.get("save")
+            category = get_object_or_404(Category, pk=pk) if pk else None
+            form = CategoryModelForm(request.POST, instance=category)
+
+            if form.is_valid():
+                try:
+                    with transaction.atomic():
+                        form.save()
+                except ValidationError as e:
+                    form.add_error(None, e)
+                except IntegrityError:
+                    form.add_error(None, "บันทึกไม่สำเร็จ ข้อมูลอาจซ้ำหรือไม่ครบ")
+                else:
+                    messages.success(request, "บันทึกหมวดหมู่สินค้าเรียบร้อยแล้ว")
+                    return redirect("categories")
+
+            return render(request, "manage/category_form.html", {
+                "form": form,
+                "category": category,
+            })
+
+        elif "delete" in request.POST:
+            category = get_object_or_404(Category, pk=request.POST["delete"])
+            try:
+                category.delete()
+            except ProtectedError:
+                messages.error(request, "ไม่สามารถลบหมวดหมู่สินค้าที่มีสินค้าใช้งานอยู่ได้")
+                return redirect("categories")
+            messages.success(request, "ลบหมวดหมู่สินค้าเรียบร้อยแล้ว")
+            return redirect("categories")
+
+    search_query = request.GET.get("q", "").strip()
+
+    qs = Category.objects.all().order_by("name")
+    for term in search_query.split():
+        qs = qs.filter(name__icontains=term)
+
+    paginator = Paginator(qs, 10)
+    page_obj = paginator.get_page(request.GET.get("page"))
+
+    return render(request, "manage/categories.html", {
         "page_obj": page_obj,
         "search_query": search_query,
     })

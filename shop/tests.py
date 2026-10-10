@@ -300,6 +300,37 @@ class ProductSearchTest(TestCase):
             ["Wireless Mouse"],
         )
 
+    def test_category_filter_returns_only_products_in_selected_category(self):
+        other_category = Category.objects.create(name="Accessories")
+        Product.objects.create(name="USB Cable", price=8, category=other_category)
+
+        response = self.client.get(reverse("products"), {"category": other_category.pk})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            [product.name for product in response.context["page_obj"]],
+            ["USB Cable"],
+        )
+        self.assertContains(response, 'id="product-category-filter"')
+        self.assertContains(response, f'value="{other_category.pk}" selected')
+
+    def test_category_filter_combines_with_name_search(self):
+        other_category = Category.objects.create(name="Accessories")
+        Product.objects.create(name="Wireless Keyboard", price=30, category=other_category)
+
+        response = self.client.get(
+            reverse("products"),
+            {"q": "wireless", "category": other_category.pk},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            [product.name for product in response.context["page_obj"]],
+            ["Wireless Keyboard"],
+        )
+        self.assertEqual(response.context["search_query"], "wireless")
+        self.assertEqual(response.context["category_query"], str(other_category.pk))
+
     def test_pagination_keeps_search_results(self):
         for i in range(12):
             Product.objects.create(name=f"Cable {i}", price=5, category=self.category)
@@ -308,6 +339,19 @@ class ProductSearchTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.context["page_obj"]), 2)  # 12 อัน หน้าละ 10 → หน้า 2 มี 2
+
+    def test_pagination_keeps_category_filter(self):
+        for i in range(12):
+            Product.objects.create(name=f"Category product {i}", price=5, category=self.category)
+
+        response = self.client.get(
+            reverse("products"),
+            {"category": self.category.pk, "page": 2},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context["page_obj"]), 4)
+        self.assertContains(response, f"category={self.category.pk}&amp;page=1")
 
 
 class LocationManagementTest(TestCase):
@@ -326,13 +370,13 @@ class LocationManagementTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Main building")
-        self.assertContains(response, "จัดการสถานที่")
+        self.assertContains(response, "จัดการจุดจำหน่าย")
 
     def test_location_form_renders_and_saves(self):
         form_response = self.client.post(reverse("locations"), {"add": "1"})
 
         self.assertEqual(form_response.status_code, 200)
-        self.assertContains(form_response, "เพิ่มสถานที่")
+        self.assertContains(form_response, "เพิ่มจุดจำหน่าย")
 
         response = self.client.post(
             reverse("locations"),
@@ -356,3 +400,73 @@ class LocationManagementTest(TestCase):
                 description="North entrance",
             ).exists()
         )
+
+
+class CategoryManagementTest(TestCase):
+    def setUp(self):
+        admin = get_user_model().objects.create_user(
+            username="category-admin",
+            password="test-password",
+            role="admin",
+        )
+        self.client.force_login(admin)
+
+    def test_category_list_page_renders_categories(self):
+        parent = Category.objects.create(name="Stationery")
+        Category.objects.create(name="Notebooks", parent=parent, description="Paper goods")
+
+        response = self.client.get(reverse("categories"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "จัดการหมวดหมู่สินค้า")
+        self.assertContains(response, "Notebooks")
+        self.assertContains(response, "Stationery")
+        self.assertContains(response, "Paper goods")
+
+    def test_category_form_renders_and_saves(self):
+        form_response = self.client.post(reverse("categories"), {"add": "1"})
+
+        self.assertEqual(form_response.status_code, 200)
+        self.assertContains(form_response, "เพิ่มหมวดหมู่สินค้า")
+        self.assertNotContains(form_response, 'name="parent"')
+
+        response = self.client.post(
+            reverse("categories"),
+            {
+                "save": "",
+                "name": "Notebooks",
+                "description": "Paper goods",
+            },
+        )
+
+        self.assertRedirects(response, reverse("categories"))
+        self.assertTrue(
+            Category.objects.filter(
+                name="Notebooks",
+                description="Paper goods",
+                parent__isnull=True,
+            ).exists()
+        )
+
+    def test_edit_form_does_not_expose_parent_field(self):
+        category = Category.objects.create(name="Stationery")
+
+        response = self.client.post(reverse("categories"), {"edit": str(category.pk)})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("parent", response.context["form"].fields)
+        self.assertNotContains(response, 'name="parent"')
+
+    def test_category_used_by_product_cannot_be_deleted(self):
+        category = Category.objects.create(name="Stationery")
+        Product.objects.create(name="Notebook", price=10, category=category)
+
+        response = self.client.post(
+            reverse("categories"),
+            {"delete": str(category.pk)},
+            follow=True,
+        )
+
+        self.assertRedirects(response, reverse("categories"))
+        self.assertTrue(Category.objects.filter(pk=category.pk).exists())
+        self.assertContains(response, "ไม่สามารถลบหมวดหมู่สินค้าที่มีสินค้าใช้งานอยู่ได้")

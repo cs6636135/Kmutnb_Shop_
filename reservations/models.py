@@ -11,7 +11,7 @@ class Reservation(models.Model):
     reservation_code = models.CharField(max_length=30, unique=True,editable=False)
     customer_id = models.CharField(max_length=20)  # รหัสลูกค้า ไม่ใช่ FK
     product = models.ForeignKey("shop.Product", on_delete=models.PROTECT) #กันไว้ตอนลบสินค้าที่มีการจองค้าง
-    location = models.ForeignKey("shop.Location", on_delete=models.PROTECT) #กันไว้ตอนลบสถานที่มีการจองค้าง แอดมินไปแคนเซิลการจองแทน
+    location = models.ForeignKey("shop.Location", on_delete=models.PROTECT) #กันไว้ตอนลบจุดจำหน่ายมีการจองค้าง แอดมินไปแคนเซิลการจองแทน
     quantity = models.PositiveIntegerField(default=1)
     status = models.CharField(max_length=30, choices=Status.choices, default=Status.PENDING)
     reserved_at = models.DateTimeField(auto_now_add=True)

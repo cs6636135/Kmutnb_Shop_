@@ -5,44 +5,8 @@
 {% block content %}
 <main class="min-h-[calc(100vh-4rem)] bg-[#F8F5F0] text-[#30415D]">
     <div class="mx-auto max-w-7xl px-6 py-10 lg:px-8">
-        <header class="flex flex-col gap-5 border-b border-[#30415D]/15 pb-8 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-                <p class="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-[#F47745]">KMUTNB SHOP</p>
-                <h1 class="text-3xl font-bold sm:text-4xl">จัดการสินค้า</h1>
-                <p class="mt-2 text-sm text-[#30415D]/70">ผู้ดูแลระบบ: {{ user.username }}</p>
-            </div>
-            <a href="{% url 'public_products' %}" class="inline-flex h-11 items-center justify-center rounded-lg border border-[#30415D]/20 px-5 text-sm font-semibold transition hover:border-[#F47745] hover:text-[#c9572c]">
-                ดูหน้าร้านค้า
-            </a>
-        </header>
-        <section class="pt-6" aria-labelledby="product-list-heading">
-        <h2 id="product-list-heading" class="mb-4 text-lg font-bold">รายการสินค้า</h2>
-
-        <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end">
-            <form method="get" action="{% url 'products' %}"
-                hx-get="{% url 'products' %}"
-                hx-trigger="input changed delay:150ms, search"
-                hx-select="#product-results"
-                hx-target="#product-results"
-                hx-swap="outerHTML"
-                hx-sync="this:replace"
-                hx-push-url="true"
-                class="w-full sm:max-w-md">
-                <label for="product-search" class="mb-1.5 block text-sm font-semibold">ค้นหาชื่อสินค้า</label>
-                <input id="product-search" type="search" name="q" value="{{ search_query }}"
-                    placeholder="เช่น สมุด" autocomplete="off"
-                    class="w-full rounded-lg border border-[#30415D]/20 bg-white px-4 py-2.5 text-sm outline-none transition placeholder:text-[#30415D]/40 focus:border-[#F47745] focus:ring-2 focus:ring-[#F47745]/20">
-            </form>
-
-            <form method="post" class="sm:ml-auto">
-                {% csrf_token %}
-                <button type="submit" name="add" value="1"
-                        class="w-full whitespace-nowrap rounded-lg bg-[#30415D] px-4 py-2.5 text-sm font-semibold text-white hover:opacity-90 sm:w-auto">
-                    + เพิ่มสินค้า
-                </button>
-            </form>
-        </div>
-         </section>
+        {% include "manage/partials/page_header.html" with heading="จัดการสินค้า" subtitle_prefix="ผู้ดูแลระบบ: " subtitle=user.username link_url="public_products" link_label="ดูหน้าร้านค้า" %}
+        {% include "manage/partials/list_toolbar.html" with heading_id="product-list-heading" section_heading="รายการสินค้า" list_url="products" results_id="product-results" search_id="product-search" search_label="ค้นหาชื่อสินค้า" search_placeholder="เช่น สมุด" add_label="เพิ่มสินค้า" show_category_filter=True %}
 
             <div id="product-results">
             <!-- ===== มือถือ: แสดงเป็นการ์ด (ซ่อนเมื่อจอ md ขึ้นไป) ===== -->
@@ -71,22 +35,7 @@
                     </div>
 
                     {% if user.role == "admin" %}
-                    <div class="mt-4 grid grid-cols-2 gap-2">
-                        <form method="post">
-                            {% csrf_token %}
-                            <button type="submit" name="edit" value="{{ p.pk }}"
-                                    class="w-full rounded-md border border-[#30415D] px-3 py-2 text-sm font-semibold text-[#30415D] hover:bg-[#30415D] hover:text-white">
-                                แก้ไข
-                            </button>
-                        </form>
-                        <form method="post" onsubmit="return confirm('ยืนยันลบสินค้านี้?');">
-                            {% csrf_token %}
-                            <button type="submit" name="delete" value="{{ p.pk }}"
-                                    class="w-full rounded-md border border-red-600 px-3 py-2 text-sm font-semibold text-red-600 hover:bg-red-600 hover:text-white">
-                                ลบ
-                            </button>
-                        </form>
-                    </div>
+                    {% include "manage/partials/record_actions.html" with record_id=p.pk action_container_class="mt-4 grid grid-cols-2 gap-2" edit_button_class="w-full rounded-md border border-[#30415D] px-3 py-2 text-sm font-semibold text-[#30415D] hover:bg-[#30415D] hover:text-white" delete_button_class="w-full rounded-md border border-red-600 px-3 py-2 text-sm font-semibold text-red-600 hover:bg-red-600 hover:text-white" delete_confirmation="ยืนยันลบสินค้านี้?" %}
                     {% endif %}
                 </div>
                 {% empty %}
@@ -141,22 +90,7 @@
                                 </td>
                                 <td class="px-5 py-4 align-middle">
                                     {% if user.role == "admin" %}
-                                    <div class="flex items-center justify-end gap-2">
-                                        <form method="post">
-                                            {% csrf_token %}
-                                            <button type="submit" name="edit" value="{{ p.pk }}"
-                                                    class="rounded-md border border-[#30415D] px-3.5 py-1.5 text-xs font-semibold text-[#30415D] hover:bg-[#30415D] hover:text-white">
-                                                แก้ไข
-                                            </button>
-                                        </form>
-                                        <form method="post" onsubmit="return confirm('ยืนยันลบสินค้านี้?');">
-                                            {% csrf_token %}
-                                            <button type="submit" name="delete" value="{{ p.pk }}"
-                                                    class="rounded-md border border-red-600 px-3.5 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-600 hover:text-white">
-                                                ลบ
-                                            </button>
-                                        </form>
-                                    </div>
+                                    {% include "manage/partials/record_actions.html" with record_id=p.pk action_container_class="flex items-center justify-end gap-2" edit_button_class="rounded-md border border-[#30415D] px-3.5 py-1.5 text-xs font-semibold text-[#30415D] hover:bg-[#30415D] hover:text-white" delete_button_class="rounded-md border border-red-600 px-3.5 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-600 hover:text-white" delete_confirmation="ยืนยันลบสินค้านี้?" %}
                                     {% else %}
                                     <span class="block text-right text-[#30415D]/40">-</span>
                                     {% endif %}
@@ -171,33 +105,9 @@
                     </table>
                 </div>
             </div>
-            {% if page_obj.has_other_pages %}
-            <nav class="mt-6 flex items-center justify-between gap-3 text-sm" aria-label="เปลี่ยนหน้า">
-                {% if page_obj.has_previous %}
-                    <a href="?{% if search_query %}q={{ search_query|urlencode }}&amp;{% endif %}page={{ page_obj.previous_page_number }}"
-                    class="rounded-lg border border-[#30415D]/20 px-4 py-2 font-semibold hover:border-[#F47745] hover:text-[#c9572c]">
-                        ← ก่อนหน้า
-                    </a>
-                {% else %}
-                    <span class="rounded-lg border border-[#30415D]/10 px-4 py-2 text-[#30415D]/30">← ก่อนหน้า</span>
-                {% endif %}
-
-                <span class="text-[#30415D]/70">
-                    หน้า {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
-                </span>
-
-                {% if page_obj.has_next %}
-                    <a href="?{% if search_query %}q={{ search_query|urlencode }}&amp;{% endif %}page={{ page_obj.next_page_number }}"
-                    class="rounded-lg border border-[#30415D]/20 px-4 py-2 font-semibold hover:border-[#F47745] hover:text-[#c9572c]">
-                        ถัดไป →
-                    </a>
-                {% else %}
-                    <span class="rounded-lg border border-[#30415D]/10 px-4 py-2 text-[#30415D]/30">ถัดไป →</span>
-                {% endif %}
-            </nav>
-            {% endif %}
+            {% include "manage/partials/pagination.html" %}
             </div>
-        </section>
+        
     </div>
 </main>
 {% endblock %}

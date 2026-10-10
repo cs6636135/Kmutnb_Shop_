@@ -22,13 +22,30 @@
                     </span>
                 </a>
                 <div class="flex flex-wrap items-center gap-x-1 gap-y-1 text-sm">
-                    <a href="{% url 'dashboard' %}" class="rounded-md px-3 py-2 hover:bg-white/10 transition">ภาพรวม</a>
+                    <a href="{% url 'dashboard' %}"
+                       class="rounded-md px-3 py-2 transition {% if request.resolver_match.url_name == 'dashboard' %}bg-[#F47745] font-semibold text-white hover:bg-[#e86736]{% else %}hover:bg-white/10{% endif %}"
+                       {% if request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %}>
+                        ภาพรวม
+                    </a>
                     {% if request.user.role == "admin" %}
-                        <a href="{% url 'locations' %}" class="rounded-md px-3 py-2 hover:bg-white/10 transition">จัดการสถานที่</a>
+                        <a href="{% url 'locations' %}"
+                           class="rounded-md px-3 py-2 transition {% if request.resolver_match.url_name == 'locations' %}bg-[#F47745] font-semibold text-white hover:bg-[#e86736]{% else %}hover:bg-white/10{% endif %}"
+                           {% if request.resolver_match.url_name == 'locations' %}aria-current="page"{% endif %}>
+                            จุดจำหน่าย
+                        </a>
+                        <a href="{% url 'categories' %}"
+                           class="rounded-md px-3 py-2 transition {% if request.resolver_match.url_name == 'categories' %}bg-[#F47745] font-semibold text-white hover:bg-[#e86736]{% else %}hover:bg-white/10{% endif %}"
+                           {% if request.resolver_match.url_name == 'categories' %}aria-current="page"{% endif %}>
+                            หมวดหมู่สินค้า
+                        </a>
                     {% endif %}
                     <a href="" class="rounded-md px-3 py-2 hover:bg-white/10 transition">รายการจอง</a>
                     {% if request.user.role == "admin" %}
-                        <a href="{% url 'products' %}" class="rounded-md bg-[#F47745] px-3 py-2 font-semibold text-white hover:bg-[#e86736] transition">จัดการสินค้า</a>
+                        <a href="{% url 'products' %}"
+                           class="rounded-md px-3 py-2 transition {% if request.resolver_match.url_name == 'products' %}bg-[#F47745] font-semibold text-white hover:bg-[#e86736]{% else %}hover:bg-white/10{% endif %}"
+                           {% if request.resolver_match.url_name == 'products' %}aria-current="page"{% endif %}>
+                            จัดการสินค้า
+                        </a>
                     {% endif %}
                     <form method="post" action="{% url 'logout' %}" class="ml-2">
                         {% csrf_token %}
