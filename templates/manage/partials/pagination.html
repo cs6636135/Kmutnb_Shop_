@@ -1,7 +1,7 @@
 {% if page_obj.has_other_pages %}
 <nav class="mt-6 flex items-center justify-between gap-3 text-sm" aria-label="เปลี่ยนหน้า">
     {% if page_obj.has_previous %}
-        <a href="?{% if search_query %}q={{ search_query|urlencode }}&amp;{% endif %}{% if category_query %}category={{ category_query|urlencode }}&amp;{% endif %}page={{ page_obj.previous_page_number }}"
+        <a href="?{% if search_query %}q={{ search_query|urlencode }}&amp;{% endif %}{% if category_query %}category={{ category_query|urlencode }}&amp;{% endif %}{% if status %}status={{ status|urlencode }}&amp;{% endif %}page={{ page_obj.previous_page_number }}"
            class="rounded-lg border border-[#30415D]/20 px-4 py-2 font-semibold hover:border-[#F47745] hover:text-[#c9572c]">
             ← ก่อนหน้า
         </a>
@@ -14,7 +14,7 @@
     </span>
 
     {% if page_obj.has_next %}
-        <a href="?{% if search_query %}q={{ search_query|urlencode }}&amp;{% endif %}{% if category_query %}category={{ category_query|urlencode }}&amp;{% endif %}page={{ page_obj.next_page_number }}"
+        <a href="?{% if search_query %}q={{ search_query|urlencode }}&amp;{% endif %}{% if category_query %}category={{ category_query|urlencode }}&amp;{% endif %}{% if status %}status={{ status|urlencode }}&amp;{% endif %}page={{ page_obj.next_page_number }}"
            class="rounded-lg border border-[#30415D]/20 px-4 py-2 font-semibold hover:border-[#F47745] hover:text-[#c9572c]">
             ถัดไป →
         </a>

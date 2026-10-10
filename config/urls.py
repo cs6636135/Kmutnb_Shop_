@@ -28,7 +28,7 @@ urlpatterns = [
 
     # ฝั่ง Manage คนทำหลังบ้าน
     path("manage/", include("shop.manage_urls")),
-    #path("manage/", include("reservations.manage_urls")),
+    path("manage/", include("reservations.manage_urls")),
 
     # Account (login/logout-permission)
     path("", include("accounts.urls")),

@@ -1,0 +1,62 @@
+{% extends "base_manage.html" %}
+
+{% block title %}รายการจอง | KMUTNB SHOP{% endblock %}
+
+{% block content %}
+<main class="min-h-[calc(100vh-4rem)] bg-[#F8F5F0] text-[#30415D]">
+    <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div class="mb-8">
+        {% include "manage/partials/page_header.html" with heading="จัดการรายการจอง" subtitle_prefix="ผู้ใช้งาน: " subtitle=user.username link_url="dashboard" link_label="กลับสู่ภาพรวม" %}
+        </div>
+        <section class="rounded-2xl border border-[#30415D]/10 bg-white p-4 shadow-sm sm:p-6">
+            <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div class="flex flex-wrap gap-2 text-sm">
+                    <a href="{% url 'reservation_list' %}" class="rounded-full px-3 py-1.5 font-semibold {% if not status %}bg-[#30415D] text-white{% else %}bg-[#F8F5F0] text-[#30415D] hover:bg-[#30415D]/10{% endif %}">ทั้งหมด</a>
+                    {% for value, label in reservation_status_choices %}
+                    <a href="{% url 'reservation_list' %}?status={{ value }}" class="rounded-full px-3 py-1.5 font-semibold {% if status == value %}bg-[#30415D] text-white{% else %}bg-[#F8F5F0] text-[#30415D] hover:bg-[#30415D]/10{% endif %}">{{ label }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-[760px] border-collapse text-left text-sm">
+                    <thead class="bg-[#30415D] text-white">
+                        <tr>
+                            <th class="px-4 py-3 font-semibold">รหัสจอง</th>
+                            <th class="px-4 py-3 font-semibold">รหัสลูกค้า</th>
+                            <th class="px-4 py-3 font-semibold">สินค้า</th>
+                            <th class="px-4 py-3 font-semibold">จุดรับ</th>
+                            <th class="px-4 py-3 font-semibold">จำนวน</th>
+                            <th class="px-4 py-3 font-semibold">จองเมื่อ</th>
+                            <th class="px-4 py-3 font-semibold">สถานะ</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[#30415D]/10">
+                        {% for reservation in page_obj %}
+                        <tr class="bg-white hover:bg-[#F8F5F0]/60">
+                            <td class="px-4 py-3 font-mono text-xs font-semibold">{{ reservation.reservation_code }}</td>
+                            <td class="px-4 py-3">{{ reservation.customer_id }}</td>
+                            <td class="px-4 py-3">{{ reservation.product.name }}</td>
+                            <td class="px-4 py-3">{{ reservation.location.name }}</td>
+                            <td class="px-4 py-3">{{ reservation.quantity }}</td>
+                            <td class="px-4 py-3 whitespace-nowrap text-[#30415D]/70">{{ reservation.reserved_at|date:"d/m/Y H:i" }}</td>
+                            <td class="px-4 py-3">
+                                <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold {% if reservation.status == 'pending' %}bg-[#F47745]/10 text-[#c9572c]{% elif reservation.status == 'picked_up' %}bg-emerald-50 text-emerald-700{% elif reservation.status == 'expired' %}bg-slate-100 text-slate-600{% elif reservation.status == 'cancelled' %}bg-red-100 text-red-700{% else %}bg-slate-100 text-slate-600{% endif %}">
+                                    {{ reservation.get_status_display }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="px-5 py-8 text-center text-sm text-[#30415D]/55">ยังไม่มีรายการจอง</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% include "manage/partials/pagination.html" %}
+        </section>
+    </div>
+</main>
+{% endblock %}

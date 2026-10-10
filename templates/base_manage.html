@@ -39,12 +39,21 @@
                             หมวดหมู่สินค้า
                         </a>
                     {% endif %}
-                    <a href="" class="rounded-md px-3 py-2 hover:bg-white/10 transition">รายการจอง</a>
+                    <a href="{% url 'reservation_list' %}"
+                       class="rounded-md px-3 py-2 transition {% if request.resolver_match.url_name == 'reservation_list' %}bg-[#F47745] font-semibold text-white hover:bg-[#e86736]{% else %}hover:bg-white/10{% endif %}"
+                       {% if request.resolver_match.url_name == 'reservation_list' %}aria-current="page"{% endif %}>
+                        รายการจอง
+                    </a>
                     {% if request.user.role == "admin" %}
                         <a href="{% url 'products' %}"
                            class="rounded-md px-3 py-2 transition {% if request.resolver_match.url_name == 'products' %}bg-[#F47745] font-semibold text-white hover:bg-[#e86736]{% else %}hover:bg-white/10{% endif %}"
                            {% if request.resolver_match.url_name == 'products' %}aria-current="page"{% endif %}>
-                            จัดการสินค้า
+                            สินค้าทั้งหมด
+                        </a>
+                         <a href="{% url 'staffs' %}"
+                           class="rounded-md px-3 py-2 transition {% if request.resolver_match.url_name == 'staffs' %}bg-[#F47745] font-semibold text-white hover:bg-[#e86736]{% else %}hover:bg-white/10{% endif %}"
+                           {% if request.resolver_match.url_name == 'staffs' %}aria-current="page"{% endif %}>
+                            จัดการบัญชี Staff
                         </a>
                     {% endif %}
                     <form method="post" action="{% url 'logout' %}" class="ml-2">

@@ -3,19 +3,14 @@ import re
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from accounts.permission import role_required
-from .models import Product,Location,Category
+from .models import Product,Location,Category,ProductLocation
+from reservations.models import Reservation
 from .form import ProductModelForm,LocationModelForm,CategoryModelForm
-from django.db.models import ProtectedError
+from django.db.models import Count, ProtectedError, Sum
 from django.db import transaction, IntegrityError
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
-
-@role_required("admin", "staff")
-def dashboard(request):
-    return render(request, "manage/dashboard.html", {
-        "user": request.user,
-        "session_info": request.session.items(),
-    })
+from django.utils import timezone
 
 
 @role_required("admin")
@@ -217,3 +212,103 @@ def categories(request):
         "page_obj": page_obj,
         "search_query": search_query,
     })
+
+
+# เปลี่ยนการจองที่หมดเวลาเป็น expired และคืนสต็อก
+def expire_overdue_reservations():
+    now = timezone.now()
+
+    # atomic: คืนสต็อกกับเปลี่ยนสถานะ ต้องสำเร็จพร้อมกันหรือย้อนกลับพร้อมกัน
+    with transaction.atomic():
+        # select_for_update: ล็อกแถวไว้ กันสองคำขอคืนสต็อกซ้ำ
+        overdue = Reservation.objects.select_for_update().filter(
+            status=Reservation.Status.PENDING,
+            expires_at__lte=now,
+        )
+
+        for r in overdue:
+            # หาสต็อกของสินค้านี้ ณ จุดที่จอง (unique คู่ product+location จึงได้ 1 แถว)
+            pl = ProductLocation.objects.get(product=r.product, location=r.location)
+            pl.stock = pl.stock + r.quantity   # คืนสต็อก
+            pl.save()
+
+            r.status = Reservation.Status.EXPIRED
+            r.save()
+
+
+@role_required("admin", "staff")
+def dashboard(request):
+    user = request.user
+    is_admin = user.role == "admin"
+    user_location = user.location
+
+    # อัปเดตรายการหมดเวลาก่อน เพื่อให้ตัวเลขตรงความจริง
+    expire_overdue_reservations()
+
+    # Admin: all() เห็นทุกสาขา / Staff: filter() เฉพาะสาขาตัวเอง
+    if is_admin:
+        stocks = ProductLocation.objects.all()
+        reservations = Reservation.objects.all()
+    else:
+        stocks = ProductLocation.objects.filter(location=user_location)
+        reservations = Reservation.objects.filter(location=user_location)
+
+    # ---------- การ์ดสถิติ ----------
+    total_units_stock = stocks.aggregate(total=Sum("stock"))["total"] or 0
+
+    # chaining filters แล้ว count()
+    active_reservations = reservations.filter(
+        status=Reservation.Status.PENDING
+    ).count()
+    expired_reservations = reservations.filter(
+        status=Reservation.Status.EXPIRED
+    ).count()
+
+    # วันนี้ตามเวลาท้องถิ่น (ไทย UTC+7)
+    today = timezone.localdate()
+    picked_up_today = reservations.filter(
+        status=Reservation.Status.PICKED_UP,
+        picked_up_at__date=today,
+    ).count()
+
+    # ---------- จองล่าสุด 8 แถว (เรียงใหม่ไปเก่า) ----------
+    recent_reservations = reservations.order_by("-reserved_at")[:8]
+
+    # ---------- สินค้าใกล้หมด (<= 5 ชิ้น) เรียงน้อยไปมาก 6 รายการ ----------
+    low_stocks = stocks.filter(stock__lte=5).order_by("stock")[:6]
+
+    # ---------- สรุปรายสาขา (เฉพาะ admin) ----------
+    locations_summary = []
+    if is_admin:
+        stock_by_location = {
+            row["location_id"]: row["total_stock"]
+            for row in ProductLocation.objects.values("location_id").annotate(
+                total_stock=Sum("stock")
+            )
+        }
+        reservations_by_location = {
+            row["location_id"]: row["total"]
+            for row in Reservation.objects.filter(
+                status=Reservation.Status.PENDING
+            ).values("location_id").annotate(total=Count("pk"))
+        }
+
+        for loc in Location.objects.all():
+            locations_summary.append({
+                "location": loc,
+                "total_stock": stock_by_location.get(loc.pk, 0),
+                "active_reservations": reservations_by_location.get(loc.pk, 0),
+            })
+
+    context = {
+        "is_admin": is_admin,
+        "user_location": user_location,
+        "total_units_stock": total_units_stock,
+        "active_reservations": active_reservations,
+        "picked_up_today": picked_up_today,
+        "expired_reservations": expired_reservations,
+        "recent_reservations": recent_reservations,
+        "low_stocks": low_stocks,
+        "locations_summary": locations_summary,
+    }
+    return render(request, "manage/dashboard.html", context)

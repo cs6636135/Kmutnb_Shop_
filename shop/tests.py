@@ -470,3 +470,36 @@ class CategoryManagementTest(TestCase):
         self.assertRedirects(response, reverse("categories"))
         self.assertTrue(Category.objects.filter(pk=category.pk).exists())
         self.assertContains(response, "ไม่สามารถลบหมวดหมู่สินค้าที่มีสินค้าใช้งานอยู่ได้")
+
+
+class DashboardTest(TestCase):
+    def test_admin_dashboard_renders(self):
+        admin = get_user_model().objects.create_user(
+            username="dashboard-admin",
+            password="test-password",
+            role="admin",
+        )
+        self.client.force_login(admin)
+
+        response = self.client.get(reverse("dashboard"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.context["is_admin"])
+        self.assertContains(response, "สต็อกรวมทุกสาขา")
+
+    def test_staff_dashboard_renders_for_assigned_location(self):
+        location = Location.objects.create(name="Main building", building="Building 1")
+        staff = get_user_model().objects.create_user(
+            username="dashboard-staff",
+            password="test-password",
+            role="staff",
+            location=location,
+        )
+        self.client.force_login(staff)
+
+        response = self.client.get(reverse("dashboard"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.context["is_admin"])
+        self.assertContains(response, "Main building")
+        self.assertEqual(response.context["locations_summary"], [])
