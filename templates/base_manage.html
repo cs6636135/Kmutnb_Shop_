@@ -23,7 +23,7 @@
     <script src="https://unpkg.com/htmx.org@2.0.4"></script>
 </head>
 <body class="min-h-screen bg-[#fff8f3]"style="font-family: 'Noto Sans Thai', sans-serif;"hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-    {% if request.user.is_authenticated %}
+    {% if request.user.is_authenticated and request.resolver_match.url_name != "login" %}
         <nav class="bg-[#30415D] text-white" aria-label="เมนูจัดการ">
             <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
                 <a href="{% url 'dashboard' %}" class="flex items-center gap-3">
@@ -36,10 +36,12 @@
 
                 <input id="manage-menu-toggle" type="checkbox" class="peer sr-only">
                 <label for="manage-menu-toggle"
-                       class="flex cursor-pointer items-center gap-2 rounded-lg border border-white/20 px-4 py-2.5 text-sm font-semibold transition hover:bg-white/10 sm:hidden">
-                    <span>เมนู</span>
-                    <svg class="h-4 w-4 transition peer-checked:rotate-180" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path fill-rule="evenodd" d="M5.22 7.47a.75.75 0 0 1 1.06 0L10 11.19l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 8.53a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/>
+                       class="flex h-11 w-11 cursor-pointer items-center justify-center rounded-md transition hover:bg-white/10 sm:hidden"
+                       role="button"
+                       aria-label="เปิดหรือปิดเมนู"
+                       title="เมนู">
+                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                        <path d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
                 </label>
 
