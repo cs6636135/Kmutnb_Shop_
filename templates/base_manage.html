@@ -25,45 +25,55 @@
 <body class="min-h-screen bg-[#fff8f3]"style="font-family: 'Noto Sans Thai', sans-serif;"hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     {% if request.user.is_authenticated %}
         <nav class="bg-[#30415D] text-white" aria-label="เมนูจัดการ">
-            <div class="mx-auto flex max-w-7xl flex-col items-stretch gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-                <a href="{% url 'dashboard' %}" class="flex items-center gap-3 self-start sm:self-auto">
+            <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
+                <a href="{% url 'dashboard' %}" class="flex items-center gap-3">
                     <span class="flex h-10 w-10 items-center justify-center rounded-lg border-b-2 border-[#F47745] bg-white/10 font-bold">K</span>
                     <span>
                         <span class="block text-sm font-bold">KMUTNB</span>
                         <span class="block text-[10px] uppercase tracking-[0.12em] text-white/65">Shop</span>
                     </span>
                 </a>
-                <div class="grid w-full grid-cols-2 gap-2 text-sm sm:flex sm:w-auto sm:flex-wrap sm:items-center sm:gap-x-1 sm:gap-y-1">
+
+                <input id="manage-menu-toggle" type="checkbox" class="peer sr-only">
+                <label for="manage-menu-toggle"
+                       class="flex cursor-pointer items-center gap-2 rounded-lg border border-white/20 px-4 py-2.5 text-sm font-semibold transition hover:bg-white/10 sm:hidden">
+                    <span>เมนู</span>
+                    <svg class="h-4 w-4 transition peer-checked:rotate-180" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M5.22 7.47a.75.75 0 0 1 1.06 0L10 11.19l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 8.53a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/>
+                    </svg>
+                </label>
+
+                <div class="hidden w-full flex-col gap-1 border-t border-white/10 pt-3 text-sm peer-checked:flex sm:flex sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-1 sm:gap-y-1 sm:border-0 sm:pt-0">
                     <a href="{% url 'dashboard' %}"
-                       class="rounded-md px-3 py-3 text-center transition sm:py-2 {% if request.resolver_match.url_name == 'dashboard' %}bg-[#F47745] font-semibold text-white hover:bg-[#e86736]{% else %}hover:bg-white/10{% endif %}"
+                       class="rounded-lg px-4 py-3 transition sm:rounded-md sm:px-3 sm:py-2 {% if request.resolver_match.url_name == 'dashboard' %}bg-[#F47745] font-semibold text-white hover:bg-[#e86736]{% else %}hover:bg-white/10{% endif %}"
                        {% if request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %}>
                         ภาพรวม
                     </a>
                     {% if request.user.role == "admin" %}
                         <a href="{% url 'locations' %}"
-                           class="rounded-md px-3 py-3 text-center transition sm:py-2 {% if request.resolver_match.url_name == 'locations' %}bg-[#F47745] font-semibold text-white hover:bg-[#e86736]{% else %}hover:bg-white/10{% endif %}"
+                           class="rounded-lg px-4 py-3 transition sm:rounded-md sm:px-3 sm:py-2 {% if request.resolver_match.url_name == 'locations' %}bg-[#F47745] font-semibold text-white hover:bg-[#e86736]{% else %}hover:bg-white/10{% endif %}"
                            {% if request.resolver_match.url_name == 'locations' %}aria-current="page"{% endif %}>
                             จุดจำหน่าย
                         </a>
                         <a href="{% url 'categories' %}"
-                           class="rounded-md px-3 py-3 text-center transition sm:py-2 {% if request.resolver_match.url_name == 'categories' %}bg-[#F47745] font-semibold text-white hover:bg-[#e86736]{% else %}hover:bg-white/10{% endif %}"
+                           class="rounded-lg px-4 py-3 transition sm:rounded-md sm:px-3 sm:py-2 {% if request.resolver_match.url_name == 'categories' %}bg-[#F47745] font-semibold text-white hover:bg-[#e86736]{% else %}hover:bg-white/10{% endif %}"
                            {% if request.resolver_match.url_name == 'categories' %}aria-current="page"{% endif %}>
                             หมวดหมู่สินค้า
                         </a>
                     {% endif %}
                     <a href="{% url 'reservation_list' %}"
-                       class="rounded-md px-3 py-3 text-center transition sm:py-2 {% if request.resolver_match.url_name == 'reservation_list' %}bg-[#F47745] font-semibold text-white hover:bg-[#e86736]{% else %}hover:bg-white/10{% endif %}"
+                       class="rounded-lg px-4 py-3 transition sm:rounded-md sm:px-3 sm:py-2 {% if request.resolver_match.url_name == 'reservation_list' %}bg-[#F47745] font-semibold text-white hover:bg-[#e86736]{% else %}hover:bg-white/10{% endif %}"
                        {% if request.resolver_match.url_name == 'reservation_list' %}aria-current="page"{% endif %}>
                         รายการจอง
                     </a>
                     {% if request.user.role == "admin" %}
                         <a href="{% url 'products' %}"
-                           class="rounded-md px-3 py-3 text-center transition sm:py-2 {% if request.resolver_match.url_name == 'products' %}bg-[#F47745] font-semibold text-white hover:bg-[#e86736]{% else %}hover:bg-white/10{% endif %}"
+                           class="rounded-lg px-4 py-3 transition sm:rounded-md sm:px-3 sm:py-2 {% if request.resolver_match.url_name == 'products' %}bg-[#F47745] font-semibold text-white hover:bg-[#e86736]{% else %}hover:bg-white/10{% endif %}"
                            {% if request.resolver_match.url_name == 'products' %}aria-current="page"{% endif %}>
                             สินค้าทั้งหมด
                         </a>
                          <a href="{% url 'staffs' %}"
-                           class="rounded-md px-3 py-3 text-center transition sm:py-2 {% if request.resolver_match.url_name == 'staffs' %}bg-[#F47745] font-semibold text-white hover:bg-[#e86736]{% else %}hover:bg-white/10{% endif %}"
+                           class="rounded-lg px-4 py-3 transition sm:rounded-md sm:px-3 sm:py-2 {% if request.resolver_match.url_name == 'staffs' %}bg-[#F47745] font-semibold text-white hover:bg-[#e86736]{% else %}hover:bg-white/10{% endif %}"
                            {% if request.resolver_match.url_name == 'staffs' %}aria-current="page"{% endif %}>
                             จัดการบัญชี Staff
                         </a>
@@ -74,13 +84,13 @@
                     <form
                         method="post"
                         action="{% url 'logout' %}"
-                        class="col-span-2 sm:ml-2"
+                        class="pt-2 sm:ml-2 sm:pt-0"
                     >
                         {% csrf_token %}
 
                         <button
                             type="submit"
-                            class="w-full rounded-md border border-white/30 px-3 py-3 font-semibold text-white transition hover:border-[#F47745] hover:bg-[#F47745] sm:w-auto sm:py-2"
+                            class="w-full rounded-lg border border-white/30 px-4 py-3 text-left font-semibold text-white transition hover:border-[#F47745] hover:bg-[#F47745] sm:w-auto sm:rounded-md sm:px-3 sm:py-2 sm:text-center"
                         >
                             ออกจากระบบ
                         </button>

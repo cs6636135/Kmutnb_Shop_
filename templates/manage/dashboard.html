@@ -283,10 +283,14 @@
                             },
 
                             ticks: {
-                                color: "#30415D",
                                 autoSkip: false,
                                 maxRotation: 45,
-                                minRotation: 0
+                                minRotation: 0,
+                                color: "#30415D",
+                                font: {
+                                    size: context => context.chart.width < 640 ? 9 : 12,
+                                    weight: context => context.chart.width < 640 ? "300" : "400"
+                                }
                             },
 
                             border: {
