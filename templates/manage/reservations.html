@@ -29,12 +29,17 @@
                             <th class="px-4 py-3 font-semibold">จำนวน</th>
                             <th class="px-4 py-3 font-semibold">จองเมื่อ</th>
                             <th class="px-4 py-3 font-semibold">สถานะ</th>
+                            <th class="px-4 py-3 text-right font-semibold">จัดการ</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-[#30415D]/10">
                         {% for reservation in page_obj %}
                         <tr class="bg-white hover:bg-[#F8F5F0]/60">
-                            <td class="px-4 py-3 font-mono text-xs font-semibold">{{ reservation.reservation_code }}</td>
+                            <td class="px-4 py-3 font-mono text-xs font-semibold">
+                                <a href="{% url 'reservation_manage' reservation.reservation_code %}" class="text-[#F47745] hover:underline" title="คลิกเพื่อจัดการรายการนี้">
+                                    {{ reservation.reservation_code }}
+                                </a>
+                            </td>
                             <td class="px-4 py-3">{{ reservation.customer_id }}</td>
                             <td class="px-4 py-3">{{ reservation.product.name }}</td>
                             <td class="px-4 py-3">{{ reservation.location.name }}</td>
@@ -45,10 +50,16 @@
                                     {{ reservation.get_status_display }}
                                 </span>
                             </td>
+                            <td class="px-4 py-3 text-right">
+                                <a href="{% url 'reservation_manage' reservation.reservation_code %}"
+                                   class="inline-flex items-center rounded-md border border-[#30415D] px-2.5 py-1 text-xs font-semibold text-[#30415D] transition hover:bg-[#30415D] hover:text-white">
+                                    จัดการ
+                                </a>
+                            </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="7" class="px-5 py-8 text-center text-sm text-[#30415D]/55">ยังไม่มีรายการจอง</td>
+                            <td colspan="8" class="px-5 py-8 text-center text-sm text-[#30415D]/55">ยังไม่มีรายการจอง</td>
                         </tr>
                         {% endfor %}
                     </tbody>
