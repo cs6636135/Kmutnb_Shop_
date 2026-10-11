@@ -1,5 +1,6 @@
 
 from io import BytesIO
+from datetime import timedelta
 from unittest.mock import patch
 
 from django.test import TestCase
@@ -8,10 +9,12 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
+from django.utils import timezone
 from PIL import Image
 
 from .form import ProductModelForm
-from .models import Category, Location, Product
+from .models import Category, Location, Product, ProductLocation
+from reservations.models import Reservation
 
 
 class ProductFormTest(TestCase):
@@ -504,6 +507,97 @@ class DashboardTest(TestCase):
         self.assertFalse(response.context["is_admin"])
         self.assertContains(response, "Main building")
         self.assertEqual(response.context["locations_summary"], [])
+
+    def test_admin_location_summary_matches_stock_and_pending_reservations(self):
+        admin = get_user_model().objects.create_user(
+            username="dashboard-summary-admin",
+            password="test-password",
+            role="admin",
+        )
+        category = Category.objects.create(name="Dashboard summary category")
+        product_one = Product.objects.create(
+            name="Dashboard summary product one",
+            price="10.00",
+            category=category,
+        )
+        product_two = Product.objects.create(
+            name="Dashboard summary product two",
+            price="20.00",
+            category=category,
+        )
+        location_one = Location.objects.create(
+            name="Summary location one",
+            building="Building 1",
+        )
+        location_two = Location.objects.create(
+            name="Summary location two",
+            building="Building 2",
+        )
+        empty_location = Location.objects.create(
+            name="Empty location",
+            building="Building 3",
+        )
+        ProductLocation.objects.create(
+            product=product_one,
+            location=location_one,
+            stock=4,
+        )
+        ProductLocation.objects.create(
+            product=product_two,
+            location=location_one,
+            stock=6,
+        )
+        ProductLocation.objects.create(
+            product=product_one,
+            location=location_two,
+            stock=3,
+        )
+
+        expires_at = timezone.now() + timedelta(hours=1)
+        for code, location, status in (
+            ("SUMMARY-PENDING-1", location_one, Reservation.Status.PENDING),
+            ("SUMMARY-PENDING-2", location_one, Reservation.Status.PENDING),
+            ("SUMMARY-CANCELLED", location_one, Reservation.Status.CANCELLED),
+            ("SUMMARY-PENDING-3", location_two, Reservation.Status.PENDING),
+        ):
+            Reservation.objects.create(
+                reservation_code=code,
+                customer_id="1234567890123",
+                product=product_one,
+                location=location,
+                quantity=1,
+                status=status,
+                expires_at=expires_at,
+            )
+
+        self.client.force_login(admin)
+        response = self.client.get(reverse("dashboard"))
+
+        self.assertEqual(response.status_code, 200)
+        summary_by_location = {
+            row["location"]["name"]: row
+            for row in response.context["locations_summary"]
+        }
+        self.assertEqual(
+            summary_by_location,
+            {
+                "Summary location one": {
+                    "location": {"name": "Summary location one"},
+                    "total_stock": 10,
+                    "active_reservations": 2,
+                },
+                "Summary location two": {
+                    "location": {"name": "Summary location two"},
+                    "total_stock": 3,
+                    "active_reservations": 1,
+                },
+                "Empty location": {
+                    "location": {"name": "Empty location"},
+                    "total_stock": 0,
+                    "active_reservations": 0,
+                },
+            },
+        )
 
 
 @override_settings(DEBUG=False)

@@ -7,9 +7,20 @@
 <div class="bg-[#fff8f3] text-[#4a2114]">
     <main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <header class="mb-7">
-    <h1 class="text-3xl font-bold text-gray-900">สินค้าทั้งหมด</h1>
+        <h1 class="text-3xl font-bold text-gray-900">
+        {% if selected_category %}
+            {{ selected_category.name }}
+        {% else %}
+            สินค้าทั้งหมด
+        {% endif %}
+    </h1>
+
     <p class="mt-2 text-sm text-gray-600">
-        ค้นหาและเลือกดูสินค้าตามหมวดหมู่หรือจุดจำหน่าย
+        {% if selected_category %}
+            เลือกชมสินค้าในหมวดหมู่{{ selected_category.name }}
+        {% else %}
+            ค้นหาและเลือกดูสินค้าตามหมวดหมู่หรือจุดจำหน่าย
+        {% endif %}
     </p>
 </header>
 

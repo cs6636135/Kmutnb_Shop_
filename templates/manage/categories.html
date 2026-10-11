@@ -5,7 +5,7 @@
 {% block content %}
 <main class="min-h-[calc(100vh-4rem)] bg-[#F8F5F0] text-[#30415D]">
     <div class="mx-auto max-w-7xl px-6 py-10 lg:px-8">
-        {% include "manage/partials/page_header.html" with heading="จัดการหมวดหมู่สินค้า" subtitle_prefix="ผู้ดูแลระบบ: " subtitle=user.username link_url="public_products" link_label="ดูหน้าร้านค้า" %}
+        {% include "manage/partials/page_header.html" with heading="จัดการหมวดหมู่สินค้า" subtitle_prefix="ผู้ดูแลระบบ: " subtitle=user.username link_url="public_products" %}
         {% include "manage/partials/list_toolbar.html" with heading_id="category-list-heading" section_heading="รายการหมวดหมู่สินค้า" list_url="categories" results_id="category-results" search_id="category-search" search_label="ค้นหาชื่อหมวดหมู่" search_placeholder="เช่น เครื่องเขียน" add_label="เพิ่มหมวดหมู่สินค้า" %}
 
             <div id="category-results">

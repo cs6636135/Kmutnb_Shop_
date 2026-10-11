@@ -8,12 +8,16 @@ from django.core.exceptions import ValidationError
 from accounts.permission import role_required
 from shop.models import ProductLocation
 from .models import Reservation
+from .services import expire_overdue_reservations
 from .forms import StatusForm
 
 # ทำเพื่อให้แสดงผลได้ก่อน แต่แก้ไขได้ ทำลวกๆมาก่อนเฉยๆ
 
 @role_required("admin", "staff")
 def reservation_list(request):
+    # อัปเดตสถานะและคืนสต็อกเมื่อมีผู้เปิดหน้ารายการจอง trigger
+    expire_overdue_reservations()
+
     user = request.user
     qs = Reservation.objects.select_related("product", "location").order_by("-reserved_at")
 
