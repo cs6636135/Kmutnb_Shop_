@@ -16,29 +16,53 @@ def home(request):
 
 def product_list(request):
     search_query = request.GET.get("q", "").strip()
-    category_id = request.GET.get("category", "")
-    location_id = request.GET.get("location", "")
+    category_id = request.GET.get("category", "").strip()
+    location_id = request.GET.get("location", "").strip()
 
     products = Product.objects.all()
+
+    # ค้นหาสินค้าจากชื่อและรายละเอียด
     if search_query:
         products = products.filter(
             Q(name__icontains=search_query)
             | Q(description__icontains=search_query)
         )
+
+    # กรองหมวดหมู่ และเก็บ Object ของหมวดหมู่ที่เลือก
+    selected_category = None
+
     if category_id.isdigit():
-        products = products.filter(category_id=category_id)
+        selected_category = Category.objects.filter(
+            pk=category_id
+        ).first()
+
+        if selected_category:
+            products = products.filter(category=selected_category)
+        else:
+            category_id = ""
     else:
         category_id = ""
 
+    # กรองจุดจำหน่าย
     stock_filter = Q()
+
     if location_id.isdigit():
-        products = products.filter(productlocation__location_id=location_id)
-        stock_filter = Q(productlocation__location_id=location_id)
+        products = products.filter(
+            productlocation__location_id=location_id
+        )
+        stock_filter = Q(
+            productlocation__location_id=location_id
+        )
     else:
         location_id = ""
 
+    # คำนวณสต็อกตามจุดจำหน่ายที่เลือก
     products = products.annotate(
-        stock=Sum("productlocation__stock", filter=stock_filter, default=0)
+        stock=Sum(
+            "productlocation__stock",
+            filter=stock_filter,
+            default=0,
+        )
     ).order_by("-created_at")
 
     return render(request, "shop/products.html", {
@@ -46,7 +70,7 @@ def product_list(request):
         "categories": Category.objects.all(),
         "locations": Location.objects.all(),
         "search_query": search_query,
-        "selected_category": category_id,
+        "selected_category": selected_category,
         "selected_location": location_id,
     })
 
