@@ -65,7 +65,7 @@ class AuthenticationTest(TestCase):
         self.assertRedirects(response, reverse("login"))
         self.assertNotIn(SESSION_KEY, self.client.session)
 
-    def test_session_uses_thirty_minute_browser_session_cookie(self):
+    def test_session_persists_across_browser_restart_and_expires_after_inactivity(self):
         self.client.force_login(self.admin)
 
         first_response = self.client.get(reverse("dashboard"))
@@ -73,12 +73,12 @@ class AuthenticationTest(TestCase):
 
         self.assertEqual(settings.SESSION_COOKIE_AGE, 60 * 30)
         self.assertTrue(settings.SESSION_SAVE_EVERY_REQUEST)
-        self.assertTrue(settings.SESSION_EXPIRE_AT_BROWSER_CLOSE)
+        self.assertFalse(settings.SESSION_EXPIRE_AT_BROWSER_CLOSE)
         for response in (first_response, second_response):
             with self.subTest(response=response):
                 session_cookie = response.cookies[settings.SESSION_COOKIE_NAME]
-                self.assertEqual(session_cookie["max-age"], "")
-                self.assertEqual(session_cookie["expires"], "")
+                self.assertEqual(session_cookie["max-age"], 60 * 30)
+                self.assertTrue(session_cookie["expires"])
         self.assertEqual(self.client.session.get_expiry_age(), 60 * 30)
 
 
@@ -148,7 +148,7 @@ class StaffPageTest(TestCase):
         response = self.client.get(reverse("staffs"))
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "ยังไม่มีเครื่องมือจัดการบัญชี")
+        self.assertContains(response, "จัดการบัญชี Staff")
 
     def test_staff_cannot_open_staff_page(self):
         staff = get_user_model().objects.create_user(
