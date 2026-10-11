@@ -9,9 +9,13 @@ from django.utils import timezone
 
 from shop.models import Product, ProductLocation
 from .models import Reservation
+from .services import expire_overdue_reservations
 
 
 def reservation_create(request, product_id):
+	# คืนสต็อกที่ค้างจากการจองหมดอายุก่อนเริ่มตรวจสต็อกหรือสร้างการจองใหม่
+	expire_overdue_reservations(product_id=product_id)
+
 	product = get_object_or_404(
 		Product.objects.annotate(
 			stock=Sum("productlocation__stock", default=0)
@@ -117,6 +121,10 @@ def reservation_confirmation(request, reservation_code):
 		Reservation.objects.select_related("product", "location"),
 		reservation_code=reservation_code,
 	)
+    #ตรวจและคืนสต็อกก่อนสร้างรายการจองใหม่ trigger
+	expire_overdue_reservations(product_id=reservation.product_id)
+
+	reservation.refresh_from_db()
 	return render(request, "reservations/confirmation.html", {
 		"reservation": reservation,
 	})
@@ -134,6 +142,10 @@ def reservation_status(request):
 			).select_related("product", "location").first()
 			if reservation is None:
 				error = "ไม่พบรายการจองจากรหัสที่ระบุ"
+			else:
+				# อัปเดตสถานะก่อนแสดงผลการตรวจการจอง
+				expire_overdue_reservations(product_id=reservation.product_id)
+				reservation.refresh_from_db()
 		else:
 			error = "กรุณากรอกรหัสการจอง"
 

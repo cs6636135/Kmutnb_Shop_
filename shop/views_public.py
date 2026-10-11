@@ -2,6 +2,7 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.db.models import Q, Sum
 from shop.models import Category, Location, Product, ProductLocation
+from reservations.services import expire_overdue_reservations
 
 def home(request):
     products = Product.objects.annotate(
@@ -76,6 +77,9 @@ def product_list(request):
 
 
 def product_detail(request, product_id):
+    # คืนสต็อกของการจองที่หมดเวลา ก่อนแสดงสต็อกสินค้านี้ trigger
+    expire_overdue_reservations(product_id=product_id)
+
     product = get_object_or_404(
         Product.objects.select_related("category").annotate(
             stock=Sum("productlocation__stock", default=0)

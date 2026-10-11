@@ -11,6 +11,7 @@ from django.db import transaction, IntegrityError
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
 from django.utils import timezone
+from reservations.services import expire_overdue_reservations
 
 
 @role_required("admin")
@@ -214,49 +215,28 @@ def categories(request):
     })
 
 
-# เปลี่ยนการจองที่หมดเวลาเป็น expired และคืนสต็อก
-def expire_overdue_reservations():
-    now = timezone.now()
-
-    # atomic: คืนสต็อกกับเปลี่ยนสถานะ ต้องสำเร็จพร้อมกันหรือย้อนกลับพร้อมกัน
-    with transaction.atomic():
-        # select_for_update: ล็อกแถวไว้ กันสองคำขอคืนสต็อกซ้ำ
-        overdue = Reservation.objects.select_for_update().filter(
-            status=Reservation.Status.PENDING,
-            expires_at__lte=now,
-        )
-
-        for r in overdue:
-            # หาสต็อกของสินค้านี้ ณ จุดที่จอง (unique คู่ product+location จึงได้ 1 แถว)
-            pl = ProductLocation.objects.get(product=r.product, location=r.location)
-            pl.stock = pl.stock + r.quantity   # คืนสต็อก
-            pl.save()
-
-            r.status = Reservation.Status.EXPIRED
-            r.save()
-
-#ทำให้เร็ว
 @role_required("admin", "staff")
 def dashboard(request):
+    # อ่านข้อมูลผู้ใช้เพื่อเลือกสิทธิ์และสาขาที่จะแสดง
     user = request.user
     is_admin = user.role == "admin"
+    if is_admin:
+        # อัปเดตการจองหมดอายุก่อนสรุปสต็อกแยกตาม location ให้ admin
+        expire_overdue_reservations()
+
     user_location = user.location
 
-    # อัปเดตรายการหมดเวลาก่อน เพื่อให้ตัวเลขตรงความจริง
-    expire_overdue_reservations()
+    # Admin เห็นข้อมูลทุกสาขา ส่วน staff เห็นเฉพาะสาขาที่ตนเองประจำอยู่
+    stocks = ProductLocation.objects.all()
+    reservations = Reservation.objects.all()
+    if not is_admin:
+        stocks = stocks.filter(location=user_location)
+        reservations = reservations.filter(location=user_location)
 
-    # Admin: all() เห็นทุกสาขา / Staff: filter() เฉพาะสาขาตัวเอง
-    if is_admin:
-        stocks = ProductLocation.objects.all()
-        reservations = Reservation.objects.all()
-    else:
-        stocks = ProductLocation.objects.filter(location=user_location)
-        reservations = Reservation.objects.filter(location=user_location)
-
-    # ---------- การ์ดสถิติ ----------
+    # รวมสต็อกคงเหลือทั้งหมดในขอบเขตสาขาที่ผู้ใช้มีสิทธิ์เห็น
     total_units_stock = stocks.aggregate(total=Sum("stock"))["total"] or 0
 
-    # chaining filters แล้ว count()
+    # นับรายการจองตามสถานะ
     active_reservations = reservations.filter(
         status=Reservation.Status.PENDING
     ).count()
@@ -264,23 +244,23 @@ def dashboard(request):
         status=Reservation.Status.EXPIRED
     ).count()
 
-    # วันนี้ตามเวลาท้องถิ่น (ไทย UTC+7)
+    # นับรายการที่รับสินค้าแล้วในวันนี้ตามเวลาท้องถิ่นของระบบ
     today = timezone.localdate()
     picked_up_today = reservations.filter(
         status=Reservation.Status.PICKED_UP,
         picked_up_at__date=today,
     ).count()
 
-    # ---------- จองล่าสุด 8 แถว (เรียงใหม่ไปเก่า) ----------
+    # ดึงรายการจองล่าสุดไม่เกิน 8 รายการ
     recent_reservations = reservations.order_by("-reserved_at")[:8]
 
-    # ---------- สินค้าใกล้หมด (<= 5 ชิ้น) เรียงน้อยไปมาก 6 รายการ ----------
+    # ดึงสินค้าที่เหลือไม่เกิน 5 ชิ้น เรียงจากเหลือน้อยไปมาก ไม่เกิน 6 รายการ
     low_stocks = stocks.filter(stock__lte=5).order_by("stock")[:6]
 
-     # ---------- สรุปรายสาขา (เฉพาะ admin) ----------
+    # เตรียมสรุปสาขาไว้สำหรับ admin เท่านั้น
     locations_summary = []
-
     if is_admin:
+        # รวมสต็อกแยกตามสาขา เพื่อลดการ query ซ้ำทีละสาขา
         stock_by_location = {
             row["location_id"]: row["total_stock"] or 0
             for row in ProductLocation.objects.values("location_id").annotate(
@@ -288,6 +268,7 @@ def dashboard(request):
             )
         }
 
+        # นับการจองที่รอรับแยกตามสาขา
         reservations_by_location = {
             row["location_id"]: row["total"]
             for row in Reservation.objects.filter(
@@ -295,6 +276,7 @@ def dashboard(request):
             ).values("location_id").annotate(total=Count("pk"))
         }
 
+        # รวมชื่อและข้อมูลสาขาเข้ากับยอดสต็อกและรายการจอง
         for loc in Location.objects.all():
             locations_summary.append({
                 "location": {
@@ -307,6 +289,7 @@ def dashboard(request):
                 "active_reservations": reservations_by_location.get(loc.pk, 0),
             })
 
+    # ส่งข้อมูลทั้งหมดที่หน้า dashboard ใช้ไปแสดงผล
     context = {
         "is_admin": is_admin,
         "user_location": user_location,
