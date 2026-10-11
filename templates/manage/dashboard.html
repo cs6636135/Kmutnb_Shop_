@@ -1,4 +1,3 @@
-
 {% extends "base_manage.html" %}
 
 {% block title %}ภาพรวมการจัดการ | KMUTNB SHOP{% endblock %}
@@ -11,20 +10,25 @@
         <header class="relative isolate overflow-hidden rounded-3xl bg-[#30415D] px-6 py-7 text-white shadow-xl sm:px-9 sm:py-9">
             <div aria-hidden="true" class="absolute -right-12 -top-24 -z-10 h-72 w-72 rounded-full border-[36px] border-white/5"></div>
             <div aria-hidden="true" class="absolute -bottom-24 right-36 -z-10 h-48 w-48 rounded-full bg-[#F47745]/20 blur-2xl"></div>
+
             <div class="flex flex-col gap-7">
                 <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
                     <div class="flex min-w-0 items-center gap-4">
                         <span class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#F47745] text-2xl font-bold text-white shadow-lg shadow-black/10">
                             {{ user.username|slice:":1"|upper }}
                         </span>
+
                         <div class="min-w-0">
-                            <p class="text-xs font-bold uppercase tracking-[0.18em] text-[#F9A27F]">KMUTNB SHOP · MANAGEMENT</p>
+                            <p class="text-xs font-bold uppercase tracking-[0.18em] text-[#F9A27F]">
+                                KMUTNB SHOP · MANAGEMENT
+                            </p>
                             <h1 class="mt-1 truncate text-2xl font-bold sm:text-3xl">
                                 สวัสดี, {{ user.get_full_name|default:user.username }}
                             </h1>
                             <p class="mt-1 text-sm text-white/65">@{{ user.username }}</p>
                         </div>
                     </div>
+
                     <span class="w-fit rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-xs font-bold tracking-wide text-white">
                         {% if is_admin %}ADMIN{% else %}STAFF{% endif %}
                     </span>
@@ -35,21 +39,33 @@
                         <p class="text-xs text-white/55">รหัสบัญชี</p>
                         <p class="mt-1 font-semibold">{{ user.id }}</p>
                     </div>
+
                     <div>
                         <p class="text-xs text-white/55">ชื่อ</p>
                         <p class="mt-1 truncate font-semibold">{{ user.first_name|default:"ไม่ระบุ" }}</p>
                     </div>
+
                     <div>
                         <p class="text-xs text-white/55">นามสกุล</p>
                         <p class="mt-1 truncate font-semibold">{{ user.last_name|default:"ไม่ระบุ" }}</p>
                     </div>
+
                     <div>
                         <p class="text-xs text-white/55">สิทธิ์การใช้งาน</p>
-                        <p class="mt-1 truncate font-semibold">{% if is_admin %}ผู้ดูแลระบบ{% else %}พนักงานประจำสาขา{% endif %}</p>
+                        <p class="mt-1 truncate font-semibold">
+                            {% if is_admin %}ผู้ดูแลระบบ{% else %}พนักงานประจำสาขา{% endif %}
+                        </p>
                     </div>
+
                     <div class="col-span-2 sm:col-span-1">
                         <p class="text-xs text-white/55">จุดจำหน่ายประจำ</p>
-                        <p class="mt-1 truncate font-semibold">{% if is_admin %}ทุกจุดจำหน่าย{% else %}{{ user_location.name|default:"ไม่ระบุ" }}{% endif %}</p>
+                        <p class="mt-1 truncate font-semibold">
+                            {% if is_admin %}
+                                ทุกจุดจำหน่าย
+                            {% else %}
+                                {{ user_location.name|default:"ไม่ระบุ" }}
+                            {% endif %}
+                        </p>
                     </div>
                 </div>
             </div>
@@ -57,29 +73,36 @@
 
         <!-- Statistics -->
         <section aria-labelledby="stats-heading">
-            <div class="mb-4 flex items-end justify-between gap-4">
-                <div>
-                    <p class="text-xs font-bold uppercase tracking-[0.14em] text-[#F47745]">AT A GLANCE</p>
-                    <h2 id="stats-heading" class="mt-1 text-xl font-bold">ภาพรวมวันนี้</h2>
-                </div>
+            <div class="mb-4">
+                <p class="text-xs font-bold uppercase tracking-[0.14em] text-[#F47745]">
+                    AT A GLANCE
+                </p>
+                <h2 id="stats-heading" class="mt-1 text-xl font-bold">ภาพรวมวันนี้</h2>
             </div>
+
             <div class="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+
                 <div class="relative overflow-hidden rounded-2xl bg-[#F47745] p-5 text-white shadow-lg shadow-[#F47745]/15 sm:p-6">
                     <div aria-hidden="true" class="absolute -right-5 -top-8 h-24 w-24 rounded-full border-[14px] border-white/10"></div>
                     <p class="relative text-sm font-medium text-white/80">จองรอรับ</p>
                     <p class="relative mt-3 text-4xl font-bold tracking-tight">{{ active_reservations }}</p>
                     <p class="relative mt-1 text-xs text-white/70">รายการที่ยังรอรับสินค้า</p>
                 </div>
+
                 <div class="rounded-2xl border border-[#30415D]/10 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:p-6">
-                    <p class="text-sm font-medium text-[#30415D]/60">{% if is_admin %}สต็อกรวมทุกสาขา{% else %}สต็อกสาขาคุณ{% endif %}</p>
+                    <p class="text-sm font-medium text-[#30415D]/60">
+                        {% if is_admin %}สต็อกรวมทุกสาขา{% else %}สต็อกสาขาคุณ{% endif %}
+                    </p>
                     <p class="mt-3 text-4xl font-bold tracking-tight">{{ total_units_stock }}</p>
                     <p class="mt-1 text-xs text-[#30415D]/45">ชิ้นคงเหลือ</p>
                 </div>
+
                 <div class="rounded-2xl border border-[#30415D]/10 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:p-6">
                     <p class="text-sm font-medium text-[#30415D]/60">รับสินค้าแล้ววันนี้</p>
                     <p class="mt-3 text-4xl font-bold tracking-tight text-emerald-700">{{ picked_up_today }}</p>
                     <p class="mt-1 text-xs text-[#30415D]/45">รายการที่ปิดสำเร็จ</p>
                 </div>
+
                 <div class="rounded-2xl border border-[#30415D]/10 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:p-6">
                     <p class="text-sm font-medium text-[#30415D]/60">หมดเวลา · สะสม</p>
                     <p class="mt-3 text-4xl font-bold tracking-tight text-slate-500">{{ expired_reservations }}</p>
@@ -88,74 +111,248 @@
             </div>
         </section>
 
-        <!-- Location summary (admin only) -->
-        {% if is_admin and locations_summary %}
-        <section aria-labelledby="loc-heading">
-            <div class="mb-4 flex items-end justify-between gap-4">
-                <div>
-                    <p class="text-xs font-bold uppercase tracking-[0.14em] text-[#F47745]">LOCATIONS</p>
-                    <h2 id="loc-heading" class="mt-1 text-xl font-bold">สรุปตามจุดจำหน่าย</h2>
-                </div>
-                <span class="shrink-0 text-xs font-medium text-[#30415D]/50">{{ locations_summary|length }} จุด</span>
-            </div>
-            <div class="overflow-hidden rounded-2xl border border-[#30415D]/10 bg-white shadow-sm">
-                <div class="overflow-x-auto bg-[#30415D]">
-                    <table class="w-full table-fixed text-left text-sm">
-                        <colgroup>
-                            <col class="w-1/2">
-                            <col class="w-1/4">
-                            <col class="w-1/4">
-                        </colgroup>
-                        <thead class="bg-[#30415D] text-white">
-                            <tr>
-                                <th scope="col" class="break-words px-3 py-3 font-semibold sm:px-5">จุดจำหน่าย</th>
-                                <th scope="col" class="break-words px-2 py-3 text-right text-xs font-semibold leading-tight sm:px-5 sm:text-sm">คงเหลือ<span class="mt-0.5 block text-[10px] font-normal text-white/65 sm:text-xs">(ชิ้น)</span></th>
-                                <th scope="col" class="break-words px-2 py-3 text-right text-xs font-semibold leading-tight sm:px-5 sm:text-sm">รอรับ<span class="mt-0.5 block text-[10px] font-normal text-white/65 sm:text-xs">(รายการ)</span></th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
-                <div class="max-h-80 overflow-auto overscroll-contain">
-                    <table class="w-full table-fixed text-left text-sm">
-                        <colgroup>
-                            <col class="w-1/2">
-                            <col class="w-1/4">
-                            <col class="w-1/4">
-                        </colgroup>
-                        <tbody class="divide-y divide-[#30415D]/[0.08]">
-                            {% for row in locations_summary %}
-                            <tr class="transition hover:bg-[#F8F5F0]/70">
-                                <th scope="row" class="break-words px-3 py-4 text-left font-semibold sm:px-5">
-                                    <span class="block break-words">{{ row.location.name }}</span>
-                                    <span class="mt-1 hidden break-words text-xs font-normal text-[#30415D]/50 sm:block">
-                                        {{ row.location.building }}{% if row.location.floor %} · ชั้น {{ row.location.floor }}{% endif %}{% if row.location.room %} · ห้อง {{ row.location.room }}{% endif %}
-                                    </span>
-                                </th>
-                                <td class="break-words px-2 py-4 text-right text-sm font-semibold tabular-nums sm:px-5 sm:text-base">
-                                    {{ row.total_stock }}
-                                </td>
-                                <td class="break-words px-2 py-4 text-right text-sm font-bold text-[#F47745] tabular-nums sm:px-5 sm:text-base">
-                                    {{ row.active_reservations }}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-        {% endif %}
+        
+<!-- Location summary (admin only) -->
+{% if is_admin and locations_summary %}
+<section aria-labelledby="loc-heading">
+    <div class="mb-4 flex items-end justify-between gap-4">
+        <div>
+            <p class="text-xs font-bold uppercase tracking-wider text-[#F47745]">
+                LOCATIONS
+            </p>
+            <h2 id="loc-heading" class="mt-1 text-xl font-bold text-[#30415D]">
+                สรุปตามจุดจำหน่าย
+            </h2>
+        </div>
+
+        <span class="shrink-0 text-xs font-medium text-[#30415D]/60">
+            {{ locations_summary|length }} จุด
+        </span>
+    </div>
+
+    <div class="rounded-2xl border border-[#30415D]/10 bg-white p-4 shadow-sm sm:p-6">
+
+        <!-- Legend -->
+        <div class="mb-5 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+            <span class="flex items-center gap-2">
+                <span class="h-3 w-3 rounded-sm bg-[#30415D]"></span>
+                <span class="text-[#30415D]">สินค้าคงเหลือ (ชิ้น)</span>
+            </span>
+
+            <span class="flex items-center gap-2">
+                <span class="h-3 w-3 rounded-sm bg-[#F47745]"></span>
+                <span class="text-[#30415D]">รายการรอรับ</span>
+            </span>
+        </div>
+
+        <!-- Chart -->
+        <div class="relative w-full" style="height: 360px;">
+            <canvas
+                id="locationsSummaryChart"
+                role="img"
+                aria-label="กราฟแท่งแสดงสินค้าคงเหลือและรายการจองรอรับ แยกตามจุดจำหน่าย">
+            </canvas>
+        </div>
+
+        <!-- Error message -->
+        <p
+            id="chartError"
+            class="mt-3 hidden text-sm text-red-600"
+            role="alert">
+        </p>
+    </div>
+</section>
+
+<!-- Django converts the data to valid JSON -->
+{{ locations_summary|json_script:"locations-summary-data" }}
+
+<!-- Load Chart.js before initializing the chart -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+
+<script>
+(function () {
+    function initChart() {
+        const dataElement = document.getElementById("locations-summary-data");
+        const canvas = document.getElementById("locationsSummaryChart");
+        const errorElement = document.getElementById("chartError");
+
+        function showError(message) {
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.classList.remove("hidden");
+            }
+            console.error("[Locations Chart]", message);
+        }
+
+        if (!dataElement || !canvas) {
+            showError("ไม่พบองค์ประกอบสำหรับแสดงกราฟ");
+            return;
+        }
+
+        if (typeof Chart === "undefined") {
+            showError("โหลด Chart.js ไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต");
+            return;
+        }
+
+        let rows;
+
+        try {
+            rows = JSON.parse(dataElement.textContent);
+        } catch (error) {
+            showError("อ่านข้อมูลกราฟไม่สำเร็จ กรุณาตรวจสอบข้อมูล JSON");
+            console.error(error);
+            return;
+        }
+
+        if (!Array.isArray(rows) || rows.length === 0) {
+            showError("ไม่มีข้อมูลจุดจำหน่ายสำหรับแสดงกราฟ");
+            return;
+        }
+
+        // Prevent duplicate chart initialization
+        const existingChart = Chart.getChart(canvas);
+        if (existingChart) {
+            existingChart.destroy();
+        }
+
+        const labels = rows.map(row =>
+            row.location && row.location.name
+                ? row.location.name
+                : "ไม่ระบุชื่อ"
+        );
+
+        const stockData = rows.map(row =>
+            Number(row.total_stock) || 0
+        );
+
+        const reservationData = rows.map(row =>
+            Number(row.active_reservations) || 0
+        );
+
+        try {
+            new Chart(canvas, {
+                type: "bar",
+
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: "สินค้าคงเหลือ (ชิ้น)",
+                            data: stockData,
+                            backgroundColor: "#30415D",
+                            borderRadius: 5,
+                            maxBarThickness: 45
+                        },
+                        {
+                            label: "รายการรอรับ",
+                            data: reservationData,
+                            backgroundColor: "#F47745",
+                            borderRadius: 5,
+                            maxBarThickness: 45
+                        }
+                    ]
+                },
+
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+
+                    interaction: {
+                        mode: "index",
+                        intersect: false
+                    },
+
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+
+                        tooltip: {
+                            backgroundColor: "#30415D",
+                            titleColor: "#FFFFFF",
+                            bodyColor: "#FFFFFF",
+                            padding: 12,
+                            cornerRadius: 8
+                        }
+                    },
+
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+
+                            ticks: {
+                                color: "#30415D",
+                                autoSkip: false,
+                                maxRotation: 45,
+                                minRotation: 0
+                            },
+
+                            border: {
+                                display: false
+                            }
+                        },
+
+                        y: {
+                            beginAtZero: true,
+
+                            ticks: {
+                                precision: 0,
+                                color: "#30415D"
+                            },
+
+                            grid: {
+                                color: "rgba(48, 65, 93, 0.08)"
+                            },
+
+                            border: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        } catch (error) {
+            showError("สร้างกราฟไม่สำเร็จ กรุณาตรวจสอบ Console");
+            console.error(error);
+        }
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initChart, {
+            once: true
+        });
+    } else {
+        initChart();
+    }
+})();
+</script>
+{% endif %}
+
 
         <!-- Recent reservations and low stock -->
         <div class="grid grid-cols-1 items-start gap-6 xl:grid-cols-12">
+
+            <!-- Recent reservations -->
             <section class="min-w-0 xl:col-span-9" aria-labelledby="recent-heading">
                 <div class="mb-4 flex items-end justify-between gap-4">
                     <div>
-                        <p class="text-xs font-bold uppercase tracking-[0.14em] text-[#F47745]">LATEST ACTIVITY</p>
-                        <h2 id="recent-heading" class="mt-1 text-xl font-bold">รายการจองล่าสุด</h2>
+                        <p class="text-xs font-bold uppercase tracking-[0.14em] text-[#F47745]">
+                            LATEST ACTIVITY
+                        </p>
+                        <h2 id="recent-heading" class="mt-1 text-xl font-bold">
+                            รายการจองล่าสุด
+                        </h2>
                     </div>
-                    <a href="{% url 'reservation_list' %}" class="shrink-0 rounded-full border border-[#F47745]/25 bg-white px-4 py-2 text-sm font-semibold text-[#F47745] transition hover:bg-[#F47745] hover:text-white">ดูทั้งหมด <span aria-hidden="true">→</span></a>
+
+                    <a
+                        href="{% url 'reservation_list' %}"
+                        class="shrink-0 rounded-full border border-[#F47745]/25 bg-white px-4 py-2 text-sm font-semibold text-[#F47745] transition hover:bg-[#F47745] hover:text-white">
+                        ดูทั้งหมด <span aria-hidden="true">→</span>
+                    </a>
                 </div>
+
                 <div class="overflow-hidden rounded-2xl border border-[#30415D]/10 bg-white shadow-sm">
                     <div class="overflow-x-auto">
                         <table class="w-full min-w-[700px] text-left text-sm">
@@ -163,33 +360,64 @@
                                 <tr>
                                     <th scope="col" class="px-5 py-4 font-semibold">รายการจอง</th>
                                     <th scope="col" class="px-5 py-4 font-semibold">สินค้า</th>
-                                    {% if is_admin %}<th scope="col" class="px-5 py-4 font-semibold">จุดรับ</th>{% endif %}
+                                    {% if is_admin %}
+                                    <th scope="col" class="px-5 py-4 font-semibold">จุดรับ</th>
+                                    {% endif %}
                                     <th scope="col" class="whitespace-nowrap px-5 py-4 font-semibold">เวลาจอง</th>
                                     <th scope="col" class="px-5 py-4 font-semibold">สถานะ</th>
                                 </tr>
                             </thead>
+
                             <tbody class="divide-y divide-[#30415D]/[0.08]">
                                 {% for r in recent_reservations %}
                                 <tr class="transition hover:bg-[#F8F5F0]/70">
                                     <td class="max-w-48 px-5 py-4">
-                                        <p class="break-all font-mono text-xs font-semibold">{{ r.reservation_code }}</p>
-                                        <p class="mt-1 text-xs text-[#30415D]/55">ลูกค้า {{ r.customer_id }}</p>
+                                        <p class="break-all font-mono text-xs font-semibold">
+                                            {{ r.reservation_code }}
+                                        </p>
+                                        <p class="mt-1 text-xs text-[#30415D]/55">
+                                            ลูกค้า {{ r.customer_id }}
+                                        </p>
                                     </td>
+
                                     <td class="px-5 py-4">
                                         <p class="font-medium">{{ r.product.name }}</p>
-                                        <p class="mt-1 text-xs text-[#30415D]/55">จำนวน {{ r.quantity }} ชิ้น</p>
+                                        <p class="mt-1 text-xs text-[#30415D]/55">
+                                            จำนวน {{ r.quantity }} ชิ้น
+                                        </p>
                                     </td>
-                                    {% if is_admin %}<td class="px-5 py-4 text-[#30415D]/70">{{ r.location.name }}</td>{% endif %}
-                                    <td class="whitespace-nowrap px-5 py-4 text-xs text-[#30415D]/65">{{ r.reserved_at|date:"d/m/Y H:i" }}</td>
+
+                                    {% if is_admin %}
+                                    <td class="px-5 py-4 text-[#30415D]/70">
+                                        {{ r.location.name }}
+                                    </td>
+                                    {% endif %}
+
+                                    <td class="whitespace-nowrap px-5 py-4 text-xs text-[#30415D]/65">
+                                        {{ r.reserved_at|date:"d/m/Y H:i" }}
+                                    </td>
+
                                     <td class="px-5 py-4">
-                                        <span class="inline-flex whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold {% if r.status == 'pending' %}bg-[#F47745]/10 text-[#c9572c]{% elif r.status == 'picked_up' %}bg-emerald-50 text-emerald-700{% elif r.status == 'expired' %}bg-slate-100 text-slate-600{% else %}bg-red-50 text-red-700{% endif %}">
-                                            {{ r.get_status_display }}
-                                        </span>
+                                        <span class="inline-flex items-center whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold
+    {% if r.status == 'pending' %}
+        bg-amber-50 text-amber-800 ring-1 ring-inset ring-amber-600/20
+    {% elif r.status == 'picked_up' %}
+        bg-emerald-50 text-emerald-800 ring-1 ring-inset ring-emerald-600/20
+    {% elif r.status == 'expired' %}
+        bg-slate-100 text-slate-700 ring-1 ring-inset ring-slate-500/20
+    {% else %}
+        bg-red-50 text-red-800 ring-1 ring-inset ring-red-600/20
+    {% endif %}">
+    {{ r.get_status_display }}
+</span>
                                     </td>
                                 </tr>
+
                                 {% empty %}
                                 <tr>
-                                    <td colspan="{% if is_admin %}5{% else %}4{% endif %}" class="px-5 py-10 text-center text-sm text-[#30415D]/55">
+                                    <td
+                                        colspan="{% if is_admin %}5{% else %}4{% endif %}"
+                                        class="px-5 py-10 text-center text-sm text-[#30415D]/55">
                                         ยังไม่มีรายการจอง
                                     </td>
                                 </tr>
@@ -200,25 +428,45 @@
                 </div>
             </section>
 
+            <!-- Low stock -->
             <section class="xl:col-span-3" aria-labelledby="low-heading">
                 <div class="mb-4">
-                    <p class="text-xs font-bold uppercase tracking-[0.14em] text-[#F47745]">STOCK ALERT</p>
+                    <p class="text-xs font-bold uppercase tracking-[0.14em] text-[#F47745]">
+                        STOCK ALERT
+                    </p>
                     <h2 id="low-heading" class="mt-1 text-xl font-bold">สินค้าใกล้หมด</h2>
                     <p class="mt-1 text-sm text-[#30415D]/55">เหลือไม่เกิน 5 ชิ้น</p>
                 </div>
+
                 <div class="space-y-3">
                     {% for item in low_stocks %}
                     <div class="flex items-center justify-between gap-3 rounded-2xl border border-[#30415D]/10 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
                         <div class="min-w-0">
-                            <p class="truncate text-sm font-semibold">{{ item.product.name }}</p>
-                            {% if is_admin %}<p class="mt-0.5 truncate text-xs text-[#30415D]/55">{{ item.location.name }}</p>{% endif %}
+                            <p class="truncate text-sm font-semibold">
+                                {{ item.product.name }}
+                            </p>
+
+                            {% if is_admin %}
+                            <p class="mt-0.5 truncate text-xs text-[#30415D]/55">
+                                {{ item.location.name }}
+                            </p>
+                            {% endif %}
                         </div>
-                        <span class="shrink-0 rounded-full px-3 py-1 text-xs font-bold {% if item.stock == 0 %}bg-red-100 text-red-700{% else %}bg-[#F47745]/10 text-[#c9572c]{% endif %}">
+
+                        <span class="shrink-0 rounded-full px-3 py-1 text-xs font-bold
+                            {% if item.stock == 0 %}
+                                bg-red-100 text-red-700
+                            {% else %}
+                                bg-[#F47745]/10 text-[#c9572c]
+                            {% endif %}">
                             {{ item.stock }} ชิ้น
                         </span>
                     </div>
+
                     {% empty %}
-                    <p class="rounded-2xl border border-dashed border-[#30415D]/20 bg-white px-5 py-8 text-center text-sm text-[#30415D]/55">ไม่มีสินค้าสต็อกต่ำ</p>
+                    <p class="rounded-2xl border border-dashed border-[#30415D]/20 bg-white px-5 py-8 text-center text-sm text-[#30415D]/55">
+                        ไม่มีสินค้าสต็อกต่ำ
+                    </p>
                     {% endfor %}
                 </div>
             </section>

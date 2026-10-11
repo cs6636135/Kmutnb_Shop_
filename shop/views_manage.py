@@ -277,15 +277,17 @@ def dashboard(request):
     # ---------- สินค้าใกล้หมด (<= 5 ชิ้น) เรียงน้อยไปมาก 6 รายการ ----------
     low_stocks = stocks.filter(stock__lte=5).order_by("stock")[:6]
 
-    # ---------- สรุปรายสาขา (เฉพาะ admin) ----------
+     # ---------- สรุปรายสาขา (เฉพาะ admin) ----------
     locations_summary = []
+
     if is_admin:
         stock_by_location = {
-            row["location_id"]: row["total_stock"]
+            row["location_id"]: row["total_stock"] or 0
             for row in ProductLocation.objects.values("location_id").annotate(
                 total_stock=Sum("stock")
             )
         }
+
         reservations_by_location = {
             row["location_id"]: row["total"]
             for row in Reservation.objects.filter(
@@ -295,7 +297,12 @@ def dashboard(request):
 
         for loc in Location.objects.all():
             locations_summary.append({
-                "location": loc,
+                "location": {
+                    "name": loc.name,
+                    "building": loc.building,
+                    "floor": loc.floor,
+                    "room": loc.room,
+                },
                 "total_stock": stock_by_location.get(loc.pk, 0),
                 "active_reservations": reservations_by_location.get(loc.pk, 0),
             })
