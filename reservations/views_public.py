@@ -121,8 +121,6 @@ def reservation_confirmation(request, reservation_code):
 		Reservation.objects.select_related("product", "location"),
 		reservation_code=reservation_code,
 	)
-    #ตรวจและคืนสต็อกก่อนสร้างรายการจองใหม่ trigger
-	expire_overdue_reservations(product_id=reservation.product_id)
 
 	reservation.refresh_from_db()
 	return render(request, "reservations/confirmation.html", {

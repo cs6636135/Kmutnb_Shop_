@@ -1,5 +1,3 @@
-import re
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from accounts.permission import role_required
@@ -244,7 +242,7 @@ def dashboard(request):
         status=Reservation.Status.EXPIRED
     ).count()
 
-    # นับรายการที่รับสินค้าแล้วในวันนี้ตามเวลาท้องถิ่นของระบบ
+    # นับรายการที่รับสินค้าแล้วในวันนี้ตามเวลาท้องถิ่น
     today = timezone.localdate()
     picked_up_today = reservations.filter(
         status=Reservation.Status.PICKED_UP,
@@ -257,39 +255,30 @@ def dashboard(request):
     # ดึงสินค้าที่เหลือไม่เกิน 5 ชิ้น เรียงจากเหลือน้อยไปมาก ไม่เกิน 6 รายการ
     low_stocks = stocks.filter(stock__lte=5).order_by("stock")[:6]
 
-    # เตรียมสรุปสาขาไว้สำหรับ admin เท่านั้น
+    # สรุปสต็อกและการจองแยกตามสาขาสำหรับ admin
     locations_summary = []
     if is_admin:
-        # รวมสต็อกแยกตามสาขา เพื่อลดการ query ซ้ำทีละสาขา
         stock_by_location = {
-            row["location_id"]: row["total_stock"] or 0
+            row["location_id"]: row["total"] or 0
             for row in ProductLocation.objects.values("location_id").annotate(
-                total_stock=Sum("stock")
+                total=Sum("stock")
             )
         }
-
-        # นับการจองที่รอรับแยกตามสาขา
         reservations_by_location = {
             row["location_id"]: row["total"]
             for row in Reservation.objects.filter(
                 status=Reservation.Status.PENDING
             ).values("location_id").annotate(total=Count("pk"))
         }
+        locations_summary = [
+            {
+                "location": {"name": location.name},
+                "total_stock": stock_by_location.get(location.pk, 0),
+                "active_reservations": reservations_by_location.get(location.pk, 0),
+            }
+            for location in Location.objects.all()
+        ]
 
-        # รวมชื่อและข้อมูลสาขาเข้ากับยอดสต็อกและรายการจอง
-        for loc in Location.objects.all():
-            locations_summary.append({
-                "location": {
-                    "name": loc.name,
-                    "building": loc.building,
-                    "floor": loc.floor,
-                    "room": loc.room,
-                },
-                "total_stock": stock_by_location.get(loc.pk, 0),
-                "active_reservations": reservations_by_location.get(loc.pk, 0),
-            })
-
-    # ส่งข้อมูลทั้งหมดที่หน้า dashboard ใช้ไปแสดงผล
     context = {
         "is_admin": is_admin,
         "user_location": user_location,
