@@ -3,6 +3,7 @@ from io import BytesIO
 from unittest.mock import patch
 
 from django.test import TestCase
+from django.test import override_settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -165,7 +166,7 @@ class ProductFormTest(TestCase):
             "https://example.supabase.co/storage/v1/object/public/"
             "img/products/test.jpg"
         )
-        upload_image.return_value = ("products/test.jpg", expected_url)
+        upload_image.return_value = expected_url
         form = ProductModelForm(data=self.make_data(), files={"image": image})
 
         self.assertTrue(form.is_valid(), form.errors)
@@ -195,7 +196,7 @@ class ProductFormTest(TestCase):
     @patch("shop.form.upload_image")
     def test_upload_rejects_invalid_supabase_url(self, upload_image):
         image = self.make_image_upload()
-        upload_image.return_value = ("products/test.jpg", "not-a-url")
+        upload_image.return_value = "not-a-url"
         form = ProductModelForm(data=self.make_data(), files={"image": image})
 
         self.assertTrue(form.is_valid(), form.errors)
@@ -208,7 +209,7 @@ class ProductFormTest(TestCase):
         image = self.make_image_upload()
         base_url = "https://example.supabase.co/"
         overlong_url = base_url + "a" * (256 - len(base_url))
-        upload_image.return_value = ("products/test.jpg", overlong_url)
+        upload_image.return_value = overlong_url
         form = ProductModelForm(data=self.make_data(), files={"image": image})
 
         self.assertTrue(form.is_valid(), form.errors)
@@ -469,7 +470,7 @@ class CategoryManagementTest(TestCase):
 
         self.assertRedirects(response, reverse("categories"))
         self.assertTrue(Category.objects.filter(pk=category.pk).exists())
-        self.assertContains(response, "ไม่สามารถลบหมวดหมู่สินค้าที่มีสินค้าใช้งานอยู่ได้")
+        self.assertContains(response, "ไม่สามารถลบหมวดหมู่ได้ เนื่องจากยังมีข้อมูลที่เกี่ยวข้องอยู่")
 
 
 class DashboardTest(TestCase):
@@ -503,3 +504,38 @@ class DashboardTest(TestCase):
         self.assertFalse(response.context["is_admin"])
         self.assertContains(response, "Main building")
         self.assertEqual(response.context["locations_summary"], [])
+
+
+@override_settings(DEBUG=False)
+class NotFoundBehaviorTest(TestCase):
+    def test_unknown_url_displays_custom_404_page(self):
+        response = self.client.get("/manage/unknown-page/")
+
+        self.assertEqual(response.status_code, 404)
+        self.assertContains(response, "ไม่พบหน้าที่ต้องการ", status_code=404)
+
+    def test_missing_product_displays_custom_404_page(self):
+        response = self.client.get(
+            reverse("product_detail", kwargs={"product_id": 999999})
+        )
+
+        self.assertEqual(response.status_code, 404)
+        self.assertContains(response, "ไม่พบหน้าที่ต้องการ", status_code=404)
+
+    def test_product_search_without_results_stays_on_search_page(self):
+        response = self.client.get(
+            reverse("public_products"),
+            {"q": "สินค้าที่ไม่มีอยู่จริง"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "ไม่พบสินค้าที่ตรงกับเงื่อนไข")
+
+    def test_unknown_reservation_code_stays_on_status_page(self):
+        response = self.client.post(
+            reverse("reservation_status"),
+            {"reservation_code": "UNKNOWN-RESERVATION"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "ไม่พบรายการจองจากรหัสที่ระบุ")

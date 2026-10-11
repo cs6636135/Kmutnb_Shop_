@@ -1,5 +1,4 @@
 from django.forms import ModelForm 
-from django.forms.widgets import TextInput
 from .models import Product,Location,Category
 from django.core.exceptions import ValidationError
 from django import forms
@@ -32,7 +31,7 @@ class ImageUpload:
         image = self.cleaned_data.get("image")
         if image:
             try:
-                path, url = upload_image(image, folder=self.image_folder)
+                 url = upload_image(image, folder=self.image_folder)
             except Exception:
                 raise ValidationError("อัปโหลดรูปไม่สำเร็จ กรุณาลองใหม่")
             obj.image_url = obj._meta.get_field("image_url").clean(url, obj) #ใช้ของโมเดลมาคลีน
@@ -44,8 +43,6 @@ class CleanName:
     # ลบอักขระล่องหน (\u200b, \ufeff) ที่ติดมาตอน copy/paste แล้วตัดช่องว่างหัวท้าย
     # เช่น "Iphone\u200b17" -> "Iphone17"   (\u200b = zero-width space)
     # "\ufeffIphone 17" -> "Iphone 17" (\ufeff = BOM)
-    name_required_msg = "กรุณากรอกชื่อ"
-
     def clean_name(self):
         name = (self.cleaned_data["name"].replace("\u200b", "").replace("\ufeff", "").strip())
         if not name:
@@ -77,6 +74,25 @@ class ProductModelForm(ImageUpload, CleanName, ModelForm):
             "reservable": forms.RadioSelect(),
             "category": forms.Select(attrs={"class": SELECT}),
         }
+        error_messages = {
+            "name": {
+                "required": "กรุณากรอกชื่อสินค้า",
+                "unique": "มีสินค้าชื่อนี้อยู่แล้ว",
+                "max_length": "ชื่อสินค้ายาวเกินไป (ไม่เกิน 150 ตัวอักษร)",
+            },
+            "price": {
+                "required": "กรุณากรอกราคา",
+                "invalid": "กรุณากรอกราคาเป็นตัวเลข",
+                "min_value": "ราคาต้องไม่ติดลบ",
+                "max_digits": "ราคาต้องมีตัวเลขไม่เกิน 10 หลัก",
+                "max_decimal_places": "ราคาทศนิยมได้ไม่เกิน 2 ตำแหน่ง",
+                "max_whole_digits": "ราคาสูงเกินไป",
+            },
+            "category": {
+                "required": "กรุณาเลือกหมวดหมู่สินค้า",
+                "invalid_choice": "หมวดหมู่ที่เลือกไม่ถูกต้อง",
+            },
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -84,7 +100,6 @@ class ProductModelForm(ImageUpload, CleanName, ModelForm):
 
 
 class LocationModelForm(ImageUpload, CleanName, ModelForm):
-    name_required_msg = "กรุณากรอกชื่อจุดจำหน่าย"
     image_folder = "locations"
 
     class Meta:
@@ -104,9 +119,24 @@ class LocationModelForm(ImageUpload, CleanName, ModelForm):
             "room": forms.TextInput(attrs={"class": INPUT, "placeholder": "ห้อง"}),
             "description": forms.Textarea(attrs={"class": INPUT, "placeholder": "รายละเอียดจุดจำหน่าย", "rows": 4}),
         }
+        error_messages = {
+            "name": {
+                "required": "กรุณากรอกชื่อจุดจำหน่าย",
+                "max_length": "ชื่อจุดจำหน่ายยาวเกินไป (ไม่เกิน 150 ตัวอักษร)",
+            },
+            "building": {
+                "required": "กรุณากรอกชื่อตึก",
+                "max_length": "ชื่อตึกยาวเกินไป (ไม่เกิน 100 ตัวอักษร)",
+            },
+            "floor": {
+                "max_length": "ชั้นยาวเกินไป (ไม่เกิน 30 ตัวอักษร)",
+            },
+            "room": {
+                "max_length": "ชื่อห้องยาวเกินไป (ไม่เกิน 100 ตัวอักษร)",
+            },
+        }
 
-class CategoryModelForm(ModelForm,CleanName):
-    name_required_msg = "กรุณากรอกชื่อหมวดหมู่สินค้า"
+class CategoryModelForm(CleanName,ModelForm):
 
     class Meta:
         model = Category
@@ -118,4 +148,11 @@ class CategoryModelForm(ModelForm,CleanName):
         widgets = {
             "name": forms.TextInput(attrs={"class": INPUT, "placeholder": "ชื่อหมวดหมู่สินค้า"}),
             "description": forms.Textarea(attrs={"class": INPUT, "placeholder": "รายละเอียดหมวดหมู่สินค้า", "rows": 4}),
+        }
+        error_messages = {
+            "name": {
+                "required": "กรุณากรอกชื่อหมวดหมู่สินค้า",
+                "unique": "มีหมวดหมู่สินค้าชื่อนี้อยู่แล้ว",
+                "max_length": "ชื่อหมวดหมู่ยาวเกินไป (ไม่เกิน 100 ตัวอักษร)",
+            },
         }

@@ -33,11 +33,11 @@ def products(request):
             pk = request.POST.get("save")
             product = get_object_or_404(Product, pk=pk) if pk else None
             form = ProductModelForm(request.POST,request.FILES or None, instance=product)
-
+            #instance คือ
             if form.is_valid():
                 try:
-                    with transaction.atomic():
-                        form.save()
+                    with transaction.atomic(): #ถ้าล้มจะไปต่อได้
+                        form.save() #ในรุปถ้าเรียกแบบไม่มีค่า commit = true
                 except ValidationError as e:
                     # error จาก model (เช่น full_clean ใน save()) ใช้ข้อความจริง
                     form.add_error(None, e)
@@ -61,7 +61,7 @@ def products(request):
                 product.delete()
                 messages.success(request, "ลบสินค้าเรียบร้อยแล้ว")
             except ProtectedError:
-                messages.error(request, "ลบไม่ได้ เพราะสินค้านี้ยังถูกใช้งานอยู่")
+                messages.error(request, "ลบไม่ได้ เพราะสินค้านี้ยังถูกใช้งานอยู่") #เช่นเอาไปใช้จองอยู่
             return redirect("products")
 
     search_query = request.GET.get("q", "").strip()          # search
@@ -194,7 +194,7 @@ def categories(request):
             try:
                 category.delete()
             except ProtectedError:
-                messages.error(request, "ไม่สามารถลบหมวดหมู่สินค้าที่มีสินค้าใช้งานอยู่ได้")
+                messages.error(request, "ไม่สามารถลบหมวดหมู่ได้ เนื่องจากยังมีข้อมูลที่เกี่ยวข้องอยู่")
                 return redirect("categories")
             messages.success(request, "ลบหมวดหมู่สินค้าเรียบร้อยแล้ว")
             return redirect("categories")
@@ -235,7 +235,7 @@ def expire_overdue_reservations():
             r.status = Reservation.Status.EXPIRED
             r.save()
 
-
+#ทำให้เร็ว
 @role_required("admin", "staff")
 def dashboard(request):
     user = request.user
