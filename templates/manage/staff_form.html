@@ -1,0 +1,26 @@
+{% extends "base_manage.html" %}
+
+{% block title %}{% if staff %}แก้ไขบัญชี Staff{% else %}เพิ่มบัญชี Staff{% endif %} | KMUTNB SHOP{% endblock %}
+
+{% block content %}
+<main class="min-h-[calc(100vh-4rem)] bg-[#F8F5F0] text-[#30415D]">
+    <div class="mx-auto max-w-3xl px-6 py-10 lg:px-8">
+
+        {% if staff %}
+            {% include "manage/partials/page_header.html" with heading="แก้ไขบัญชี Staff" subtitle=staff.username link_url="staffs" link_label="← กลับรายการบัญชี Staff" %}
+        {% else %}
+            {% include "manage/partials/page_header.html" with heading="เพิ่มบัญชี Staff" subtitle="กรอกข้อมูลบัญชี Staff" link_url="staffs" link_label="← กลับรายการบัญชี Staff" %}
+        {% endif %}
+
+        <section class="py-8">
+            <form method="post" enctype="multipart/form-data" novalidate
+                  class="rounded-lg border border-[#30415D]/10 bg-white p-6 sm:p-8">
+                {% csrf_token %}
+
+                {% include "manage/partials/form_content.html" with error_box_class="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800" list_url="staffs"%}
+            </form>
+        </section>
+
+    </div>
+</main>
+{% endblock %}

@@ -1,0 +1,46 @@
+<section class="pt-6" aria-labelledby="{{ heading_id }}">
+    <h2 id="{{ heading_id }}" class="mb-4 text-lg font-bold">{{ section_heading }}</h2>
+
+    <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end">
+        <form method="get" action="{% url list_url %}"
+              hx-get="{% url list_url %}"
+              hx-trigger="{% if show_category_filter %}input changed delay:150ms, change, search{% else %}input changed delay:150ms, search{% endif %}"
+              hx-select="#{{ results_id }}"
+              hx-target="#{{ results_id }}"
+              hx-swap="outerHTML"
+              hx-sync="this:replace"
+              hx-push-url="true"
+              class="w-full {% if show_category_filter %}sm:max-w-2xl{% else %}sm:max-w-md{% endif %}">
+            <div class="flex flex-col gap-3 sm:flex-row">
+                <div class="min-w-0 flex-1">
+                    <label for="{{ search_id }}" class="mb-1.5 block text-sm font-semibold">{{ search_label }}</label>
+                    <input id="{{ search_id }}" type="search" name="q" value="{{ search_query }}"
+                           placeholder="{{ search_placeholder }}" autocomplete="off"
+                           class="w-full rounded-lg border border-[#30415D]/20 bg-white px-4 py-2.5 text-sm outline-none transition placeholder:text-[#30415D]/40 focus:border-[#F47745] focus:ring-2 focus:ring-[#F47745]/20">
+                </div>
+                {% if show_category_filter %}
+                <div class="sm:w-52">
+                    <label for="product-category-filter" class="mb-1.5 block text-sm font-semibold">กรองตามหมวดหมู่</label>
+                    <select id="product-category-filter" name="category"
+                            class="w-full rounded-lg border border-[#30415D]/20 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-[#F47745] focus:ring-2 focus:ring-[#F47745]/20">
+                        <option value="">ทุกหมวดหมู่</option>
+                        {% for category in categories %}
+                        <option value="{{ category.pk }}" {% if category_query == category.pk|stringformat:"s" %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+            </div>
+        </form>
+
+        <form method="post"  action="{% url create_url %}" class="sm:ml-auto">
+            {% csrf_token %}
+            <button type="submit" 
+                    class="w-full whitespace-nowrap rounded-lg bg-[#30415D] px-4 py-2.5 text-sm font-semibold text-white hover:opacity-90 sm:w-auto">
+                + {{ add_label }}
+            </button>
+        </form>
+    </div>
+</section>

@@ -1,0 +1,13 @@
+<div class="{{ action_container_class }}">
+   <a href="{% url edit_url record_id %}"
+   class="{{ edit_button_class }} text-center">
+    แก้ไข
+   </a>
+    <form method="post" action="{% url delete_url record_id %}" onsubmit="return confirm('{{ delete_confirmation }}');">
+        {% csrf_token %}
+        <button type="submit"
+                class="{{ delete_button_class }}">
+            ลบ
+        </button>
+    </form>
+</div>

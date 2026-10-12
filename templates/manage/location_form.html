@@ -1,0 +1,25 @@
+{% extends "base_manage.html" %}
+
+{% block title %}{% if location %}แก้ไขจุดจำหน่าย{% else %}เพิ่มจุดจำหน่าย{% endif %} | KMUTNB SHOP{% endblock %}
+
+{% block content %}
+<main class="min-h-[calc(100vh-4rem)] bg-[#F8F5F0] text-[#30415D]">
+    <div class="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+        {% if location %}
+            {% include "manage/partials/page_header.html" with heading="แก้ไขจุดจำหน่าย" subtitle=location.name link_url="locations" link_label="← กลับรายการจุดจำหน่าย" %}
+        {% else %}
+            {% include "manage/partials/page_header.html" with heading="เพิ่มจุดจำหน่าย" subtitle="กรอกข้อมูลจุดจำหน่ายใหม่" link_url="locations" link_label="← กลับรายการจุดจำหน่าย" %}
+        {% endif %}
+
+        <section class="py-7 sm:py-8">
+            <form method="post" enctype="multipart/form-data" novalidate
+                  class="rounded-2xl border border-[#30415D]/10 bg-white p-4 shadow-sm sm:p-8">
+                {% csrf_token %}
+
+                {% include "manage/partials/form_content.html" with error_box_class="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800" preview_url=location.image_url preview_alt="ตัวอย่างรูปจุดจำหน่าย" preview_radius="rounded-xl" list_url="locations" %}
+            </form>
+        </section>
+    </div>
+</main>
+{% include "manage/partials/image_preview_script.html" %}
+{% endblock %}

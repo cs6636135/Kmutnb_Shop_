@@ -1,0 +1,43 @@
+{% if form.errors %}
+<div class="{{ error_box_class }}" role="alert">
+    <p class="mb-1 font-semibold">บันทึกไม่สำเร็จ กรุณาตรวจสอบข้อมูล</p>
+    <ul class="list-disc pl-5">
+        {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+    {% for field in form %}
+    <div class="{% if field.name == 'description' or field.name == 'image' %}sm:col-span-2{% endif %}">
+        <label for="{{ field.id_for_label }}" class="mb-1.5 block text-sm font-semibold">
+            {{ field.label }}
+            {% if field.field.required %}<span class="text-red-500">*</span>{% endif %}
+        </label>
+        {% if field.name == "image" %}
+            <img id="image-preview" src="{{ preview_url }}" alt="{{ preview_alt }}"
+                 class="mb-3 max-h-80 w-full {{ preview_radius }} border border-[#30415D]/10 bg-[#F8F5F0] object-contain {% if not preview_url %}hidden{% endif %}">
+        {% endif %}
+        {{ field }}
+        {% if field.help_text %}
+            <p class="mt-1 text-xs text-[#30415D]/55">{{ field.help_text }}</p>
+        {% endif %}
+        {% if field.errors %}
+            <p class="mt-2 text-sm font-medium text-red-600">{{ field.errors.0 }}</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<div class="mt-8 flex flex-col-reverse gap-3 border-t border-[#30415D]/10 pt-6 sm:flex-row sm:items-center">
+    <a href="{% url list_url %}"
+       class="inline-flex h-11 items-center justify-center rounded-lg border border-[#30415D]/20 px-6 text-sm font-semibold transition hover:border-[#F47745] hover:text-[#c9572c]">
+        ยกเลิก
+    </a>
+    <button type="submit" 
+            class="inline-flex h-11 items-center justify-center rounded-lg bg-[#30415D] px-6 text-sm font-semibold text-white transition hover:bg-[#25344b] sm:ml-auto">
+        บันทึก
+    </button>
+</div>
