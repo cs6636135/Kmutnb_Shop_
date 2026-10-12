@@ -39,21 +39,11 @@ class ImageUpload:
             obj.save()
         return obj
     
-class CleanName:
-    # ลบอักขระล่องหน (\u200b, \ufeff) ที่ติดมาตอน copy/paste แล้วตัดช่องว่างหัวท้าย
-    # เช่น "Iphone\u200b17" -> "Iphone17"   (\u200b = zero-width space)
-    # "\ufeffIphone 17" -> "Iphone 17" (\ufeff = BOM)
-    def clean_name(self):
-        name = (self.cleaned_data["name"].replace("\u200b", "").replace("\ufeff", "").strip())
-        if not name:
-            raise ValidationError(self.name_required_msg)
-        return name
-    
 INPUT = "w-full min-w-0 rounded-lg border border-slate-300 px-4 py-3 text-base outline-none focus:border-[#F47745] focus:ring-2 focus:ring-[#F47745]/20"
 SELECT = INPUT + " bg-white"
 
 
-class ProductModelForm(ImageUpload, CleanName, ModelForm):
+class ProductModelForm(ImageUpload, ModelForm):
     name_required_msg = "กรุณากรอกชื่อสินค้า"
     image_folder = "products"
 
@@ -99,7 +89,7 @@ class ProductModelForm(ImageUpload, CleanName, ModelForm):
         self.fields["category"].empty_label = "กรุณาเลือกหมวดหมู่สินค้า"
 
 
-class LocationModelForm(ImageUpload, CleanName, ModelForm):
+class LocationModelForm(ImageUpload, ModelForm):
     image_folder = "locations"
 
     class Meta:
@@ -136,7 +126,7 @@ class LocationModelForm(ImageUpload, CleanName, ModelForm):
             },
         }
 
-class CategoryModelForm(CleanName,ModelForm):
+class CategoryModelForm(ModelForm):
 
     class Meta:
         model = Category
