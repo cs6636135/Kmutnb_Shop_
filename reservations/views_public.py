@@ -9,9 +9,10 @@ from django.utils import timezone
 
 from shop.models import Product, ProductLocation
 from .models import Reservation
+from .services import expire_overdue_reservations
 
 def reservation_create(request, product_id):
-    # คืนสต็อกที่ค้างจากการจองหมดอายุก่อนเริ่มตรวจสต็อกหรือสร้างการจองใหม่
+    # คืนสต็อกจากรายการจองที่หมดอายุก่อนตรวจสอบสต็อก
     expire_overdue_reservations(product_id=product_id)
 
     product = get_object_or_404(
@@ -25,20 +26,38 @@ def reservation_create(request, product_id):
         ProductLocation.objects.filter(
             product=product,
             stock__gt=0,
-        ).select_related("location").order_by("location__name")
+        )
+        .select_related("location")
+        .order_by("location__name")
     )
 
     error = None
-    customer_type = request.POST.get("customer_type", "student")
-    student_id = request.POST.get("customer_id", "").strip()
-    customer_phone = request.POST.get("customer_phone", "").strip()
+
+    customer_type = request.POST.get(
+        "customer_type", "student"
+    ).strip()
+
+    student_id = request.POST.get(
+        "customer_id", ""
+    ).strip()
+
+    customer_phone = request.POST.get(
+        "customer_phone", ""
+    ).strip()
 
     customer_id = (
-        student_id if customer_type == "student" else customer_phone
+        student_id
+        if customer_type == "student"
+        else customer_phone
     )
 
-    quantity_value = request.POST.get("quantity", "1")
-    selected_location_id = request.POST.get("location", "")
+    quantity_value = request.POST.get(
+        "quantity", "1"
+    ).strip()
+
+    selected_location_id = request.POST.get(
+        "location", ""
+    ).strip()
 
     can_reserve = (
         product.reservable
@@ -47,33 +66,48 @@ def reservation_create(request, product_id):
     )
 
     if request.method == "POST":
+
+        # ตรวจสอบว่าสินค้าเปิดให้จองหรือไม่
         if not product.reservable:
             error = "สินค้านี้ไม่เปิดให้จอง"
 
+        # ตรวจสอบสต็อกรวม
         elif product.stock <= 0:
             error = "สินค้าหมด ไม่พร้อมจอง"
 
+        # ตรวจสอบประเภทผู้จอง
         elif customer_type not in {"student", "external"}:
             error = "กรุณาเลือกประเภทผู้จอง"
 
-        elif customer_type == "student" and not re.fullmatch(
-            r"[0-9]{13}", student_id
+        # ตรวจสอบรหัสนักศึกษา 13 หลัก
+        elif (
+            customer_type == "student"
+            and not re.fullmatch(r"[0-9]{13}", student_id)
         ):
             error = "กรุณากรอกรหัสนักศึกษาเป็นตัวเลข 13 หลัก"
 
-        elif customer_type == "external" and not re.fullmatch(
-            r"[0-9]{10}", customer_phone
+        # ตรวจสอบเบอร์โทรศัพท์ 10 หลัก
+        elif (
+            customer_type == "external"
+            and not re.fullmatch(r"[0-9]{10}", customer_phone)
         ):
             error = "กรุณากรอกเบอร์โทรศัพท์เป็นตัวเลข 10 หลัก"
 
-        # ตรวจสอบจำนวนจองขั้นต่ำ 1 ชิ้น และสูงสุด 5 ชิ้น
+        # จำนวนที่จองต้องเป็นจำนวนเต็มตั้งแต่ 1 ถึง 5 ชิ้น
         elif (
-            not quantity_value.isdigit()
-            or not (1 <= int(quantity_value) <= 5)
+            not quantity_value.isascii()
+            or not quantity_value.isdigit()
+            or not 1 <= int(quantity_value) <= 5
         ):
-            error = "สามารถจองสินค้าได้ตั้งแต่ 1 ถึง 5 ชิ้นต่อรายการเท่านั้น"
+            error = (
+                "สามารถจองสินค้าได้ตั้งแต่ 1 ถึง 5 ชิ้นต่อรายการเท่านั้น"
+            )
 
-        elif not selected_location_id.isdigit():
+        # ตรวจสอบจุดรับสินค้า
+        elif (
+            not selected_location_id.isascii()
+            or not selected_location_id.isdigit()
+        ):
             error = "กรุณาเลือกจุดรับสินค้า"
 
         else:
@@ -82,8 +116,10 @@ def reservation_create(request, product_id):
 
             try:
                 with transaction.atomic():
+                    # ล็อกแถวสต็อกเพื่อป้องกันการจองพร้อมกัน
                     product_location = (
-                        ProductLocation.objects.select_for_update()
+                        ProductLocation.objects
+                        .select_for_update()
                         .select_related("location")
                         .get(
                             pk=int(selected_location_id),
@@ -91,9 +127,9 @@ def reservation_create(request, product_id):
                         )
                     )
 
-                    # ตรวจสอบสต็อก ณ จุดรับสินค้าที่เลือก
+                    # ตรวจสอบสต็อก ณ จุดรับที่เลือก
                     if product_location.stock <= 0:
-                        error = "สินค้าหมด ณ จุดรับสินค้าที่เลือก"
+                        error = "สินค้าหมด ณ จุดรับที่เลือก"
 
                     elif quantity > product_location.stock:
                         error = (
@@ -103,7 +139,7 @@ def reservation_create(request, product_id):
                         )
 
                     else:
-                        # ตัดสต็อกเมื่อผ่านเงื่อนไขทั้งหมด
+                        # ตัดสต็อกเมื่อจองสำเร็จ
                         product_location.stock -= quantity
                         product_location.save(
                             update_fields=["stock"]
@@ -115,38 +151,50 @@ def reservation_create(request, product_id):
                         while Reservation.objects.filter(
                             reservation_code=reservation_code
                         ).exists():
-                            reservation_code = secrets.token_hex(12).upper()
+                            reservation_code = (
+                                secrets.token_hex(12).upper()
+                            )
 
-                        # บันทึกข้อมูลการจอง
+                        # สร้างรายการจองและกำหนดเวลาหมดอายุ 4 ชั่วโมง
                         reservation = Reservation.objects.create(
                             reservation_code=reservation_code,
                             customer_id=customer_id,
                             product=product,
                             location=product_location.location,
                             quantity=quantity,
-                            expires_at=timezone.now() + timedelta(hours=4),
+                            expires_at=(
+                                timezone.now() + timedelta(hours=4)
+                            ),
                         )
 
             except ProductLocation.DoesNotExist:
-                error = "ไม่พบจุดรับสินค้าที่เลือก กรุณาเลือกใหม่"
+                error = (
+                    "ไม่พบจุดรับสินค้าที่เลือก กรุณาเลือกใหม่"
+                )
 
+            # หากจองสำเร็จ ไปยังหน้ายืนยันการจอง
             if reservation is not None:
                 return redirect(
                     "reservation_confirmation",
                     reservation_code=reservation.reservation_code,
                 )
 
-        # โหลดสต็อกและจุดรับสินค้าใหม่เมื่อเกิดข้อผิดพลาด
+        # โหลดสต็อกและจุดรับสินค้าใหม่หลังตรวจสอบ
         available_locations = list(
             ProductLocation.objects.filter(
                 product=product,
                 stock__gt=0,
-            ).select_related("location").order_by("location__name")
+            )
+            .select_related("location")
+            .order_by("location__name")
         )
 
         can_reserve = (
             product.reservable
-            and any(item.stock > 0 for item in available_locations)
+            and any(
+                item.stock > 0
+                for item in available_locations
+            )
         )
 
     return render(
@@ -172,6 +220,8 @@ def reservation_confirmation(request, reservation_code):
 		Reservation.objects.select_related("product", "location"),
 		reservation_code=reservation_code,
 	)
+
+	reservation.refresh_from_db()
 	return render(request, "reservations/confirmation.html", {
 		"reservation": reservation,
 	})
@@ -189,6 +239,10 @@ def reservation_status(request):
 			).select_related("product", "location").first()
 			if reservation is None:
 				error = "ไม่พบรายการจองจากรหัสที่ระบุ"
+			else:
+				# อัปเดตสถานะก่อนแสดงผลการตรวจการจอง
+				expire_overdue_reservations(product_id=reservation.product_id)
+				reservation.refresh_from_db()
 		else:
 			error = "กรุณากรอกรหัสการจอง"
 
