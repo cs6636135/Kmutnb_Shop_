@@ -241,25 +241,29 @@
                 </div>
 
                 <!-- Quantity -->
-                <div>
+<div>
 
-                    <label for="reservation-quantity"
-                           class="mb-2 block text-sm font-semibold text-gray-800">
-                        จำนวนสินค้าที่ต้องการ
-                    </label>
+    <label for="reservation-quantity"
+           class="mb-2 block text-sm font-semibold text-gray-800">
+        จำนวนสินค้าที่ต้องการ
+    </label>
 
-                    <input
-                        id="reservation-quantity"
-                        name="quantity"
-                        type="number"
-                        min="1"
-                        max="{{ product.stock }}"
-                        required
-                        value="{{ quantity_value|default:'1' }}"
-                        class="h-12 w-full rounded-xl border border-gray-300 px-4 text-sm outline-none transition focus:border-[#F47745] focus:ring-2 focus:ring-[#F47745]/20"
-                    >
+    <input
+        id="reservation-quantity"
+        name="quantity"
+        type="number"
+        min="1"
+        max="5"
+        required
+        value="{{ quantity_value|default:'1' }}"
+        class="h-12 w-full rounded-xl border border-gray-300 px-4 text-sm outline-none transition focus:border-[#F47745] focus:ring-2 focus:ring-[#F47745]/20"
+    >
 
-                </div>
+    <p class="mt-2 text-xs text-gray-500">
+        จองได้ 1–5 ชิ้นต่อรายการ และไม่เกินจำนวนสินค้าคงเหลือ
+    </p>
+
+</div>
 
                 <!-- Pickup Location -->
                 <div>

@@ -13,107 +13,160 @@ from .services import expire_overdue_reservations
 
 
 def reservation_create(request, product_id):
-	# คืนสต็อกที่ค้างจากการจองหมดอายุก่อนเริ่มตรวจสต็อกหรือสร้างการจองใหม่
-	expire_overdue_reservations(product_id=product_id)
+    # คืนสต็อกที่ค้างจากการจองหมดอายุก่อนเริ่มตรวจสต็อกหรือสร้างการจองใหม่
+    expire_overdue_reservations(product_id=product_id)
 
-	product = get_object_or_404(
-		Product.objects.annotate(
-			stock=Sum("productlocation__stock", default=0)
-		),
-		pk=product_id,
-	)
-	available_locations = list(
-		ProductLocation.objects.filter(
-			product=product,
-			stock__gt=0,
-		).select_related("location").order_by("location__name")
-	)
-	error = None
-	customer_type = request.POST.get("customer_type", "student")
-	student_id = request.POST.get("customer_id", "").strip()
-	customer_phone = request.POST.get("customer_phone", "").strip()
-	customer_id = student_id if customer_type == "student" else customer_phone
-	quantity_value = request.POST.get("quantity", "1")
-	selected_location_id = request.POST.get("location", "")
-	can_reserve = product.reservable and product.stock > 0 and bool(available_locations)
+    product = get_object_or_404(
+        Product.objects.annotate(
+            stock=Sum("productlocation__stock", default=0)
+        ),
+        pk=product_id,
+    )
 
-	if request.method == "POST":
-		if not product.reservable:
-			error = "สินค้านี้ไม่เปิดให้จอง"
-		elif product.stock <= 0:
-			error = "สินค้าหมด ไม่พร้อมจอง"
-		elif customer_type not in {"student", "external"}:
-			error = "กรุณาเลือกประเภทผู้จอง"
-		elif customer_type == "student" and not re.fullmatch(r"[0-9]{13}", student_id):
-			error = "กรุณากรอกรหัสนักศึกษาเป็นตัวเลข 13 หลัก"
-		elif customer_type == "external" and not re.fullmatch(r"[0-9]{10}", customer_phone):
-			error = "กรุณากรอกเบอร์โทรศัพท์เป็นตัวเลข 10 หลัก"
-		elif not quantity_value.isdigit() or int(quantity_value) < 1:
-			error = "กรุณาระบุจำนวนสินค้าอย่างน้อย 1 ชิ้น"
-		elif not selected_location_id.isdigit():
-			error = "กรุณาเลือกจุดรับสินค้า"
-		else:
-			quantity = int(quantity_value)
-			reservation = None
-			try:
-				with transaction.atomic():
-					product_location = ProductLocation.objects.select_for_update().select_related(
-						"location"
-					).get(pk=int(selected_location_id), product=product)
-					if product_location.stock < quantity:
-						error = (
-							f"สินค้า ณ จุดรับนี้มีเพียง {product_location.stock} ชิ้น "
-							"กรุณาปรับจำนวนแล้วลองอีกครั้ง"
-						)
-					else:
-						product_location.stock -= quantity
-						product_location.save(update_fields=["stock"])
+    available_locations = list(
+        ProductLocation.objects.filter(
+            product=product,
+            stock__gt=0,
+        ).select_related("location").order_by("location__name")
+    )
 
-						reservation_code = secrets.token_hex(12).upper()
-						while Reservation.objects.filter(
-							reservation_code=reservation_code
-						).exists():
-							reservation_code = secrets.token_hex(12).upper()
+    error = None
+    customer_type = request.POST.get("customer_type", "student")
+    student_id = request.POST.get("customer_id", "").strip()
+    customer_phone = request.POST.get("customer_phone", "").strip()
 
-						reservation = Reservation.objects.create(
-							reservation_code=reservation_code,
-							customer_id=customer_id,
-							product=product,
-							location=product_location.location,
-							quantity=quantity,
-							expires_at=timezone.now() + timedelta(hours=4),
-						)
-			except ProductLocation.DoesNotExist:
-				error = "ไม่พบจุดรับสินค้าที่เลือก กรุณาเลือกใหม่"
+    customer_id = (
+        student_id if customer_type == "student" else customer_phone
+    )
 
-			if reservation is not None:
-				return redirect(
-					"reservation_confirmation",
-					reservation_code=reservation.reservation_code,
-				)
+    quantity_value = request.POST.get("quantity", "1")
+    selected_location_id = request.POST.get("location", "")
 
-		available_locations = list(
-			ProductLocation.objects.filter(
-				product=product,
-				stock__gt=0,
-			).select_related("location").order_by("location__name")
-		)
-		can_reserve = product.reservable and any(
-			item.stock > 0 for item in available_locations
-		)
+    can_reserve = (
+        product.reservable
+        and product.stock > 0
+        and bool(available_locations)
+    )
 
-	return render(request, "reservations/create.html", {
-		"product": product,
-		"available_locations": available_locations,
-		"can_reserve": can_reserve,
-		"error": error,
-		"customer_type": customer_type,
-		"customer_id": customer_id,
-		"student_id": student_id,
-		"customer_phone": customer_phone,
-		"quantity_value": quantity_value,
-		"selected_location_id": selected_location_id,
-	})
+    if request.method == "POST":
+        if not product.reservable:
+            error = "สินค้านี้ไม่เปิดให้จอง"
+
+        elif product.stock <= 0:
+            error = "สินค้าหมด ไม่พร้อมจอง"
+
+        elif customer_type not in {"student", "external"}:
+            error = "กรุณาเลือกประเภทผู้จอง"
+
+        elif customer_type == "student" and not re.fullmatch(
+            r"[0-9]{13}", student_id
+        ):
+            error = "กรุณากรอกรหัสนักศึกษาเป็นตัวเลข 13 หลัก"
+
+        elif customer_type == "external" and not re.fullmatch(
+            r"[0-9]{10}", customer_phone
+        ):
+            error = "กรุณากรอกเบอร์โทรศัพท์เป็นตัวเลข 10 หลัก"
+
+        # ตรวจสอบจำนวนจองขั้นต่ำ 1 ชิ้น และสูงสุด 5 ชิ้น
+        elif (
+            not quantity_value.isdigit()
+            or not (1 <= int(quantity_value) <= 5)
+        ):
+            error = "สามารถจองสินค้าได้ตั้งแต่ 1 ถึง 5 ชิ้นต่อรายการเท่านั้น"
+
+        elif not selected_location_id.isdigit():
+            error = "กรุณาเลือกจุดรับสินค้า"
+
+        else:
+            quantity = int(quantity_value)
+            reservation = None
+
+            try:
+                with transaction.atomic():
+                    product_location = (
+                        ProductLocation.objects.select_for_update()
+                        .select_related("location")
+                        .get(
+                            pk=int(selected_location_id),
+                            product=product,
+                        )
+                    )
+
+                    # ตรวจสอบสต็อก ณ จุดรับสินค้าที่เลือก
+                    if product_location.stock <= 0:
+                        error = "สินค้าหมด ณ จุดรับสินค้าที่เลือก"
+
+                    elif quantity > product_location.stock:
+                        error = (
+                            f"สินค้า ณ จุดรับนี้มีเพียง "
+                            f"{product_location.stock} ชิ้น "
+                            "กรุณาปรับจำนวนแล้วลองอีกครั้ง"
+                        )
+
+                    else:
+                        # ตัดสต็อกเมื่อผ่านเงื่อนไขทั้งหมด
+                        product_location.stock -= quantity
+                        product_location.save(
+                            update_fields=["stock"]
+                        )
+
+                        # สร้างรหัสจองที่ไม่ซ้ำกัน
+                        reservation_code = secrets.token_hex(12).upper()
+
+                        while Reservation.objects.filter(
+                            reservation_code=reservation_code
+                        ).exists():
+                            reservation_code = secrets.token_hex(12).upper()
+
+                        # บันทึกข้อมูลการจอง
+                        reservation = Reservation.objects.create(
+                            reservation_code=reservation_code,
+                            customer_id=customer_id,
+                            product=product,
+                            location=product_location.location,
+                            quantity=quantity,
+                            expires_at=timezone.now() + timedelta(hours=4),
+                        )
+
+            except ProductLocation.DoesNotExist:
+                error = "ไม่พบจุดรับสินค้าที่เลือก กรุณาเลือกใหม่"
+
+            if reservation is not None:
+                return redirect(
+                    "reservation_confirmation",
+                    reservation_code=reservation.reservation_code,
+                )
+
+        # โหลดสต็อกและจุดรับสินค้าใหม่เมื่อเกิดข้อผิดพลาด
+        available_locations = list(
+            ProductLocation.objects.filter(
+                product=product,
+                stock__gt=0,
+            ).select_related("location").order_by("location__name")
+        )
+
+        can_reserve = (
+            product.reservable
+            and any(item.stock > 0 for item in available_locations)
+        )
+
+    return render(
+        request,
+        "reservations/create.html",
+        {
+            "product": product,
+            "available_locations": available_locations,
+            "can_reserve": can_reserve,
+            "error": error,
+            "customer_type": customer_type,
+            "customer_id": customer_id,
+            "student_id": student_id,
+            "customer_phone": customer_phone,
+            "quantity_value": quantity_value,
+            "selected_location_id": selected_location_id,
+        },
+    )
 
 
 def reservation_confirmation(request, reservation_code):
