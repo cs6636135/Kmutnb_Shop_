@@ -16,12 +16,9 @@
 </head>
 
 <body class="min-h-screen flex flex-col bg-[#fff8f3]" style="font-family: 'Noto Sans Thai', sans-serif;">
-
 <!-- Navbar -->
-
-<!-- Navbar -->
-<nav class="bg-white text-[#4b2424]">
-    <div class="max-w-7xl mx-auto px-8">
+<nav class="bg-white text-[#4b2424] relative z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8">
         <div class="h-20 flex items-center justify-between">
 
             <!-- Logo -->
@@ -32,30 +29,28 @@
                      class="h-9 w-auto object-contain sm:h-11">
             </a>
 
-            <!-- Menu -->
-            <div class="flex items-center gap-2">
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center gap-2">
 
                 <!-- หน้าแรก -->
                 <a href="{% url 'home' %}"
-                   class="px-5 py-3 text-base underline-offset-4
-                          transition
-                          {% if request.resolver_match.url_name == 'home' %}
-                              underline decoration-2 font-semibold
-                          {% else %}
-                              hover:underline
-                          {% endif %}">
+                   class="px-5 py-3 text-base underline-offset-4 transition
+                   {% if request.resolver_match.url_name == 'home' %}
+                       underline decoration-2 font-semibold
+                   {% else %}
+                       hover:underline
+                   {% endif %}">
                     หน้าแรก
                 </a>
 
                 <!-- สินค้า -->
                 <a href="{% url 'public_products' %}"
-                   class="px-5 py-3 text-base underline-offset-4
-                          transition
-                          {% if request.resolver_match.url_name == 'public_products' or request.resolver_match.url_name == 'product_detail' %}
-                              underline decoration-2 font-semibold
-                          {% else %}
-                              hover:underline
-                          {% endif %}">
+                   class="px-5 py-3 text-base underline-offset-4 transition
+                   {% if request.resolver_match.url_name == 'public_products' or request.resolver_match.url_name == 'product_detail' %}
+                       underline decoration-2 font-semibold
+                   {% else %}
+                       hover:underline
+                   {% endif %}">
                     สินค้า
                 </a>
 
@@ -63,61 +58,235 @@
                 {% url 'reservation_status' as reservation_status_url %}
                 {% if reservation_status_url %}
                     <a href="{{ reservation_status_url }}"
-                       class="px-5 py-3 text-base underline-offset-4
-                              transition
-                              {% if request.resolver_match.url_name == 'reservation_status' %}
-                                  underline decoration-2 font-semibold
-                              {% else %}
-                                  hover:underline
-                              {% endif %}">
+                       class="px-5 py-3 text-base underline-offset-4 transition
+                       {% if request.resolver_match.url_name == 'reservation_status' %}
+                           underline decoration-2 font-semibold
+                       {% else %}
+                           hover:underline
+                       {% endif %}">
                         ตรวจสอบการจอง
                     </a>
                 {% endif %}
 
             </div>
 
-            <!-- Right side -->
-            <div class="flex items-center gap-5">
+            <!-- Right Side -->
+            <div class="flex items-center gap-3">
 
-                <!-- Search Icon -->
-                <a href="{% url 'home' %}#product-search"
-                   aria-label="ค้นหาสินค้า"
-                   title="ค้นหาสินค้า"
-                   class="w-10 h-10 flex items-center justify-center
-                          rounded-full hover:bg-orange-50 transition">
-                    <svg xmlns="http://www.w3.org/2000/svg"
+                <!-- Search Bar: Desktop -->
+<form action="{% url 'public_products' %}"
+      method="get"
+      role="search"
+      class="hidden md:block w-64 lg:w-80">
+    <div class="flex h-12 items-center rounded-full
+                border border-gray-200 bg-white px-3
+                transition focus-within:border-[#c4471c]
+                focus-within:ring-2 focus-within:ring-[#c4471c]/20">
+        <input
+            type="search"
+            name="q"
+            placeholder="ค้นหาสินค้า..."
+            aria-label="ค้นหาสินค้า"
+            class="h-full min-w-0 flex-1 bg-transparent
+                   px-2 text-sm text-[#4b2424]
+                   outline-none placeholder:text-gray-400"
+        >
+        <button
+            type="submit"
+            aria-label="ค้นหา"
+            class="flex h-9 w-9 shrink-0 items-center
+                   justify-center rounded-full
+                   text-[#4b2424] transition hover:bg-orange-50">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 fill="none"
+                 viewBox="0 0 24 24"
+                 stroke-width="2"
+                 stroke="currentColor"
+                 class="h-7 w-7"
+                 aria-hidden="true">
+                <circle cx="10.8" cy="10.8" r="6.3"/>
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="m16 16 4 4"/>
+            </svg>
+        </button>
+    </div>
+</form>
+
+                <!-- Hamburger Button: Mobile -->
+                <button
+                    id="mobile-menu-button"
+                    type="button"
+                    aria-label="เปิดเมนู"
+                    aria-controls="mobile-menu"
+                    aria-expanded="false"
+                    class="md:hidden w-11 h-11 flex items-center justify-center
+                           rounded-lg hover:bg-orange-50 transition
+                           focus:outline-none focus:ring-2 focus:ring-[#c4471c]"
+                    onclick="toggleMobileMenu()">
+
+                    <!-- Hamburger Icon -->
+                    <svg id="hamburger-icon"
+                         xmlns="http://www.w3.org/2000/svg"
                          fill="none"
                          viewBox="0 0 24 24"
                          stroke-width="1.8"
-                         stroke="currentColor"
-                         class="w-6 h-6"
-                         aria-hidden="true">
-                        <circle cx="10.8" cy="10.8" r="6.3"/>
-                        <path stroke-linecap="round" d="m16 16 4 4"/>
-                    </svg>
-                </a>
-
-                <!-- Cart Icon -->
-                <div class="w-9 h-9 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                         fill="none"
-                         viewBox="0 0 24 24"
-                         stroke-width="1.5"
                          stroke="currentColor"
                          class="w-7 h-7"
                          aria-hidden="true">
                         <path stroke-linecap="round"
                               stroke-linejoin="round"
-                              d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25h9.75l3-9H5.106m2.394 9L6.375 17.25h11.25M7.5 14.25 5.106 5.272M9 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm9 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1-1.5 0Z"/>
+                              d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
-                </div>
+
+                    <!-- Close Icon -->
+                    <svg id="close-icon"
+                         xmlns="http://www.w3.org/2000/svg"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke-width="1.8"
+                         stroke="currentColor"
+                         class="w-7 h-7 hidden"
+                         aria-hidden="true">
+                        <path stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M6 6l12 12M18 6L6 18"/>
+                    </svg>
+                </button>
 
             </div>
-
         </div>
+
+        <!-- Mobile Dropdown Menu -->
+<div id="mobile-menu"
+     class="hidden md:hidden border-t border-gray-100 bg-white py-4">
+
+    <div class="flex flex-col gap-2">
+
+        <!-- Search Bar: First Item -->
+        <form action="{% url 'public_products' %}"
+              method="get"
+              role="search"
+              class="mx-3 mb-2">
+
+            <div class="flex h-14 items-center rounded-full
+                        border border-gray-200 bg-white px-4
+                        transition focus-within:border-[#c4471c]
+                        focus-within:ring-2 focus-within:ring-[#c4471c]/20">
+
+                <input
+                    type="search"
+                    name="q"
+                    placeholder="ค้นหาสินค้า..."
+                    aria-label="ค้นหาสินค้า"
+                    class="h-full min-w-0 flex-1 bg-transparent
+                           px-2 text-base text-[#4b2424]
+                           outline-none placeholder:text-gray-400"
+                >
+
+                <button
+                    type="submit"
+                    aria-label="ค้นหา"
+                    class="flex h-10 w-10 shrink-0 items-center
+                           justify-center rounded-full
+                           transition hover:bg-orange-50
+                           text-[#4b2424]">
+
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke-width="2"
+                         stroke="currentColor"
+                         class="h-7 w-7"
+                         aria-hidden="true">
+                        <circle cx="10.8" cy="10.8" r="6.3"/>
+                        <path stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="m16 16 4 4"/>
+                    </svg>
+
+                </button>
+            </div>
+        </form>
+
+        <!-- หน้าแรก -->
+        <a href="{% url 'home' %}"
+           class="rounded-lg px-4 py-3 text-sm transition
+           {% if request.resolver_match.url_name == 'home' %}
+               bg-orange-50 font-semibold text-[#c4471c]
+           {% else %}
+               hover:bg-orange-50
+           {% endif %}">
+            หน้าแรก
+        </a>
+
+        <!-- สินค้า -->
+        <a href="{% url 'public_products' %}"
+           class="rounded-lg px-4 py-3 text-sm transition
+           {% if request.resolver_match.url_name == 'public_products' or request.resolver_match.url_name == 'product_detail' %}
+               bg-orange-50 font-semibold text-[#c4471c]
+           {% else %}
+               hover:bg-orange-50
+           {% endif %}">
+            สินค้า
+        </a>
+
+        <!-- ตรวจสอบการจอง -->
+        {% if reservation_status_url %}
+            <a href="{{ reservation_status_url }}"
+               class="rounded-lg px-4 py-3 text-sm transition
+               {% if request.resolver_match.url_name == 'reservation_status' %}
+                   bg-orange-50 font-semibold text-[#c4471c]
+               {% else %}
+                   hover:bg-orange-50
+               {% endif %}">
+                ตรวจสอบการจอง
+            </a>
+        {% endif %}
+
+    </div>
+</div>
     </div>
 </nav>
 
+<!-- Mobile Menu Script -->
+<script>
+    function toggleMobileMenu() {
+        const menu = document.getElementById("mobile-menu");
+        const button = document.getElementById("mobile-menu-button");
+        const hamburgerIcon = document.getElementById("hamburger-icon");
+        const closeIcon = document.getElementById("close-icon");
+
+        const isOpening = menu.classList.contains("hidden");
+
+        menu.classList.toggle("hidden");
+        hamburgerIcon.classList.toggle("hidden");
+        closeIcon.classList.toggle("hidden");
+
+        button.setAttribute("aria-expanded", String(isOpening));
+        button.setAttribute(
+            "aria-label",
+            isOpening ? "ปิดเมนู" : "เปิดเมนู"
+        );
+    }
+
+    // ปิดเมนูเมื่อเปลี่ยนจาก Mobile ไป Desktop
+    window.addEventListener("resize", function () {
+        if (window.innerWidth >= 768) {
+            const menu = document.getElementById("mobile-menu");
+            const button = document.getElementById("mobile-menu-button");
+            const hamburgerIcon = document.getElementById("hamburger-icon");
+            const closeIcon = document.getElementById("close-icon");
+
+            menu.classList.add("hidden");
+            hamburgerIcon.classList.remove("hidden");
+            closeIcon.classList.add("hidden");
+
+            button.setAttribute("aria-expanded", "false");
+            button.setAttribute("aria-label", "เปิดเมนู");
+        }
+    });
+</script>
 
     <!-- Django Messages -->
     {% if messages %}

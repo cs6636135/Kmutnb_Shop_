@@ -1,480 +1,646 @@
+
 {% extends "base_manage.html" %}
 
 {% block title %}ภาพรวมการจัดการ | KMUTNB SHOP{% endblock %}
 
 {% block content %}
 <main class="min-h-[calc(100vh-4rem)] bg-[#F8F5F0] text-[#30415D]">
-    <div class="mx-auto max-w-7xl space-y-8 px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+  <div class="mx-auto max-w-7xl space-y-8 px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
 
-        <!-- Welcome panel -->
-        <header class="relative isolate overflow-hidden rounded-3xl bg-[#30415D] px-6 py-7 text-white shadow-xl sm:px-9 sm:py-9">
-            <div aria-hidden="true" class="absolute -right-12 -top-24 -z-10 h-72 w-72 rounded-full border-[36px] border-white/5"></div>
-            <div aria-hidden="true" class="absolute -bottom-24 right-36 -z-10 h-48 w-48 rounded-full bg-[#F47745]/20 blur-2xl"></div>
+    <!-- Page heading -->
+    <section class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p class="text-xs font-bold uppercase tracking-[0.16em] text-[#F47745]">MANAGEMENT ANALYTICS</p>
+        <h1 class="mt-2 text-2xl font-bold sm:text-3xl">ภาพรวมการจัดการ</h1>
+        <p class="mt-2 text-sm text-[#30415D]/60">สรุปข้อมูลการจองและสต็อกสินค้าในระบบ</p>
+      </div>
 
-            <div class="flex flex-col gap-7">
-                <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
-                    <div class="flex min-w-0 items-center gap-4">
-                        <span class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#F47745] text-2xl font-bold text-white shadow-lg shadow-black/10">
-                            {{ user.username|slice:":1"|upper }}
-                        </span>
+      <span class="inline-flex w-fit items-center gap-2 rounded-full border border-[#30415D]/10 bg-white px-4 py-2 text-xs font-semibold text-[#30415D]/70">
+        <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+        ข้อมูลจากระบบ
+      </span>
+    </section>
 
-                        <div class="min-w-0">
-                            <p class="text-xs font-bold uppercase tracking-[0.18em] text-[#F9A27F]">
-                                KMUTNB SHOP · MANAGEMENT
-                            </p>
-                            <h1 class="mt-1 truncate text-2xl font-bold sm:text-3xl">
-                                สวัสดี, {{ user.username }}
-                            </h1>
-                            <p class="mt-1 text-sm text-white/65">@{{ user.role }}</p>
-                        </div>
-                    </div>
+    
+<!-- KPI cards -->
+<section aria-labelledby="stats-heading">
+  <div class="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4">
 
-                    <span class="w-fit rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-xs font-bold tracking-wide text-white">
-                        {% if is_admin %}ADMIN{% else %}STAFF{% endif %}
-                    </span>
-                </div>
+    <!-- 1. รายการจองรอรับสินค้า -->
+    <article class="relative overflow-hidden rounded-2xl bg-[#F47745] p-5 text-white shadow-sm transition hover:-translate-y-1 hover:shadow-md sm:p-6">
+      <div class="absolute -right-5 -top-7 h-24 w-24 rounded-full border-[14px] border-white/10"></div>
 
-                <div class="grid grid-cols-2 gap-x-6 gap-y-5 border-t border-white/15 pt-5 sm:grid-cols-3 lg:grid-cols-5">
-                    <div>
-                        <p class="text-xs text-white/55">รหัสบัญชี</p>
-                        <p class="mt-1 font-semibold">{{ user.id }}</p>
-                    </div>
-
-                    <div>
-                        <p class="text-xs text-white/55">ชื่อ</p>
-                        <p class="mt-1 truncate font-semibold">{{ user.first_name|default:"ไม่ระบุ" }}</p>
-                    </div>
-
-                    <div>
-                        <p class="text-xs text-white/55">นามสกุล</p>
-                        <p class="mt-1 truncate font-semibold">{{ user.last_name|default:"ไม่ระบุ" }}</p>
-                    </div>
-
-                    <div>
-                        <p class="text-xs text-white/55">สิทธิ์การใช้งาน</p>
-                        <p class="mt-1 truncate font-semibold">
-                            {% if is_admin %}ผู้ดูแลระบบ{% else %}พนักงานประจำสาขา{% endif %}
-                        </p>
-                    </div>
-
-                    <div class="col-span-2 sm:col-span-1">
-                        <p class="text-xs text-white/55">จุดจำหน่ายประจำ</p>
-                        <p class="mt-1 truncate font-semibold">
-                            {% if is_admin %}
-                                ทุกจุดจำหน่าย
-                            {% else %}
-                                {{ user_location.name|default:"ไม่ระบุ" }}
-                            {% endif %}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <!-- Statistics -->
-        <section aria-labelledby="stats-heading">
-            <div class="mb-4">
-                <p class="text-xs font-bold uppercase tracking-[0.14em] text-[#F47745]">
-                    AT A GLANCE
-                </p>
-                <h2 id="stats-heading" class="mt-1 text-xl font-bold">ภาพรวมวันนี้</h2>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-
-                <div class="relative overflow-hidden rounded-2xl bg-[#F47745] p-5 text-white shadow-lg shadow-[#F47745]/15 sm:p-6">
-                    <div aria-hidden="true" class="absolute -right-5 -top-8 h-24 w-24 rounded-full border-[14px] border-white/10"></div>
-                    <p class="relative text-sm font-medium text-white/80">จองรอรับ</p>
-                    <p class="relative mt-3 text-4xl font-bold tracking-tight">{{ active_reservations }}</p>
-                    <p class="relative mt-1 text-xs text-white/70">รายการที่ยังรอรับสินค้า</p>
-                </div>
-
-                <div class="rounded-2xl border border-[#30415D]/10 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:p-6">
-                    <p class="text-sm font-medium text-[#30415D]/60">
-                        {% if is_admin %}สต็อกรวมทุกสาขา{% else %}สต็อกสาขาคุณ{% endif %}
-                    </p>
-                    <p class="mt-3 text-4xl font-bold tracking-tight">{{ total_units_stock }}</p>
-                    <p class="mt-1 text-xs text-[#30415D]/45">ชิ้นคงเหลือ</p>
-                </div>
-
-                <div class="rounded-2xl border border-[#30415D]/10 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:p-6">
-                    <p class="text-sm font-medium text-[#30415D]/60">รับสินค้าแล้ววันนี้</p>
-                    <p class="mt-3 text-4xl font-bold tracking-tight text-emerald-700">{{ picked_up_today }}</p>
-                    <p class="mt-1 text-xs text-[#30415D]/45">รายการที่ปิดสำเร็จ</p>
-                </div>
-
-                <div class="rounded-2xl border border-[#30415D]/10 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:p-6">
-                    <p class="text-sm font-medium text-[#30415D]/60">หมดเวลา · สะสม</p>
-                    <p class="mt-3 text-4xl font-bold tracking-tight text-slate-500">{{ expired_reservations }}</p>
-                    <p class="mt-1 text-xs text-[#30415D]/45">รายการหมดอายุทั้งหมด</p>
-                </div>
-            </div>
-        </section>
-
-        
-<!-- Location summary (admin only) -->
-{% if is_admin and locations_summary %}
-<section aria-labelledby="loc-heading">
-    <div class="mb-4 flex items-end justify-between gap-4">
-        <div>
-            <p class="text-xs font-bold uppercase tracking-wider text-[#F47745]">
-                LOCATIONS
-            </p>
-            <h2 id="loc-heading" class="mt-1 text-xl font-bold text-[#30415D]">
-                สรุปตามจุดจำหน่าย
-            </h2>
-        </div>
-
-        <span class="shrink-0 text-xs font-medium text-[#30415D]/60">
-            {{ locations_summary|length }} จุด
-        </span>
-    </div>
-
-    <div class="rounded-2xl border border-[#30415D]/10 bg-white p-4 shadow-sm sm:p-6">
-
-        <!-- Legend -->
-        <div class="mb-5 flex flex-wrap gap-x-5 gap-y-2 text-sm">
-            <span class="flex items-center gap-2">
-                <span class="h-3 w-3 rounded-sm bg-[#30415D]"></span>
-                <span class="text-[#30415D]">สินค้าคงเหลือ (ชิ้น)</span>
-            </span>
-
-            <span class="flex items-center gap-2">
-                <span class="h-3 w-3 rounded-sm bg-[#F47745]"></span>
-                <span class="text-[#30415D]">รายการรอรับ</span>
-            </span>
-        </div>
-
-        <!-- Chart -->
-        <div class="relative w-full" style="height: 360px;">
-            <canvas
-                id="locationsSummaryChart"
-                role="img"
-                aria-label="กราฟแท่งแสดงสินค้าคงเหลือและรายการจองรอรับ แยกตามจุดจำหน่าย">
-            </canvas>
-        </div>
-
-        <!-- Error message -->
-        <p
-            id="chartError"
-            class="mt-3 hidden text-sm text-red-600"
-            role="alert">
+      <div class="relative flex items-center justify-between">
+        <p class="text-sm font-semibold text-white/90">
+          จองรอรับสินค้า
         </p>
-    </div>
+        <i class="fa-solid fa-clipboard-list text-lg text-white/80"></i>
+      </div>
+
+      <p class="relative mt-4 text-4xl font-bold tracking-tight">
+        {{ active_reservations|default:0 }}
+      </p>
+
+      <p class="relative mt-2 text-xs text-white/80">
+        รายการที่รอลูกค้ามารับสินค้า
+      </p>
+    </article>
+
+    <!-- 2. จำนวนสินค้าคงเหลือ -->
+    <article class="rounded-2xl border border-[#30415D]/10 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md sm:p-6">
+      <div class="flex items-center justify-between gap-2">
+        <p class="text-sm font-semibold text-[#30415D]/70">
+          {% if is_admin %}
+            สินค้าคงเหลือทุกสาขา
+          {% else %}
+            สินค้าคงเหลือสาขาคุณ
+          {% endif %}
+        </p>
+        <i class="fa-solid fa-box text-lg text-[#30415D]/60"></i>
+      </div>
+
+      <p class="mt-4 text-4xl font-bold tracking-tight text-[#30415D]">
+        {{ total_units_stock|default:0 }}
+      </p>
+
+      <p class="mt-2 text-xs text-[#30415D]/50">
+        หน่วยสินค้าคงเหลือทั้งหมด (ชิ้น)
+      </p>
+    </article>
+
+    <!-- 3. รับสินค้าแล้ววันนี้ -->
+    <article class="rounded-2xl border border-emerald-700/10 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md sm:p-6">
+      <div class="flex items-center justify-between gap-2">
+        <p class="text-sm font-semibold text-[#30415D]/70">
+          รับสินค้าแล้ววันนี้
+        </p>
+        <i class="fa-solid fa-circle-check text-lg text-emerald-700"></i>
+      </div>
+
+      <p class="mt-4 text-4xl font-bold tracking-tight text-emerald-700">
+        {{ picked_up_today|default:0 }}
+      </p>
+
+      <p class="mt-2 text-xs text-[#30415D]/50">
+        รายการที่รับสินค้าสำเร็จวันนี้
+      </p>
+    </article>
+
+    <!-- 4. รายการจองใกล้หมดอายุ -->
+    <article class="rounded-2xl border border-amber-500/20 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md sm:p-6">
+      <div class="flex items-center justify-between gap-2">
+        <p class="text-sm font-semibold text-[#30415D]/70">
+          จองใกล้หมดอายุ
+        </p>
+        <i class="fa-solid fa-clock text-lg text-amber-600"></i>
+      </div>
+
+      <p class="mt-4 text-4xl font-bold tracking-tight text-amber-600">
+        {{ expiring_soon|default:0 }}
+      </p>
+
+      <p class="mt-2 text-xs text-[#30415D]/50">
+        รายการที่จะหมดอายุภายใน 1 ชั่วโมง
+      </p>
+    </article>
+
+  </div>
 </section>
 
-<!-- Django converts the data to valid JSON -->
-{{ locations_summary|json_script:"locations-summary-data" }}
 
-<!-- Load Chart.js before initializing the chart -->
+    {% if is_admin and locations_summary %}
+      {{ locations_summary|json_script:"locations-summary-data" }}
+      {{ category_stock_data|json_script:"category-stock-data" }}
+      {{ reservation_status_data|json_script:"reservation-status-data" }}
+
+      <section aria-labelledby="charts-heading" class="space-y-4">
+
+        <!-- Main grouped bar chart -->
+        <article class="rounded-2xl border border-[#30415D]/10 bg-white p-4 shadow-sm sm:p-6">
+          <div class="mb-5 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h3 class="font-bold">สต็อกสินค้าเทียบกับรายการจอง</h3>
+              <p class="mt-1 text-xs text-[#30415D]/55">เปรียบเทียบรายจุดจำหน่าย</p>
+            </div>
+
+            <div class="flex flex-wrap gap-4 text-xs">
+              <span class="flex items-center gap-2">
+                <span class="h-2.5 w-2.5 rounded-sm bg-[#30415D]"></span>
+                สต็อกคงเหลือ (ชิ้น)
+              </span>
+              <span class="flex items-center gap-2">
+                <span class="h-2.5 w-2.5 rounded-sm bg-[#F47745]"></span>
+                จองรอรับ (รายการ)
+              </span>
+            </div>
+          </div>
+
+          <div class="relative h-[320px] w-full sm:h-[380px]">
+            <canvas
+              id="stockReservationChart"
+              role="img"
+              aria-label="กราฟเปรียบเทียบสต็อกและการจองตามจุดจำหน่าย"
+            ></canvas>
+          </div>
+        </article>
+
+        <!-- Doughnut + category stock chart -->
+        <div class="grid grid-cols-1 gap-4 xl:grid-cols-5">
+
+          <!-- Reservation status chart -->
+          <article class="rounded-2xl border border-[#30415D]/10 bg-white p-4 shadow-sm sm:p-6 xl:col-span-2">
+            <h3 class="font-bold">สัดส่วนรายการจองตามสถานะ</h3>
+            <p class="mt-1 text-xs text-[#30415D]/55">
+              ดูจำนวนรายการจองแยกตามสถานะปัจจุบัน
+            </p>
+
+            <div class="relative mx-auto mt-4 h-[280px] max-w-[360px]">
+              <canvas
+                id="stockShareChart"
+                role="img"
+                aria-label="กราฟโดนัทแสดงสัดส่วนรายการจองตามสถานะ"
+              ></canvas>
+            </div>
+
+            <p
+              id="reservationStatusEmpty"
+              class="mt-3 hidden text-center text-sm text-[#30415D]/55"
+            >
+              ยังไม่มีรายการจองสำหรับแสดงกราฟ
+            </p>
+          </article>
+
+          <!-- Stock by category -->
+          <article class="rounded-2xl border border-[#30415D]/10 bg-white p-4 shadow-sm sm:p-6 xl:col-span-3">
+            <h3 class="font-bold">จำนวนสินค้าในคลังแยกตามหมวดหมู่</h3>
+            <p class="mt-1 text-xs text-[#30415D]/55">
+              แสดงจำนวนสินค้าคงเหลือรวมในแต่ละหมวดหมู่
+            </p>
+
+            <div class="relative mt-4 h-[300px] w-full sm:h-[340px]">
+              <canvas
+                id="categoryStockChart"
+                role="img"
+                aria-label="กราฟแท่งแสดงจำนวนสินค้าคงเหลือแยกตามหมวดหมู่"
+              ></canvas>
+            </div>
+
+            <p
+              id="categoryStockEmpty"
+              class="mt-3 hidden text-center text-sm text-[#30415D]/55"
+            >
+              ไม่มีข้อมูล Stock สำหรับแสดงกราฟ
+            </p>
+          </article>
+
+        </div>
+
+        <p
+          id="chartError"
+          class="hidden rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+          role="alert"
+        ></p>
+      </section>
+    {% endif %}
+
+    <!-- Recent reservations and low stock -->
+    <div class="grid grid-cols-1 items-start gap-6 xl:grid-cols-12">
+
+      <!-- Recent reservations -->
+      <section class="min-w-0 xl:col-span-9" aria-labelledby="recent-heading">
+        <div class="mb-4 flex items-end justify-between gap-4">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-[0.14em] text-[#F47745]">LATEST ACTIVITY</p>
+            <h2 id="recent-heading" class="mt-1 text-xl font-bold">รายการจองล่าสุด</h2>
+          </div>
+
+          <a
+            href="{% url 'reservation_list' %}"
+            class="shrink-0 rounded-full border border-[#F47745]/25 bg-white px-4 py-2 text-sm font-semibold text-[#F47745] transition hover:bg-[#F47745] hover:text-white"
+          >
+            ดูทั้งหมด
+          </a>
+        </div>
+
+        <div class="overflow-hidden rounded-2xl border border-[#30415D]/10 bg-white shadow-sm">
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-[700px] text-left text-sm">
+              <thead class="bg-[#30415D] text-white">
+                <tr>
+                  <th scope="col" class="px-5 py-4 font-semibold">รายการจอง</th>
+                  <th scope="col" class="px-5 py-4 font-semibold">สินค้า</th>
+                  {% if is_admin %}
+                    <th scope="col" class="px-5 py-4 font-semibold">จุดรับ</th>
+                  {% endif %}
+                  <th scope="col" class="whitespace-nowrap px-5 py-4 font-semibold">เวลาจอง</th>
+                  <th scope="col" class="px-5 py-4 font-semibold">สถานะ</th>
+                </tr>
+              </thead>
+
+              <tbody class="divide-y divide-[#30415D]/[0.08]">
+                {% for r in recent_reservations %}
+                  <tr class="transition hover:bg-[#F8F5F0]/70">
+                    <td class="max-w-48 px-5 py-4">
+                      <p class="break-all font-mono text-xs font-semibold">{{ r.reservation_code }}</p>
+                      <p class="mt-1 text-xs text-[#30415D]/55">ลูกค้า {{ r.customer_id }}</p>
+                    </td>
+
+                    <td class="px-5 py-4">
+                      <p class="font-medium">{{ r.product.name }}</p>
+                      <p class="mt-1 text-xs text-[#30415D]/55">จำนวน {{ r.quantity }} ชิ้น</p>
+                    </td>
+
+                    {% if is_admin %}
+                      <td class="px-5 py-4 text-[#30415D]/70">{{ r.location.name }}</td>
+                    {% endif %}
+
+                    <td class="whitespace-nowrap px-5 py-4 text-xs text-[#30415D]/65">
+                      {{ r.reserved_at|date:"d/m/Y H:i" }}
+                    </td>
+
+                    <td class="px-5 py-4">
+                      <span class="inline-flex items-center whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold
+                        {% if r.status == 'pending' %}
+                          bg-amber-50 text-amber-800 ring-1 ring-inset ring-amber-600/20
+                        {% elif r.status == 'picked_up' %}
+                          bg-emerald-50 text-emerald-800 ring-1 ring-inset ring-emerald-600/20
+                        {% elif r.status == 'expired' %}
+                          bg-slate-100 text-slate-700 ring-1 ring-inset ring-slate-500/20
+                        {% else %}
+                          bg-red-50 text-red-800 ring-1 ring-inset ring-red-600/20
+                        {% endif %}
+                      ">
+                        {{ r.get_status_display }}
+                      </span>
+                    </td>
+                  </tr>
+                {% empty %}
+                  <tr>
+                    <td colspan="{% if is_admin %}5{% else %}4{% endif %}" class="px-5 py-10 text-center text-sm text-[#30415D]/55">
+                      ยังไม่มีรายการจอง
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Low stock -->
+      <section class="xl:col-span-3" aria-labelledby="low-heading">
+        <div class="mb-4">
+          <p class="text-xs font-bold uppercase tracking-[0.14em] text-[#F47745]">STOCK ALERT</p>
+          <h2 id="low-heading" class="mt-1 text-xl font-bold">สินค้าใกล้หมด</h2>
+          <p class="mt-1 text-sm text-[#30415D]/55">เหลือไม่เกิน 5 ชิ้น</p>
+        </div>
+
+        <div class="space-y-3">
+          {% for item in low_stocks %}
+            <div class="flex items-center justify-between gap-3 rounded-2xl border border-[#30415D]/10 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+              <div class="min-w-0">
+                <p class="truncate text-sm font-semibold">{{ item.product.name }}</p>
+                {% if is_admin %}
+                  <p class="mt-0.5 truncate text-xs text-[#30415D]/55">{{ item.location.name }}</p>
+                {% endif %}
+              </div>
+
+              <span class="shrink-0 rounded-full px-3 py-1 text-xs font-bold
+                {% if item.stock == 0 %}
+                  bg-red-100 text-red-700
+                {% else %}
+                  bg-[#F47745]/10 text-[#c9572c]
+                {% endif %}
+              ">
+                {{ item.stock }} ชิ้น
+              </span>
+            </div>
+          {% empty %}
+            <p class="rounded-2xl border border-dashed border-[#30415D]/20 bg-white px-5 py-8 text-center text-sm text-[#30415D]/55">
+              ไม่มีสินค้าสต็อกต่ำ
+            </p>
+          {% endfor %}
+        </div>
+      </section>
+
+    </div>
+  </div>
+</main>
+
+{% if is_admin and locations_summary %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
 
 <script>
 (function () {
-    function initChart() {
-        const dataElement = document.getElementById("locations-summary-data");
-        const canvas = document.getElementById("locationsSummaryChart");
-        const errorElement = document.getElementById("chartError");
+  const dataElement = document.getElementById('locations-summary-data');
+  const categoryElement = document.getElementById('category-stock-data');
+  const statusElement = document.getElementById('reservation-status-data');
 
-        function showError(message) {
-            if (errorElement) {
-                errorElement.textContent = message;
-                errorElement.classList.remove("hidden");
-            }
-            console.error("[Locations Chart]", message);
-        }
+  const errorElement = document.getElementById('chartError');
+  const categoryEmptyElement = document.getElementById('categoryStockEmpty');
+  const statusEmptyElement = document.getElementById('reservationStatusEmpty');
 
-        if (!dataElement || !canvas) {
-            showError("ไม่พบองค์ประกอบสำหรับแสดงกราฟ");
-            return;
-        }
+  function showError(message) {
+    if (errorElement) {
+      errorElement.textContent = message;
+      errorElement.classList.remove('hidden');
+    }
+    console.error('[Dashboard charts]', message);
+  }
 
-        if (typeof Chart === "undefined") {
-            showError("โหลด Chart.js ไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต");
-            return;
-        }
+  function initCharts() {
+    if (typeof Chart === 'undefined') {
+      showError('โหลดไลบรารีกราฟไม่สำเร็จ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต');
+      return;
+    }
 
-        let rows;
+    const palette = [
+      '#30415D', '#F47745', '#7186A5', '#F6B18F',
+      '#4D9A8A', '#C7A66B', '#8A78A8', '#D66A6A'
+    ];
 
-        try {
-            rows = JSON.parse(dataElement.textContent);
-        } catch (error) {
-            showError("อ่านข้อมูลกราฟไม่สำเร็จ กรุณาตรวจสอบข้อมูล JSON");
-            console.error(error);
-            return;
-        }
+    const commonLegend = {
+      labels: {
+        color: '#30415D',
+        usePointStyle: true,
+        boxWidth: 8,
+        padding: 16
+      }
+    };
 
-        if (!Array.isArray(rows) || rows.length === 0) {
-            showError("ไม่มีข้อมูลจุดจำหน่ายสำหรับแสดงกราฟ");
-            return;
-        }
+    const commonTooltip = {
+      backgroundColor: '#30415D',
+      titleColor: '#FFFFFF',
+      bodyColor: '#FFFFFF',
+      padding: 12,
+      cornerRadius: 8
+    };
 
-        // Prevent duplicate chart initialization
-        const existingChart = Chart.getChart(canvas);
-        if (existingChart) {
-            existingChart.destroy();
-        }
+    // 1. Stock compared with pending reservations by location
+    if (dataElement) {
+      let rows;
 
-        const labels = rows.map(row =>
-            row.location && row.location.name
-                ? row.location.name
-                : "ไม่ระบุชื่อ"
+      try {
+        rows = JSON.parse(dataElement.textContent);
+      } catch (error) {
+        showError('อ่านข้อมูลจุดจำหน่ายไม่สำเร็จ');
+        console.error(error);
+        rows = [];
+      }
+
+      if (Array.isArray(rows) && rows.length > 0) {
+        const labels = rows.map(
+          row => row.location && row.location.name
+            ? row.location.name
+            : 'ไม่ระบุชื่อ'
         );
 
-        const stockData = rows.map(row =>
-            Number(row.total_stock) || 0
+        const stock = rows.map(row => Number(row.total_stock) || 0);
+        const reservations = rows.map(
+          row => Number(row.active_reservations) || 0
         );
 
-        const reservationData = rows.map(row =>
-            Number(row.active_reservations) || 0
-        );
+        const groupedCanvas = document.getElementById('stockReservationChart');
 
-        try {
-            new Chart(canvas, {
-                type: "bar",
-
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: "สินค้าคงเหลือ (ชิ้น)",
-                            data: stockData,
-                            backgroundColor: "#30415D",
-                            borderRadius: 5,
-                            maxBarThickness: 45
-                        },
-                        {
-                            label: "รายการรอรับ",
-                            data: reservationData,
-                            backgroundColor: "#F47745",
-                            borderRadius: 5,
-                            maxBarThickness: 45
-                        }
-                    ]
+        if (groupedCanvas) {
+          new Chart(groupedCanvas, {
+            type: 'bar',
+            data: {
+              labels,
+              datasets: [
+                {
+                  label: 'สต็อกคงเหลือ (ชิ้น)',
+                  data: stock,
+                  backgroundColor: '#30415D',
+                  borderRadius: 5,
+                  maxBarThickness: 42
                 },
-
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-
-                    interaction: {
-                        mode: "index",
-                        intersect: false
-                    },
-
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-
-                        tooltip: {
-                            backgroundColor: "#30415D",
-                            titleColor: "#FFFFFF",
-                            bodyColor: "#FFFFFF",
-                            padding: 12,
-                            cornerRadius: 8
-                        }
-                    },
-
-                    scales: {
-                        x: {
-                            grid: {
-                                display: false
-                            },
-
-                            ticks: {
-                                autoSkip: false,
-                                maxRotation: 45,
-                                minRotation: 0,
-                                color: "#30415D",
-                                font: {
-                                    size: context => context.chart.width < 640 ? 9 : 12,
-                                    weight: context => context.chart.width < 640 ? "300" : "400"
-                                }
-                            },
-
-                            border: {
-                                display: false
-                            }
-                        },
-
-                        y: {
-                            beginAtZero: true,
-
-                            ticks: {
-                                precision: 0,
-                                color: "#30415D"
-                            },
-
-                            grid: {
-                                color: "rgba(48, 65, 93, 0.08)"
-                            },
-
-                            border: {
-                                display: false
-                            }
-                        }
-                    }
+                {
+                  label: 'จองรอรับ (รายการ)',
+                  data: reservations,
+                  backgroundColor: '#F47745',
+                  borderRadius: 5,
+                  maxBarThickness: 42
                 }
-            });
-        } catch (error) {
-            showError("สร้างกราฟไม่สำเร็จ กรุณาตรวจสอบ Console");
-            console.error(error);
+              ]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              interaction: {
+                mode: 'index',
+                intersect: false
+              },
+              plugins: {
+                legend: commonLegend,
+                tooltip: commonTooltip
+              },
+              scales: {
+                x: {
+                  grid: { display: false },
+                  ticks: {
+                    color: '#30415D',
+                    maxRotation: 35,
+                    minRotation: 0
+                  },
+                  border: { display: false }
+                },
+                y: {
+                  beginAtZero: true,
+                  ticks: {
+                    color: '#30415D',
+                    precision: 0
+                  },
+                  grid: {
+                    color: 'rgba(48,65,93,0.08)'
+                  },
+                  border: { display: false }
+                }
+              }
+            }
+          });
         }
+      }
     }
 
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", initChart, {
-            once: true
-        });
-    } else {
-        initChart();
+    // 2. Reservation count by status
+    const doughnutCanvas = document.getElementById('stockShareChart');
+
+    if (doughnutCanvas && statusElement) {
+      let statusRows;
+
+      try {
+        statusRows = JSON.parse(statusElement.textContent);
+      } catch (error) {
+        showError('อ่านข้อมูลสถานะการจองไม่สำเร็จ');
+        console.error(error);
+        statusRows = [];
+      }
+
+      if (Array.isArray(statusRows) && statusRows.length > 0) {
+        const statusColors = {
+          pending: '#F47745',
+          picked_up: '#10B981',
+          expired: '#94A3B8',
+          cancelled: '#EF4444'
+        };
+
+        const statusValues = statusRows.map(
+          row => Number(row.total) || 0
+        );
+
+        if (statusValues.some(value => value > 0)) {
+          new Chart(doughnutCanvas, {
+            type: 'doughnut',
+            data: {
+              labels: statusRows.map(row => row.name),
+              datasets: [{
+                label: 'จำนวนรายการจอง',
+                data: statusValues,
+                backgroundColor: statusRows.map(
+                  row => statusColors[row.status] || '#30415D'
+                ),
+                borderColor: '#FFFFFF',
+                borderWidth: 3,
+                hoverOffset: 8
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              cutout: '64%',
+              plugins: {
+                legend: {
+                  position: 'bottom',
+                  ...commonLegend
+                },
+                tooltip: {
+                  ...commonTooltip,
+                  callbacks: {
+                    label(context) {
+                      const total = context.dataset.data.reduce(
+                        (sum, value) => sum + value, 0
+                      );
+
+                      const value = Number(context.raw) || 0;
+                      const percent = total
+                        ? (value / total * 100).toFixed(1)
+                        : '0.0';
+
+                      return `${context.label}: ${value.toLocaleString()} รายการ (${percent}%)`;
+                    }
+                  }
+                }
+              }
+            }
+          });
+        } else if (statusEmptyElement) {
+          statusEmptyElement.classList.remove('hidden');
+        }
+      } else if (statusEmptyElement) {
+        statusEmptyElement.classList.remove('hidden');
+      }
     }
+
+    // 3. Total stock by product category
+    const categoryCanvas = document.getElementById('categoryStockChart');
+
+    if (categoryCanvas && categoryElement) {
+      let categoryRows;
+
+      try {
+        categoryRows = JSON.parse(categoryElement.textContent);
+      } catch (error) {
+        showError('อ่านข้อมูล Stock แยกตามหมวดหมู่ไม่สำเร็จ');
+        console.error(error);
+        categoryRows = [];
+      }
+
+      if (Array.isArray(categoryRows) && categoryRows.length > 0) {
+        const categoryLabels = categoryRows.map(
+          item => item.name || 'ไม่ระบุหมวดหมู่'
+        );
+
+        const categoryStocks = categoryRows.map(
+          item => Number(item.total_stock) || 0
+        );
+
+        new Chart(categoryCanvas, {
+          type: 'bar',
+          data: {
+            labels: categoryLabels,
+            datasets: [{
+              label: 'จำนวนสินค้าคงเหลือ (ชิ้น)',
+              data: categoryStocks,
+              backgroundColor: categoryLabels.map(
+                (_, i) => palette[i % palette.length]
+              ),
+              borderRadius: 6,
+              maxBarThickness: 42
+            }]
+          },
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false
+              },
+              tooltip: {
+                ...commonTooltip,
+                callbacks: {
+                  label: context =>
+                    ` ${context.parsed.x.toLocaleString()} ชิ้น`
+                }
+              }
+            },
+            scales: {
+              x: {
+                beginAtZero: true,
+                ticks: {
+                  color: '#30415D',
+                  precision: 0
+                },
+                title: {
+                  display: true,
+                  text: 'จำนวนสินค้าคงเหลือ (ชิ้น)',
+                  color: '#30415D'
+                },
+                grid: {
+                  color: 'rgba(48,65,93,0.08)'
+                },
+                border: {
+                  display: false
+                }
+              },
+              y: {
+                ticks: {
+                  color: '#30415D'
+                },
+                grid: {
+                  display: false
+                },
+                border: {
+                  display: false
+                }
+              }
+            }
+          }
+        });
+      } else if (categoryEmptyElement) {
+        categoryEmptyElement.classList.remove('hidden');
+      }
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCharts, { once: true });
+  } else {
+    initCharts();
+  }
 })();
 </script>
 {% endif %}
 
-
-        <!-- Recent reservations and low stock -->
-        <div class="grid grid-cols-1 items-start gap-6 xl:grid-cols-12">
-
-            <!-- Recent reservations -->
-            <section class="min-w-0 xl:col-span-9" aria-labelledby="recent-heading">
-                <div class="mb-4 flex items-end justify-between gap-4">
-                    <div>
-                        <p class="text-xs font-bold uppercase tracking-[0.14em] text-[#F47745]">
-                            LATEST ACTIVITY
-                        </p>
-                        <h2 id="recent-heading" class="mt-1 text-xl font-bold">
-                            รายการจองล่าสุด
-                        </h2>
-                    </div>
-
-                    <a
-                        href="{% url 'reservation_list' %}"
-                        class="shrink-0 rounded-full border border-[#F47745]/25 bg-white px-4 py-2 text-sm font-semibold text-[#F47745] transition hover:bg-[#F47745] hover:text-white">
-                        ดูทั้งหมด <span aria-hidden="true">→</span>
-                    </a>
-                </div>
-
-                <div class="overflow-hidden rounded-2xl border border-[#30415D]/10 bg-white shadow-sm">
-                    <div class="overflow-x-auto">
-                        <table class="w-full min-w-[700px] text-left text-sm">
-                            <thead class="bg-[#30415D] text-white">
-                                <tr>
-                                    <th scope="col" class="px-5 py-4 font-semibold">รายการจอง</th>
-                                    <th scope="col" class="px-5 py-4 font-semibold">สินค้า</th>
-                                    {% if is_admin %}
-                                    <th scope="col" class="px-5 py-4 font-semibold">จุดรับ</th>
-                                    {% endif %}
-                                    <th scope="col" class="whitespace-nowrap px-5 py-4 font-semibold">เวลาจอง</th>
-                                    <th scope="col" class="px-5 py-4 font-semibold">สถานะ</th>
-                                </tr>
-                            </thead>
-
-                            <tbody class="divide-y divide-[#30415D]/[0.08]">
-                                {% for r in recent_reservations %}
-                                <tr class="transition hover:bg-[#F8F5F0]/70">
-                                    <td class="max-w-48 px-5 py-4">
-                                        <p class="break-all font-mono text-xs font-semibold">
-                                            {{ r.reservation_code }}
-                                        </p>
-                                        <p class="mt-1 text-xs text-[#30415D]/55">
-                                            ลูกค้า {{ r.customer_id }}
-                                        </p>
-                                    </td>
-
-                                    <td class="px-5 py-4">
-                                        <p class="font-medium">{{ r.product.name }}</p>
-                                        <p class="mt-1 text-xs text-[#30415D]/55">
-                                            จำนวน {{ r.quantity }} ชิ้น
-                                        </p>
-                                    </td>
-
-                                    {% if is_admin %}
-                                    <td class="px-5 py-4 text-[#30415D]/70">
-                                        {{ r.location.name }}
-                                    </td>
-                                    {% endif %}
-
-                                    <td class="whitespace-nowrap px-5 py-4 text-xs text-[#30415D]/65">
-                                        {{ r.reserved_at|date:"d/m/Y H:i" }}
-                                    </td>
-
-                                    <td class="px-5 py-4">
-                                        <span class="inline-flex items-center whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold
-    {% if r.status == 'pending' %}
-        bg-amber-50 text-amber-800 ring-1 ring-inset ring-amber-600/20
-    {% elif r.status == 'picked_up' %}
-        bg-emerald-50 text-emerald-800 ring-1 ring-inset ring-emerald-600/20
-    {% elif r.status == 'expired' %}
-        bg-slate-100 text-slate-700 ring-1 ring-inset ring-slate-500/20
-    {% else %}
-        bg-red-50 text-red-800 ring-1 ring-inset ring-red-600/20
-    {% endif %}">
-    {{ r.get_status_display }}
-</span>
-                                    </td>
-                                </tr>
-
-                                {% empty %}
-                                <tr>
-                                    <td
-                                        colspan="{% if is_admin %}5{% else %}4{% endif %}"
-                                        class="px-5 py-10 text-center text-sm text-[#30415D]/55">
-                                        ยังไม่มีรายการจอง
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Low stock -->
-            <section class="xl:col-span-3" aria-labelledby="low-heading">
-                <div class="mb-4">
-                    <p class="text-xs font-bold uppercase tracking-[0.14em] text-[#F47745]">
-                        STOCK ALERT
-                    </p>
-                    <h2 id="low-heading" class="mt-1 text-xl font-bold">สินค้าใกล้หมด</h2>
-                    <p class="mt-1 text-sm text-[#30415D]/55">เหลือไม่เกิน 5 ชิ้น</p>
-                </div>
-
-                <div class="space-y-3">
-                    {% for item in low_stocks %}
-                    <div class="flex items-center justify-between gap-3 rounded-2xl border border-[#30415D]/10 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-                        <div class="min-w-0">
-                            <p class="truncate text-sm font-semibold">
-                                {{ item.product.name }}
-                            </p>
-
-                            {% if is_admin %}
-                            <p class="mt-0.5 truncate text-xs text-[#30415D]/55">
-                                {{ item.location.name }}
-                            </p>
-                            {% endif %}
-                        </div>
-
-                        <span class="shrink-0 rounded-full px-3 py-1 text-xs font-bold
-                            {% if item.stock == 0 %}
-                                bg-red-100 text-red-700
-                            {% else %}
-                                bg-[#F47745]/10 text-[#c9572c]
-                            {% endif %}">
-                            {{ item.stock }} ชิ้น
-                        </span>
-                    </div>
-
-                    {% empty %}
-                    <p class="rounded-2xl border border-dashed border-[#30415D]/20 bg-white px-5 py-8 text-center text-sm text-[#30415D]/55">
-                        ไม่มีสินค้าสต็อกต่ำ
-                    </p>
-                    {% endfor %}
-                </div>
-            </section>
-        </div>
-    </div>
-</main>
 {% endblock %}

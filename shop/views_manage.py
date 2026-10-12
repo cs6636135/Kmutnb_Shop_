@@ -10,7 +10,7 @@ from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
 from django.utils import timezone
 from reservations.services import expire_overdue_reservations
-
+from datetime import timedelta
 
 @role_required("admin")
 def products(request):
@@ -313,79 +313,177 @@ def categories(request):
 
 @role_required("admin", "staff")
 def dashboard(request):
-    # อ่านข้อมูลผู้ใช้เพื่อเลือกสิทธิ์และสาขาที่จะแสดง
+    # อ่านข้อมูลผู้ใช้และตรวจสอบสิทธิ์
     user = request.user
     is_admin = user.role == "admin"
-    if is_admin:
-        # อัปเดตการจองหมดอายุก่อนสรุปสต็อกแยกตาม location ให้ admin
-        expire_overdue_reservations()
-
     user_location = user.location
 
-    # Admin เห็นข้อมูลทุกสาขา ส่วน staff เห็นเฉพาะสาขาที่ตนเองประจำอยู่
+    # อัปเดตสถานะรายการจองที่หมดอายุสำหรับ Admin
+    if is_admin:
+        expire_overdue_reservations()
+
+    # เตรียม QuerySet ของสต็อกและรายการจอง
     stocks = ProductLocation.objects.all()
     reservations = Reservation.objects.all()
+
+    # Admin เห็นทุกสาขา ส่วน Staff เห็นเฉพาะสาขาของตนเอง
     if not is_admin:
         stocks = stocks.filter(location=user_location)
         reservations = reservations.filter(location=user_location)
 
-    # รวมสต็อกคงเหลือทั้งหมดในขอบเขตสาขาที่ผู้ใช้มีสิทธิ์เห็น
-    total_units_stock = stocks.aggregate(total=Sum("stock"))["total"] or 0
+    # ==========================================
+    # 1. จำนวนสินค้าคงเหลือทั้งหมด
+    # ==========================================
+    total_units_stock = stocks.aggregate(
+        total=Sum("stock")
+    )["total"] or 0
 
-    # นับรายการจองตามสถานะ
+    # ==========================================
+    # 2. จำนวนรายการจองที่รอรับสินค้า
+    # ==========================================
     active_reservations = reservations.filter(
         status=Reservation.Status.PENDING
     ).count()
-    expired_reservations = reservations.filter(
-        status=Reservation.Status.EXPIRED
-    ).count()
 
-    # นับรายการที่รับสินค้าแล้วในวันนี้ตามเวลาท้องถิ่น
+    # ==========================================
+    # 3. จำนวนรายการที่รับสินค้าแล้ววันนี้
+    # ==========================================
     today = timezone.localdate()
+
     picked_up_today = reservations.filter(
         status=Reservation.Status.PICKED_UP,
         picked_up_at__date=today,
     ).count()
 
-    # ดึงรายการจองล่าสุดไม่เกิน 8 รายการ
-    recent_reservations = reservations.order_by("-reserved_at")[:8]
+    # ==========================================
+    # 4. จำนวนรายการจองใกล้หมดอายุภายใน 1 ชั่วโมง
+    # ==========================================
+    now = timezone.now()
+    one_hour_later = now + timedelta(hours=1)
 
-    # ดึงสินค้าที่เหลือไม่เกิน 5 ชิ้น เรียงจากเหลือน้อยไปมาก ไม่เกิน 6 รายการ
-    low_stocks = stocks.filter(stock__lte=5).order_by("stock")[:6]
+    expiring_soon = reservations.filter(
+        status=Reservation.Status.PENDING,
+        expires_at__gt=now,
+        expires_at__lte=one_hour_later,
+    ).count()
 
-    # สรุปสต็อกและการจองแยกตามสาขาสำหรับ admin
+    # ==========================================
+    # 5. จำนวนรายการจองที่หมดอายุสะสม
+    # ==========================================
+    expired_reservations = reservations.filter(
+        status=Reservation.Status.EXPIRED
+    ).count()
+
+    # ==========================================
+    # 6. รายการจองล่าสุด ไม่เกิน 8 รายการ
+    # ==========================================
+    recent_reservations = reservations.order_by(
+        "-reserved_at"
+    )[:5]
+
+    # ==========================================
+    # 7. สินค้าที่เหลือไม่เกิน 5 ชิ้น สูงสุด 6 รายการ
+    # ==========================================
+    low_stocks = stocks.filter(
+        stock__lte=5
+    ).order_by("stock")[:6]
+
+    # ==========================================
+    # 8. สรุปสต็อกและรายการจองแยกตามสาขา
+    # สำหรับ Admin
+    # ==========================================
     locations_summary = []
+
     if is_admin:
         stock_by_location = {
             row["location_id"]: row["total"] or 0
-            for row in ProductLocation.objects.values("location_id").annotate(
+            for row in ProductLocation.objects.values(
+                "location_id"
+            ).annotate(
                 total=Sum("stock")
             )
         }
+
         reservations_by_location = {
             row["location_id"]: row["total"]
             for row in Reservation.objects.filter(
                 status=Reservation.Status.PENDING
-            ).values("location_id").annotate(total=Count("pk"))
+            ).values(
+                "location_id"
+            ).annotate(
+                total=Count("pk")
+            )
         }
+
         locations_summary = [
             {
                 "location": {"name": location.name},
-                "total_stock": stock_by_location.get(location.pk, 0),
-                "active_reservations": reservations_by_location.get(location.pk, 0),
+                "total_stock": stock_by_location.get(
+                    location.pk, 0
+                ),
+                "active_reservations": reservations_by_location.get(
+                    location.pk, 0
+                ),
             }
             for location in Location.objects.all()
         ]
 
+    # ==========================================
+    # 9. สรุปจำนวนสินค้าคงเหลือแยกตามหมวดหมู่
+    # ==========================================
+    stocks_by_category = stocks.values(
+        "product__category__name"
+    ).annotate(
+        total_stock=Sum("stock")
+    ).order_by(
+        "product__category__name"
+    )
+
+    category_stock_data = [
+        {
+            "name": row["product__category__name"] or "ไม่ระบุหมวดหมู่",
+            "total_stock": row["total_stock"] or 0,
+        }
+        for row in stocks_by_category
+    ]
+
+    # ==========================================
+    # 10. สรุปจำนวนรายการจองแยกตามสถานะ
+    # สำหรับกราฟโดนัท reservation status
+    # ==========================================
+    reservation_status_data = [
+        {
+            "name": label,
+            "status": value,
+            "total": reservations.filter(
+                status=value
+            ).count(),
+        }
+        for value, label in Reservation.Status.choices
+    ]
+
+    # ==========================================
+    # 11. ข้อมูลที่ส่งไปยัง dashboard.html
+    # ==========================================
     context = {
         "is_admin": is_admin,
         "user_location": user_location,
+
+        # ข้อมูลการ์ดสรุป
         "total_units_stock": total_units_stock,
         "active_reservations": active_reservations,
         "picked_up_today": picked_up_today,
+        "expiring_soon": expiring_soon,
         "expired_reservations": expired_reservations,
+
+        # ข้อมูลรายการใน Dashboard
         "recent_reservations": recent_reservations,
         "low_stocks": low_stocks,
+
+        # ข้อมูลสำหรับกราฟ
         "locations_summary": locations_summary,
+        "category_stock_data": category_stock_data,
+        "reservation_status_data": reservation_status_data,
     }
+
     return render(request, "manage/dashboard.html", context)

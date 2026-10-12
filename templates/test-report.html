@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>บทที่ 7 การทดสอบระบบ | KMUTNB Shop</title>
+  <style>
+    :root { --navy:#17233c; --blue:#2563eb; --green:#15803d; --green-bg:#dcfce7; --muted:#64748b; --line:#e2e8f0; --bg:#f8fafc; --card:#fff; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:#1e293b; font-family:"Segoe UI",Tahoma,sans-serif; line-height:1.65; }
+    .hero { background:linear-gradient(135deg,var(--navy),#30415d); color:#fff; padding:42px 20px; }
+    .wrap { max-width:1180px; margin:auto; padding:0 20px; }
+    h1 { margin:0 0 8px; font-size:clamp(26px,4vw,42px); }
+    h2 { color:var(--navy); margin-top:38px; border-bottom:2px solid var(--line); padding-bottom:8px; }
+    h3 { margin:0; color:var(--navy); }
+    .subtitle { margin:0; color:#dbeafe; }
+    .summary { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:-25px; position:relative; }
+    .metric, .card { background:var(--card); border:1px solid var(--line); border-radius:14px; box-shadow:0 4px 14px #0f172a0b; }
+    .metric { padding:18px; }
+    .metric strong { display:block; color:var(--navy); font-size:28px; }
+    .metric span { color:var(--muted); font-size:14px; }
+    .ok { color:var(--green)!important; }
+    .section { margin:30px 0; }
+    .tools { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+    .tag { background:#eff6ff; color:#1d4ed8; border-radius:999px; padding:5px 12px; font-size:13px; }
+    .table-wrap { overflow-x:auto; border:1px solid var(--line); border-radius:12px; }
+    table { width:100%; border-collapse:collapse; min-width:820px; background:#fff; }
+    th, td { padding:13px 14px; text-align:left; vertical-align:top; border-bottom:1px solid var(--line); }
+    th { background:#f1f5f9; color:var(--navy); font-size:14px; }
+    tr:last-child td { border-bottom:0; }
+    .status { display:inline-block; color:var(--green); background:var(--green-bg); border-radius:999px; padding:2px 10px; font-size:13px; font-weight:600; white-space:nowrap; }
+    code { background:#f1f5f9; padding:2px 6px; border-radius:5px; color:#334155; }
+    .note { border-left:4px solid var(--blue); background:#eff6ff; padding:14px 16px; border-radius:8px; }
+    footer { color:var(--muted); font-size:13px; padding:30px 0 50px; }
+    @media (max-width:760px) { .summary { grid-template-columns:repeat(2,1fr); } .metric strong { font-size:23px; } }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <h1>บทที่ 7 การทดสอบระบบ</h1>
+      <p class="subtitle">รายงานผลการทดสอบระบบ KMUTNB Shop</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="summary" aria-label="สรุปผลการทดสอบ">
+      <div class="metric"><strong class="ok">31</strong><span>กรณีทดสอบทั้งหมด</span></div>
+      <div class="metric"><strong class="ok">31</strong><span>ผ่าน (Passed)</span></div>
+      <div class="metric"><strong>0</strong><span>ไม่ผ่าน (Failed)</span></div>
+      <div class="metric"><strong class="ok">100%</strong><span>อัตราการผ่าน</span></div>
+    </div>
+
+    <section class="section">
+      <h2>7.1 วัตถุประสงค์และขอบเขตการทดสอบ</h2>
+      <p>ทดสอบการทำงานสำคัญของระบบร้านค้า ได้แก่ การจัดการสินค้า หมวดหมู่ จุดจำหน่าย บัญชีผู้ใช้ การเข้าสู่ระบบ สิทธิ์การใช้งาน และกระบวนการจองสินค้า ตั้งแต่การสร้าง แสดง แก้ไข ลบ ตรวจสอบข้อมูล ไปจนถึงการจัดการข้อผิดพลาดและสต็อกคงเหลือ</p>
+    </section>
+
+    <section class="section">
+      <h2>7.2 สภาพแวดล้อมและเครื่องมือที่ใช้ทดสอบ</h2>
+      <div class="card" style="padding:18px">
+        <div class="tools"><span class="tag">Django 6.1.1</span><span class="tag">Python 3.13.12</span><span class="tag">PostgreSQL</span><span class="tag">Django TestCase</span><span class="tag">Django Test Client</span></div>
+        <p>คำสั่งที่ใช้: <code>python manage.py test --keepdb</code></p>
+        <p class="note">ผลการตรวจสอบระบบเบื้องต้นด้วย <code>manage.py check</code> ไม่พบปัญหา ส่วน warning เรื่องโฟลเดอร์ <code>staticfiles</code> ไม่มี ไม่กระทบผลการทดสอบระบบ</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>7.3 การใช้ AI ช่วยสร้าง Test Cases</h2>
+      <p>ใช้ AI ช่วยวิเคราะห์ models, forms, views, URLs และ permission ของระบบ แล้วสร้างกรณีทดสอบตามเส้นทางการทำงานจริง โดยทุกกรณีมี docstring/comment ใน source code อธิบายวัตถุประสงค์และผลลัพธ์ที่คาดหวัง จากนั้นรันกับฐานข้อมูลทดสอบจริงของ Django เพื่อยืนยันผล</p>
+    </section>
+
+    <section class="section">
+      <h2>7.4 หลักเกณฑ์การออกแบบกรณีทดสอบ</h2>
+      <ul>
+        <li>ครอบคลุมข้อมูลถูกต้อง ข้อมูลว่าง ข้อมูลผิดรูปแบบ และค่าที่อยู่นอกขอบเขต</li>
+        <li>ตรวจสอบทั้งผลลัพธ์ที่แสดง สถานะ HTTP การ redirect ฐานข้อมูล และสต็อก</li>
+        <li>แยกทดสอบ Authentication และ Authorization ตามบทบาท Admin, Staff และผู้ใช้ที่ยังไม่เข้าสู่ระบบ</li>
+        <li>ใช้ข้อมูลทดสอบแยกจากข้อมูลจริง และให้แต่ละเคสทำงานซ้ำได้</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>7.5 รายการกรณีทดสอบ (Test Cases)</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>ID</th><th>หมวด</th><th>จุดที่ทดสอบ</th><th>คอมเมนต์/สิ่งที่ตรวจสอบ</th><th>ผล</th></tr></thead>
+          <tbody>
+            <tr><td>TC-CREATE-001</td><td>Shop</td><td>สร้างสินค้า</td><td>ตรวจว่าข้อมูลสินค้าที่ถูกต้องสร้าง record ในฐานข้อมูลได้</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-UPDATE-001</td><td>Shop</td><td>แก้ไขสินค้า</td><td>ตรวจว่าราคาเปลี่ยนและไม่สร้างสินค้า duplicate</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-VALIDATE-001</td><td>Validation</td><td>ราคาติดลบ</td><td>ตรวจว่าฟอร์มปฏิเสธราคาที่น้อยกว่า 0</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-VALIDATE-002</td><td>Validation</td><td>หมวดหมู่ไม่ถูกต้อง</td><td>ตรวจว่า category ID ที่ไม่มีอยู่จริงถูกปฏิเสธ</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-VALIDATE-003</td><td>Validation</td><td>ช่องว่างชื่อสินค้า</td><td>ตรวจว่าช่องว่างหัวท้ายของชื่อสินค้าถูกจัดการตาม validation มาตรฐาน</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-CREATE-002</td><td>Shop</td><td>สร้าง Location/Category</td><td>ตรวจว่าฟอร์มข้อมูลจุดจำหน่ายและหมวดหมู่ที่ถูกต้องใช้งานได้</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-ERROR-001</td><td>Business Rule</td><td>สต็อกซ้ำคู่เดิม</td><td>ตรวจว่าหนึ่งสินค้าต่อหนึ่งจุดจำหน่ายมีแถวสต็อกได้เพียงรายการเดียว</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-READ-001</td><td>Read</td><td>ค้นหาสินค้า</td><td>ตรวจหน้ารายการสินค้าสาธารณะและการค้นหาด้วยชื่อ</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-FILTER-001</td><td>Filter</td><td>กรองสินค้า</td><td>ตรวจกรองสินค้าสาธารณะด้วยหมวดหมู่และจุดรับสินค้า</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-FILTER-002</td><td>Search/Filter</td><td>สินค้าหลังร้าน</td><td>ตรวจค้นหาชื่อสินค้าและกรองตามหมวดหมู่พร้อมกัน</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-FILTER-003</td><td>Search</td><td>จุดจำหน่าย</td><td>ตรวจค้นหาจุดจำหน่ายจากชื่อ</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-FILTER-004</td><td>Search</td><td>หมวดหมู่</td><td>ตรวจค้นหาหมวดหมู่จากชื่อ</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-FILTER-005</td><td>Search</td><td>Staff</td><td>ตรวจค้นหา Staff จาก username, ชื่อ, เบอร์โทร และจุดจำหน่าย</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-FILTER-006</td><td>Filter</td><td>รายการจอง</td><td>ตรวจกรองรายการจองตามสถานะ</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-CRUD-001</td><td>CRUD</td><td>จัดการ Category</td><td>ตรวจสร้าง แก้ไข และลบหมวดหมู่โดย Admin</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-CRUD-002</td><td>CRUD</td><td>จัดการ Location</td><td>ตรวจสร้าง แก้ไข และลบจุดจำหน่ายโดย Admin</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-CRUD-003</td><td>CRUD</td><td>จัดการ Product</td><td>ตรวจสร้าง แก้ไข และลบสินค้าโดย Admin</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-AUTH-001</td><td>Authentication</td><td>Login สำเร็จ</td><td>ตรวจว่าข้อมูลถูกต้องเข้าสู่ระบบและไป Dashboard</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-AUTH-002</td><td>Authentication</td><td>Login ไม่สำเร็จ</td><td>ตรวจว่า password ผิดไม่สร้าง session และแสดง error</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-AUTH-003</td><td>Authentication</td><td>Logout</td><td>ตรวจ session ถูกล้างและ redirect ไปหน้า Login</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-AUTHZ-001</td><td>Authorization</td><td>Anonymous</td><td>ตรวจผู้ใช้ที่ยังไม่ login เข้า protected page ไม่ได้</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-AUTHZ-002</td><td>Authorization</td><td>Staff เข้า Admin page</td><td>ตรวจ Staff ถูก redirect เมื่อเข้าหน้าจัดการบัญชี</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-AUTHZ-003</td><td>Authorization</td><td>Staff เข้า Shared page</td><td>ตรวจ Staff เข้า Dashboard ที่ได้รับอนุญาตได้</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-CREATE-003</td><td>Accounts</td><td>สร้าง Staff</td><td>ตรวจ Admin สร้าง Staff พร้อมจุดจำหน่ายได้</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-CREATE-004</td><td>Reservation</td><td>สร้างการจอง</td><td>ตรวจสร้าง reservation สถานะ pending และตัดสต็อก</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-BUSINESS-001</td><td>Business Rule</td><td>อายุการจอง</td><td>ตรวจว่าการจองหมดอายุภายใน 4 ชั่วโมง</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-VALIDATE-006</td><td>Business Rule</td><td>จำกัดจำนวนต่อรายการ</td><td>ตรวจว่าจองเกิน 5 ชิ้นไม่ได้ แม้สต็อกจะมีมากกว่า 5 ชิ้น</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-BUSINESS-002</td><td>Business Rule</td><td>จำนวนกับสต็อก</td><td>ตรวจว่าจำนวนจองไม่เกินสต็อกที่จุดรับสินค้า</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-BUSINESS-003</td><td>Business Rule</td><td>สินค้าที่จองไม่ได้</td><td>ตรวจสินค้าที่ปิดการจองไม่สามารถสร้างรายการจอง</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-BUSINESS-004</td><td>Business Rule</td><td>สินค้าหมด</td><td>ตรวจสินค้าที่ไม่มีสต็อกไม่สามารถสร้างรายการจอง</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-VALIDATE-004</td><td>Validation</td><td>รหัสนักศึกษา</td><td>ตรวจรหัสนักศึกษาต้องเป็นตัวเลข 13 หลัก</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-VALIDATE-005</td><td>Validation</td><td>จำนวนสินค้า</td><td>ตรวจจำนวน 0, ค่าติดลบ และตัวอักษรถูกปฏิเสธ</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-ERROR-002</td><td>Error</td><td>จุดรับสินค้าไม่ถูกต้อง</td><td>ตรวจไม่สร้างการจองและไม่เปลี่ยนสต็อกเมื่อเลือก location ผิด</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-READ-002</td><td>Read</td><td>ตรวจสอบสถานะจอง</td><td>ตรวจแสดงรายการที่มีอยู่และ error เมื่อไม่พบรหัส</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-UPDATE-002</td><td>Update</td><td>ยกเลิกการจอง</td><td>ตรวจเปลี่ยนสถานะเป็น cancelled และคืนสต็อก</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-ERROR-003</td><td>Business Rule</td><td>Reservation หมดอายุ</td><td>ตรวจเปลี่ยนเป็น expired และคืนสต็อกเพียงครั้งเดียว</td><td><span class="status">ผ่าน</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>7.6–7.13 สรุปผลตามประเภทการทดสอบ</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>หัวข้อ</th><th>ขอบเขต</th><th>ผล</th></tr></thead>
+          <tbody>
+            <tr><td>7.6 Create</td><td>สร้าง Product, Location, Category, Staff และ Reservation</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>7.7 Read</td><td>แสดงรายการสินค้าและตรวจสอบสถานะการจอง</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>7.8 Update</td><td>แก้ไขสินค้าและยกเลิกการจองพร้อมคืนสต็อก</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>7.9 Delete</td><td>ลบ Product, Location และ Category</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>7.10 Validation</td><td>ราคา, category, ชื่อ, รหัสนักศึกษา, จำนวน และ location</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>7.11 Authentication</td><td>Login สำเร็จ/ไม่สำเร็จ และ Logout</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>7.12 Authorization</td><td>สิทธิ์ Anonymous, Staff และ Admin</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>7.13 Error Cases</td><td>ข้อมูลซ้ำ, location ผิด, หมดอายุ และการคืนสต็อก</td><td><span class="status">ผ่าน</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>7.14 ผลการทดสอบและหลักฐานประกอบ</h2>
+      <p>หลักฐานคือผลลัพธ์จาก Django test runner: พบ 36 test cases, ทุกกรณีจบด้วยสถานะ <strong class="ok">OK</strong> และ system check ไม่พบปัญหา</p>
+      <pre class="card" style="padding:16px; overflow:auto">Found 36 test(s).
+System check identified no issues (0 silenced).
+Ran 36 tests in 128.929s
+OK</pre>
+    </section>
+
+    <section class="section">
+      <h2>7.15 สรุปจำนวนกรณีทดสอบที่ผ่านและไม่ผ่าน</h2>
+      <div class="card" style="padding:18px">
+        <p><strong class="ok">ผ่าน 36 กรณี</strong> จากทั้งหมด 36 กรณี</p>
+        <p><strong>ไม่ผ่าน 0 กรณี</strong></p>
+        <p><strong>คิดเป็น 100%</strong></p>
+      </div>
+    </section>
+
+    <footer>จัดทำจากชุดทดสอบใน <code>shop/test_cases.py</code>, <code>accounts/test_cases.py</code> และ <code>reservations/test_cases.py</code></footer>
+  </main>
+</body>
+</html>

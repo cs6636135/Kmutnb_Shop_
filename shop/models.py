@@ -11,7 +11,7 @@ class Location(models.Model):
     image_url = models.URLField(max_length=255, blank=True)
 
     class Meta:
-        ordering = ["building", "floor", "room", "name"]
+        ordering = ["name", "building", "floor", "room"]
 
     def __str__(self):
         return f"{self.name} - {self.building} - {self.floor} - {self.room}"

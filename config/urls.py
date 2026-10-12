@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.conf import settings
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.views.generic import TemplateView
 from django.urls import include, path
 
 urlpatterns = [
@@ -32,6 +33,9 @@ urlpatterns = [
 
     # Account (login/logout-permission)
     path("", include("accounts.urls")),
+    #test report
+    path("test-report/",TemplateView.as_view(template_name="test-report.html"),name="test_report",
+    ),
    
 ]
 

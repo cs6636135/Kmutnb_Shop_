@@ -6,7 +6,7 @@
 <main class="min-h-[calc(100vh-4rem)] bg-[#F8F5F0] text-[#30415D]">
     <div class="mx-auto max-w-7xl px-6 py-10 lg:px-8">
         {% include "manage/partials/page_header.html" with heading="จัดการจุดจำหน่าย" subtitle_prefix="ผู้ดูแลระบบ: " subtitle=user.username link_url="public_products" %}
-        {% include "manage/partials/list_toolbar.html" with heading_id="location-list-heading" section_heading="รายการจุดจำหน่าย" list_url="locations" results_id="location-results" search_id="location-search" search_label="ค้นหาชื่อจุดจำหน่าย" search_placeholder="เช่น อาคาร 78" add_label="เพิ่มจุดจำหน่าย" %}
+        {% include "manage/partials/list_toolbar.html" with heading_id="location-list-heading" list_url="locations" results_id="location-results" search_id="location-search" search_label="ค้นหาชื่อจุดจำหน่าย" search_placeholder="เช่น อาคาร 78" add_label="เพิ่มจุดจำหน่าย" %}
 
             <div id="location-results">
                 <div class="space-y-3 md:hidden">
