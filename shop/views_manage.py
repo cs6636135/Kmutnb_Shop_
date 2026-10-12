@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from accounts.permission import role_required
 from .models import Product,Location,Category,ProductLocation
