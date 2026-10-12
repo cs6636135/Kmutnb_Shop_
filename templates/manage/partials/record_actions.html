@@ -1,4 +1,22 @@
 <div class="{{ action_container_class }}">
+    {% if stock_update == True %}
+    <form method="post" onsubmit="return confirm('{{ update_confirmation }}');">
+        {% csrf_token %}
+        <input type="number" name="stock" value="{{ stock_amount }}" min="0"
+                class="{{ stock_amount_class }}">
+        <button type="submit" name="update" value="{{ record_id }}"
+                class="{{ update_button_class }}">
+            บันทึก
+        </button>
+    </form>
+    <form method="post" onsubmit="return confirm('{{ delete_confirmation }}');">
+        {% csrf_token %}
+        <button type="submit" name="delete" value="{{ record_id }}"
+                class="{{ delete_button_class }}">
+            ลบ
+        </button>
+    </form>
+    {% else %}
     <form method="post">
         {% csrf_token %}
         <button type="submit" name="edit" value="{{ record_id }}"
@@ -13,4 +31,5 @@
             ลบ
         </button>
     </form>
+    {% endif %}
 </div>

@@ -30,6 +30,20 @@
                     </select>
                 </div>
                 {% endif %}
+                {% if show_location_filter %}
+                <div class="sm:w-52">
+                    <label for="product-category-filter" class="mb-1.5 block text-sm font-semibold">กรองตามจุดจำหน่าย</label>
+                    <select id="product-category-filter" name="location"
+                            class="w-full rounded-lg border border-[#30415D]/20 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-[#F47745] focus:ring-2 focus:ring-[#F47745]/20">
+                        <option value="">ทุกจุดจำหน่าย</option>
+                        {% for location in locations %}
+                        <option value="{{ location.pk }}" {% if location_query == location.pk|stringformat:"s" %}selected{% endif %}>
+                            {{ location.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
             </div>
         </form>
 
