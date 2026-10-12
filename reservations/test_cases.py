@@ -42,6 +42,55 @@ class ReservationWorkflowTests(TestCase):
         self.stock.refresh_from_db()
         self.assertEqual(self.stock.stock, 3)
 
+    def test_reservation_expiry_is_set_to_four_hours(self):
+        """TC-BUSINESS-001: a successful reservation expires exactly four hours later."""
+        before = timezone.now()
+        response = self.post_reservation(quantity="1")
+        after = timezone.now()
+        self.assertEqual(response.status_code, 302)
+        reservation = Reservation.objects.get()
+        self.assertGreaterEqual(reservation.expires_at, before + timedelta(hours=4))
+        self.assertLessEqual(reservation.expires_at, after + timedelta(hours=4))
+
+    def test_quantity_above_five_is_rejected(self):
+        """TC-VALIDATE-006: one reservation cannot request more than five items."""
+        self.stock.stock = 10
+        self.stock.save(update_fields=["stock"])
+        response = self.post_reservation(quantity="6")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            "สามารถจองสินค้าได้ตั้งแต่ 1 ถึง 5 ชิ้นต่อรายการเท่านั้น",
+        )
+        self.assertFalse(Reservation.objects.exists())
+
+    def test_quantity_cannot_exceed_available_stock(self):
+        """TC-BUSINESS-002: reservation quantity cannot exceed stock at the selected location."""
+        self.stock.stock = 2
+        self.stock.save(update_fields=["stock"])
+        response = self.post_reservation(quantity="3")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "มีเพียง 2 ชิ้น")
+        self.assertFalse(Reservation.objects.exists())
+
+    def test_non_reservable_product_cannot_be_reserved(self):
+        """TC-BUSINESS-003: products marked as non-reservable reject reservation requests."""
+        self.product.reservable = False
+        self.product.save(update_fields=["reservable"])
+        response = self.post_reservation()
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "สินค้านี้ไม่เปิดให้จอง")
+        self.assertFalse(Reservation.objects.exists())
+
+    def test_out_of_stock_product_cannot_be_reserved(self):
+        """TC-BUSINESS-004: an out-of-stock product cannot create a reservation."""
+        self.stock.stock = 0
+        self.stock.save(update_fields=["stock"])
+        response = self.post_reservation()
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "สินค้าหมด ไม่พร้อมจอง")
+        self.assertFalse(Reservation.objects.exists())
+
     def test_invalid_customer_id_does_not_create_reservation(self):
         """TC-VALIDATE-004: student ID must contain exactly 13 digits."""
         response = self.post_reservation(customer_id="123")
