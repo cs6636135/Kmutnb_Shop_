@@ -135,6 +135,20 @@
                 รายการจอง
             </a>
 
+            <!-- Stocks -->
+            <a
+                href="{% url 'stocks' %}"
+                class="rounded-lg px-4 py-3 text-sm transition lg:py-3
+                {% if request.resolver_match.url_name == 'stocks' %}
+                    bg-[#F47745] font-semibold text-white
+                {% else %}
+                    text-white/85 hover:bg-white/10 hover:text-white
+                {% endif %}"
+                {% if request.resolver_match.url_name == 'stocks' %}aria-current="page"{% endif %}
+            >
+                สต็อกสินค้า
+            </a>
+
             {% if request.user.role == "admin" %}
 
             <!-- Products -->
