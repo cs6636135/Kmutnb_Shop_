@@ -1,0 +1,138 @@
+{% extends "base_manage.html" %}
+
+{% block title %}จัดการรายการจอง {{ reservation.reservation_code }} | KMUTNB SHOP{% endblock %}
+
+{% block content %}
+<main class="min-h-[calc(100vh-4rem)] bg-[#F8F5F0] text-[#30415D] py-8 sm:py-12">
+    <div class="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
+
+        <!-- ส่วนหัวหน้าจอ -->
+        <div class="mb-6">
+            {% include "manage/partials/page_header.html" with heading="จัดการรายการจอง" subtitle_prefix="รหัสจอง: " subtitle=reservation.reservation_code|default:"ไม่พบข้อมูล" link_url="reservation_list" link_label="← กลับสู่รายการจอง" %}
+        </div>
+
+        {% if error %}
+            <!-- การแจ้งเตือนกรณีเกิดข้อผิดพลาด / ไม่พบรายการ -->
+            <div class="rounded-2xl border border-red-200 bg-white p-8 text-center shadow-sm">
+                <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100 text-red-600 mb-4">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-bold text-red-800">{{ error }}</h3>
+                <p class="mt-2 text-sm text-[#30415D]/65">กรุณาตรวจสอบรหัสการจอง หรือสิทธิ์การเข้าถึงอีกครั้ง</p>
+                <div class="mt-6">
+                    <a href="{% url 'reservation_list' %}"
+                       class="inline-flex items-center justify-center rounded-lg bg-[#30415D] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#25344b]">
+                        กลับสู่หน้ารายการจอง
+                    </a>
+                </div>
+            </div>
+        {% else %}
+            <!-- การ์ดแสดงรายละเอียดและการเปลี่ยนสถานะ (จัดกลางจอ) -->
+            <div class="overflow-hidden rounded-2xl border border-[#30415D]/10 bg-white shadow-sm">
+                <!-- ส่วนบนของการ์ด: รหัสและ Badge สถานะปัจจุบัน -->
+                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-[#30415D]/10 bg-[#F8F5F0]/70 px-6 py-4 sm:px-8">
+                    <div>
+                        <span class="block text-xs font-semibold uppercase tracking-wider text-[#30415D]/50">รหัสการจอง</span>
+                        <span class="font-mono text-lg font-bold text-[#30415D] sm:text-xl">{{ reservation.reservation_code }}</span>
+                    </div>
+                    <div>
+                        <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-bold border {% if reservation.status == 'pending' %}bg-amber-50 text-amber-800 border-amber-300{% elif reservation.status == 'picked_up' %}bg-emerald-50 text-emerald-800 border-emerald-300{% elif reservation.status == 'cancelled' %}bg-red-50 text-red-800 border-red-300{% else %}bg-slate-100 text-slate-700 border-slate-300{% endif %}">
+                            สถานะปัจจุบัน: {{ reservation.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- ข้อมูลรายละเอียดการจอง -->
+                <div class="p-6 sm:p-8">
+                    <h3 class="mb-4 text-sm font-bold uppercase tracking-wider text-[#30415D]/60">รายละเอียดคำสั่งจอง</h3>
+                    <dl class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 text-sm">
+                        <div class="rounded-lg bg-[#F8F5F0]/40 p-3.5 border border-[#30415D]/5">
+                            <dt class="text-xs text-[#30415D]/60 font-medium">สินค้า</dt>
+                            <dd class="mt-1 font-semibold text-[#30415D] text-base">{{ reservation.product.name }}</dd>
+                        </div>
+                        <div class="rounded-lg bg-[#F8F5F0]/40 p-3.5 border border-[#30415D]/5">
+                            <dt class="text-xs text-[#30415D]/60 font-medium">จำนวน</dt>
+                            <dd class="mt-1 font-semibold text-[#30415D] text-base">{{ reservation.quantity }} ชิ้น</dd>
+                        </div>
+                        <div class="rounded-lg bg-[#F8F5F0]/40 p-3.5 border border-[#30415D]/5">
+                            <dt class="text-xs text-[#30415D]/60 font-medium">จุดรับสินค้า</dt>
+                            <dd class="mt-1 font-semibold text-[#30415D] text-base">{{ reservation.location.name }}</dd>
+                        </div>
+                        <div class="rounded-lg bg-[#F8F5F0]/40 p-3.5 border border-[#30415D]/5">
+                            <dt class="text-xs text-[#30415D]/60 font-medium">ผู้จอง (รหัสนักศึกษา/ลูกค้า)</dt>
+                            <dd class="mt-1 font-semibold text-[#30415D] text-base">{{ reservation.customer_id }}</dd>
+                        </div>
+                        <div class="rounded-lg bg-[#F8F5F0]/40 p-3.5 border border-[#30415D]/5">
+                            <dt class="text-xs text-[#30415D]/60 font-medium">วันที่ทำการจอง</dt>
+                            <dd class="mt-1 font-semibold text-[#30415D]">{{ reservation.reserved_at|date:"d/m/Y H:i" }}</dd>
+                        </div>
+                        <div class="rounded-lg bg-[#F8F5F0]/40 p-3.5 border border-[#30415D]/5">
+                            <dt class="text-xs text-[#30415D]/60 font-medium">วันหมดอายุการจอง</dt>
+                            <dd class="mt-1 font-semibold text-[#30415D]">{{ reservation.expires_at|date:"d/m/Y H:i" }}</dd>
+                        </div>
+                        {% if reservation.picked_up_at %}
+                        <div class="rounded-lg bg-emerald-50/50 p-3.5 border border-emerald-200/40">
+                            <dt class="text-xs text-emerald-800 font-medium">วันที่รับสินค้า</dt>
+                            <dd class="mt-1 font-semibold text-emerald-900">{{ reservation.picked_up_at|date:"d/m/Y H:i" }}</dd>
+                        </div>
+                        {% endif %}
+                        {% if reservation.cancelled_at %}
+                        <div class="rounded-lg bg-red-50/50 p-3.5 border border-red-200/40">
+                            <dt class="text-xs text-red-800 font-medium">วันที่ยกเลิก</dt>
+                            <dd class="mt-1 font-semibold text-red-900">{{ reservation.cancelled_at|date:"d/m/Y H:i" }}</dd>
+                        </div>
+                        {% endif %}
+                    </dl>
+
+                    <!-- ฟอร์มเปลี่ยนสถานะ -->
+                    <div class="mt-8 border-t border-[#30415D]/10 pt-6">
+                        <form method="post" novalidate>
+                            {% csrf_token %}
+
+                            {% if form.errors %}
+                            <div class="mb-5 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800" role="alert">
+                                <p class="font-semibold">ไม่สามารถอัปเดตสถานะได้:</p>
+                                <ul class="mt-1 list-disc pl-5">
+                                    {% for error in form.non_field_errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                    {% for field in form %}
+                                        {% for error in field.errors %}
+                                            <li>{{ field.label }}: {{ error }}</li>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %}
+
+                            <div class="space-y-2">
+                                <label for="{{ form.status.id_for_label }}" class="block text-sm font-semibold text-[#30415D]">
+                                    เปลี่ยนสถานะการจอง <span class="text-red-500">*</span>
+                                </label>
+                                {{ form.status }}
+                                <p class="text-xs text-[#30415D]/55">
+                                    * หากเลือกเป็น "ยกเลิก" หรือ "หมดอายุ" ระบบจะคืนสต็อกสินค้ากลับเข้าสู่จุดจำหน่ายโดยอัตโนมัติ
+                                </p>
+                            </div>
+
+                            <div class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                <a href="{% url 'reservation_list' %}"
+                                   class="inline-flex h-11 items-center justify-center rounded-lg border border-[#30415D]/20 px-5 text-sm font-semibold transition hover:border-[#F47745] hover:text-[#c9572c]">
+                                    ← กลับสู่รายการจอง
+                                </a>
+                                <button type="submit"
+                                        class="inline-flex h-11 items-center justify-center rounded-lg bg-[#30415D] px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-[#25344b] focus:ring-2 focus:ring-[#30415D]/20">
+                                    บันทึกสถานะ
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+    </div>
+</main>
+{% endblock %}
