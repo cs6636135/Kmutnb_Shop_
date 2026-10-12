@@ -15,6 +15,12 @@ class UserModelForm(ModelForm):
             self.fields["password"].required = False
             self.fields["password"].help_text = "เว้นว่างไว้หากไม่ต้องการเปลี่ยนรหัสผ่าน"
 
+    # password = forms.CharField(
+    #     required=False,
+    #     widget=forms.PasswordInput(attrs={"class": INPUT, "placeholder": "รหัสผ่าน"}),
+    #     label="รหัสผ่าน"
+    #     )
+
     def clean_username(self):
         username = self.cleaned_data["username"].replace("\u200b", "").replace("\ufeff", "").strip()
         if not username:
@@ -22,10 +28,20 @@ class UserModelForm(ModelForm):
         return username
 
     def save(self, commit=True):
+        old_password = None
+
+        #เช็คว่าใช่การแก้ไขไหม ถ้าใช่เก็บ old password ไว้
+        if self.instance and self.instance.pk:
+            old_password = User.objects.get(pk=self.instance.pk).password
+            
         user = super().save(commit=False)
         password = self.cleaned_data.get("password")
+        #ถ้ามีการ input password ให้แก้ไข password เป็นอันใหม่
         if password:
             user.set_password(password)
+        #ถ้าไม่มีการ input password ให้ใช้ old password
+        else:
+            user.password = old_password
         if commit:
             user.save()
         return user
