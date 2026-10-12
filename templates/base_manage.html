@@ -68,6 +68,11 @@
                        {% if request.resolver_match.url_name == 'reservation_list' %}aria-current="page"{% endif %}>
                         รายการจอง
                     </a>
+                    <a href="{% url 'stocks' %}"
+                           class="rounded-lg px-4 py-3 transition sm:rounded-md sm:px-3 sm:py-2 {% if request.resolver_match.url_name == 'stocks' %}bg-[#F47745] font-semibold text-white hover:bg-[#e86736]{% else %}hover:bg-white/10{% endif %}"
+                           {% if request.resolver_match.url_name == 'stocks' %}aria-current="page"{% endif %}>
+                            สต็อกสินค้า
+                        </a>
                     {% if request.user.role == "admin" %}
                         <a href="{% url 'products' %}"
                            class="rounded-lg px-4 py-3 transition sm:rounded-md sm:px-3 sm:py-2 {% if request.resolver_match.url_name == 'products' %}bg-[#F47745] font-semibold text-white hover:bg-[#e86736]{% else %}hover:bg-white/10{% endif %}"

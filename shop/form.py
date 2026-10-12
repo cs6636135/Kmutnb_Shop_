@@ -1,5 +1,5 @@
 from django.forms import ModelForm 
-from .models import Product,Location,Category
+from .models import Product,Location,Category,ProductLocation
 from django.core.exceptions import ValidationError
 from django import forms
 from .storage import upload_image
@@ -98,6 +98,47 @@ class ProductModelForm(ImageUpload, CleanName, ModelForm):
         super().__init__(*args, **kwargs)
         self.fields["category"].empty_label = "กรุณาเลือกหมวดหมู่สินค้า"
 
+class ProductLocationForm(ModelForm):
+    class Meta:
+        model = ProductLocation
+        fields = ["product","location", "stock"]
+        labels = {
+            "product": "สินค้า",
+            "location": "จุดจำหน่าย",
+            "stock": "จำนวนสินค้า",
+        }
+        widgets = {
+            "product": forms.Select(attrs={"class": SELECT}),
+            "location": forms.Select(attrs={"class": SELECT}),
+            "stock": forms.NumberInput(attrs={"class": INPUT, "min": "0", "step": "1", "placeholder": "0"}),
+        }
+        error_messages = {
+            "product": {
+                "required": "กรุณาเลือกสินค้า",
+                "invalid_choice": "สินค้าที่เลือกไม่ถูกต้อง",
+            },
+            "location": {
+                "required": "กรุณาเลือกจุดจำหน่าย",
+                "invalid_choice": "จุดจำหน่ายที่เลือกไม่ถูกต้อง",
+            },
+            "stock": {
+                "required": "กรุณากรอกจำนวนสินค้า",
+                "invalid": "กรุณากรอกจำนวนสินค้าเป็นตัวเลข",
+                "min_value": "จำนวนสินค้าต้องไม่ติดลบ",
+            },
+        }
+
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["product"].empty_label = "กรุณาเลือกสินค้า"
+        self.fields["location"].empty_label = "กรุณาเลือกจุดจำหน่าย"
+
+        if user and user.role == "staff":
+            self.fields["location"].queryset = Location.objects.filter(
+                pk=user.location_id
+            )
+            self.fields["location"].initial = user.location_id
+            self.fields["location"].disabled = True
 
 class LocationModelForm(ImageUpload, CleanName, ModelForm):
     image_folder = "locations"

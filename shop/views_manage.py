@@ -1,9 +1,9 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.contrib import messages
 from accounts.permission import role_required
 from .models import Product,Location,Category,ProductLocation
 from reservations.models import Reservation
-from .form import ProductModelForm,LocationModelForm,CategoryModelForm
+from .form import ProductModelForm,LocationModelForm,CategoryModelForm,ProductLocationForm
 from django.db.models import Count, ProtectedError, Sum
 from django.db import transaction, IntegrityError
 from django.core.exceptions import ValidationError
@@ -92,18 +92,116 @@ def products(request):
         "category_query": category_query,
     })
 
+@role_required("admin", "staff")
+def stocks(request):
+    if request.method == "POST":
+        if "update" in request.POST:
+            pk = request.POST.get("update")
+            product = get_object_or_404(ProductLocation, pk=pk) if pk else None
+            stock = request.POST.get("stock")
+            if stock:
+                product.stock = stock
+                product.save()
+                messages.success(request, "บันทึกสต็อกเรียบร้อยแล้ว")
+                return redirect("stocks")
+        elif "add" in request.POST:
+            return render(request, "manage/stock_form.html", {
+                "form": ProductLocationForm(user=request.user),
+            })
+        elif "save" in request.POST:
+            pk = request.POST.get("save")
+            product = get_object_or_404(ProductLocation, pk=pk) if pk else None
+            form = ProductLocationForm(request.POST, request.FILES or None, instance=product, user=request.user)
+            #instance คือ
+            if form.is_valid() and form.is_valid():
+                try:
+                    with transaction.atomic(): #ถ้าล้มจะไปต่อได้
+                        form.save() #ในรุปถ้าเรียกแบบไม่มีค่า commit = true
+                except ValidationError as e:
+                    # error จาก model (เช่น full_clean ใน save()) ใช้ข้อความจริง
+                    form.add_error(None, e)
+                except IntegrityError as e:
+                    # error จากฐานข้อมูล แสดงข้อความจริงจาก DB
+                    print("IntegrityError:", e)
+                    form.add_error(None, "บันทึกไม่สำเร็จ ข้อมูลอาจซ้ำหรือไม่ครบ")
+                else:
+                    messages.success(request, "บันทึกสินค้าเรียบร้อยแล้ว")
+                    return redirect("stocks")      # redirect เฉพาะสำเร็จ
+            print("FORM ERRORS:", form.errors)
+                # มาถึงตรงนี้ = มี error ทุกชนิดรวมอยู่ใน form.errors แล้ว
+            return render(request, "manage/stock_form.html", {
+                    "form": form,
+                    "product": product,
+            })
+            
+        elif "delete" in request.POST:                  # ลบ
+            product = get_object_or_404(ProductLocation, pk=request.POST["delete"])
+            try:
+                product.delete()
+                messages.success(request, "ลบสินค้าออกจากสต็อกเรียบร้อยแล้ว")
+            except ProtectedError:
+                messages.error(request, "ลบไม่ได้ เพราะสินค้านี้ยังถูกใช้งานอยู่") #เช่นเอาไปใช้จองอยู่
+            return redirect("stocks")
+
+    search_query = request.GET.get("q", "").strip()          # search
+    category_query = request.GET.get("category", "").strip()
+    categories = Category.objects.order_by("name")
+    location_query = request.GET.get("location", "").strip()
+    locations = Location.objects.order_by("name")
+
+    qs = ProductLocation.objects.select_related("product","location").order_by("-product__created_at")
+    for term in search_query.split():
+        qs = qs.filter(product__name__icontains=term)
+
+    if category_query:
+        try:
+            category_id = int(category_query)
+        except ValueError:
+            category_query = ""
+        else:
+            if categories.filter(pk=category_id).exists():
+                qs = qs.filter(product__category_id=category_id)
+            else:
+                category_query = ""
+
+    if location_query:
+        try:
+            location_id = int(location_query)
+        except ValueError:
+            location_query = ""
+        else:
+            if locations.filter(pk=location_id).exists():
+                qs = qs.filter(location_id=location_id)
+            else:
+                location_query = ""
+
+    if request.user.role == "staff":
+        qs = qs.filter(location_id=request.user.location.id)
+
+    paginator = Paginator(qs, 10)                            # หน้าละ 10 อัน
+    page_obj = paginator.get_page(request.GET.get("page"))   # เลขหน้าจากลิงก์ ?page=2
+
+    return render(request, "manage/stocks.html", {
+        "page_obj": page_obj,
+        "search_query": search_query,
+        "categories": categories,
+        "category_query": category_query,
+        "locations": locations,
+        "location_query": location_query,
+    })
+
 @role_required("admin")
 def locations(request):
     if request.method == "POST":
 
         if "add" in request.POST:
-            return render(request, "manage/location_form.html", {
+            return render(request, "manage/product_location_form.html", {
                 "form": LocationModelForm(),
             })
 
         elif "edit" in request.POST:
             location = get_object_or_404(Location, pk=request.POST["edit"])
-            return render(request, "manage/location_form.html", {
+            return render(request, "manage/product_location_form.html", {
                 "form": LocationModelForm(instance=location),
                 "location": location,
             })
@@ -125,7 +223,7 @@ def locations(request):
                     messages.success(request, "บันทึกจุดจำหน่ายเรียบร้อยแล้ว")
                     return redirect("locations")
 
-            return render(request, "manage/location_form.html", {
+            return render(request, "manage/product_location_form.html", {
                 "form": form,
                 "location": location,
             })
