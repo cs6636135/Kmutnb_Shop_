@@ -329,24 +329,11 @@
         <!-- Sidebar Footer -->
         <div class="shrink-0 border-t border-white/10 p-4">
             <div class="flex items-center gap-3 rounded-xl bg-white/[0.06] p-3">
-
-                <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#F47745] text-sm font-bold">
-                    {{ request.user.username|slice:":1"|upper }}
-                </div>
-
                 <div class="min-w-0">
-                    <p class="truncate text-sm font-semibold">
-                        {% if request.user.first_name %}
-                            {{ request.user.first_name }}
-                            {% if request.user.last_name %}
-                                {{ request.user.last_name }}
-                            {% endif %}
-                        {% else %}
-                            {{ request.user.username }}
-                        {% endif %}
-                    </p>
-
                     <p class="mt-0.5 text-xs text-white/55">
+                        สิทธิ์การใช้งาน
+                    </p>
+                    <p class="truncate text-sm font-semibold">
                         {% if request.user.role == "admin" %}
                             ผู้ดูแลระบบ
                         {% else %}
