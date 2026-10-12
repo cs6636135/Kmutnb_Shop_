@@ -1,3 +1,4 @@
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="th">
@@ -19,315 +20,604 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/htmx.org@2.0.4"></script>
-</head>
 
-<body class="min-h-screen bg-[#fff8f3]"style="font-family: 'Noto Sans Thai', sans-serif;"hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-
-{% if request.user.is_authenticated and request.resolver_match.url_name != "login" %}
-        <nav class="bg-[#30415D] text-white" aria-label="เมนูจัดการ">
-
-<div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
-        <!-- Brand -->
-        <a href="{% url 'dashboard' %}"
-           class="flex shrink-0 items-center gap-3"
-           aria-label="KMUTNB SHOP หน้าภาพรวม">
-
-            <span class="flex h-11 w-11 items-center justify-center rounded-xl border-b-2 border-[#F47745] bg-white/10 text-xl font-bold">
-                K
-            </span>
-
-            <span class="leading-tight">
-                <span class="block text-base font-bold tracking-tight">
-                    KMUTNB SHOP
-                </span>
-                <span class="block text-xs tracking-[0.18em] text-white/65">
-                    Management
-                </span>
-            </span>
-        </a>
-
-        <!-- Mobile Menu Toggle -->
-        <input
-            id="manage-menu-toggle"
-            type="checkbox"
-            class="peer sr-only"
-        >
-
-        <label
-            for="manage-menu-toggle"
-            class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg transition hover:bg-white/10 lg:hidden"
-            aria-label="เปิดหรือปิดเมนู"
-            title="เมนู"
-        >
-            <svg
-                class="h-6 w-6"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                aria-hidden="true"
-            >
-                <path d="M4 6h16M4 12h16M4 18h16"/>
-            </svg>
-        </label>
-
-        <!-- Navigation Links -->
-        <div class="hidden w-full flex-col gap-1 border-t border-white/10 pt-3 peer-checked:flex lg:flex lg:w-auto lg:flex-1 lg:flex-row lg:items-center lg:justify-end lg:gap-1 lg:border-0 lg:pt-0">
-
-            <!-- Dashboard -->
-            <a
-                href="{% url 'dashboard' %}"
-                class="rounded-lg px-4 py-3 text-sm transition lg:py-3
-                {% if request.resolver_match.url_name == 'dashboard' %}
-                    bg-[#F47745] font-semibold text-white
-                {% else %}
-                    text-white/85 hover:bg-white/10 hover:text-white
-                {% endif %}"
-                {% if request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %}
-            >
-                ภาพรวม
-            </a>
-
-            {% if request.user.role == "admin" %}
-
-            <!-- Locations -->
-            <a
-                href="{% url 'locations' %}"
-                class="rounded-lg px-4 py-3 text-sm transition lg:py-3
-                {% if request.resolver_match.url_name == 'locations' %}
-                    bg-[#F47745] font-semibold text-white
-                {% else %}
-                    text-white/85 hover:bg-white/10 hover:text-white
-                {% endif %}"
-                {% if request.resolver_match.url_name == 'locations' %}aria-current="page"{% endif %}
-            >
-                จุดจำหน่าย
-            </a>
-
-            <!-- Categories -->
-            <a
-                href="{% url 'categories' %}"
-                class="rounded-lg px-4 py-3 text-sm transition lg:py-3
-                {% if request.resolver_match.url_name == 'categories' %}
-                    bg-[#F47745] font-semibold text-white
-                {% else %}
-                    text-white/85 hover:bg-white/10 hover:text-white
-                {% endif %}"
-                {% if request.resolver_match.url_name == 'categories' %}aria-current="page"{% endif %}
-            >
-                หมวดหมู่สินค้า
-            </a>
-
-            {% endif %}
-
-            <!-- Reservations -->
-            <a
-                href="{% url 'reservation_list' %}"
-                class="rounded-lg px-4 py-3 text-sm transition lg:py-3
-                {% if request.resolver_match.url_name == 'reservation_list' %}
-                    bg-[#F47745] font-semibold text-white
-                {% else %}
-                    text-white/85 hover:bg-white/10 hover:text-white
-                {% endif %}"
-                {% if request.resolver_match.url_name == 'reservation_list' %}aria-current="page"{% endif %}
-            >
-                รายการจอง
-            </a>
-
-            <!-- Stocks -->
-            <a
-                href="{% url 'stocks' %}"
-                class="rounded-lg px-4 py-3 text-sm transition lg:py-3
-                {% if request.resolver_match.url_name == 'stocks' %}
-                    bg-[#F47745] font-semibold text-white
-                {% else %}
-                    text-white/85 hover:bg-white/10 hover:text-white
-                {% endif %}"
-                {% if request.resolver_match.url_name == 'stocks' %}aria-current="page"{% endif %}
-            >
-                สต็อกสินค้า
-            </a>
-
-            {% if request.user.role == "admin" %}
-
-            <!-- Products -->
-            <a
-                href="{% url 'products' %}"
-                class="rounded-lg px-4 py-3 text-sm transition lg:py-3
-                {% if request.resolver_match.url_name == 'products' %}
-                    bg-[#F47745] font-semibold text-white
-                {% else %}
-                    text-white/85 hover:bg-white/10 hover:text-white
-                {% endif %}"
-                {% if request.resolver_match.url_name == 'products' %}aria-current="page"{% endif %}
-            >
-                สินค้าทั้งหมด
-            </a>
-
-            <!-- Staff Management -->
-            <a
-                href="{% url 'staffs' %}"
-                class="rounded-lg px-4 py-3 text-sm transition lg:py-3
-                {% if request.resolver_match.url_name == 'staffs' %}
-                    bg-[#F47745] font-semibold text-white
-                {% else %}
-                    text-white/85 hover:bg-white/10 hover:text-white
-                {% endif %}"
-                {% if request.resolver_match.url_name == 'staffs' %}aria-current="page"{% endif %}
-            >
-                จัดการบัญชี Staff
-            </a>
-
-            {% endif %}
-
-            <!-- User Avatar Dropdown -->
-<div class="relative ml-2 border-l border-white/20 pl-3"
-     id="user-menu">
-
-    <button
-        type="button"
-        id="user-menu-button"
-        aria-expanded="false"
-        aria-controls="user-menu-dropdown"
-        aria-label="ดูข้อมูลบัญชีผู้ใช้"
-        class="flex h-10 w-10 items-center justify-center rounded-full bg-[#F47745] text-sm font-bold text-white transition hover:ring-2 hover:ring-white/40 focus:outline-none focus:ring-2 focus:ring-[#F47745]"
-    >
-        {{ request.user.username|slice:":1"|upper }}
-    </button>
-
-    <!-- Dropdown -->
-    <div
-        id="user-menu-dropdown"
-        class="absolute right-0 top-full z-50 mt-3 hidden w-72 overflow-hidden rounded-xl border border-gray-200 bg-white text-[#30415D] shadow-xl"
-    >
-
-        <!-- User Details -->
-        <div class="border-b border-gray-100 px-4 py-4">
-
-            <p class="truncate text-sm font-semibold">
-                {% if request.user.first_name %}
-                    {{ request.user.first_name }}
-                    {% if request.user.last_name %}{{ request.user.last_name }}{% endif %}
-                {% else %}
-                    {{ request.user.username }}
-                {% endif %}
-            </p>
-
-            <p class="mt-1 text-xs text-gray-500">
-                รหัสบัญชี: {{ request.user.id }}
-            </p>
-
-        </div>
-
-        <div class="space-y-3 px-4 py-4">
-
-            <!-- Permission -->
-            <div>
-                <p class="text-xs text-gray-500">สิทธิ์การใช้งาน</p>
-                <p class="mt-1 text-sm font-medium">
-                    {% if request.user.role == "admin" %}
-                        ผู้ดูแลระบบ
-                    {% else %}
-                        พนักงานประจำสาขา
-                    {% endif %}
-                </p>
-            </div>
-
-            <!-- Location -->
-            <div>
-                <p class="text-xs text-gray-500">จุดจำหน่ายประจำ</p>
-                <p class="mt-1 break-words text-sm font-medium">
-                    {% if request.user.role == "admin" %}
-                        ทุกจุดจำหน่าย
-                    {% else %}
-                        {{ request.user.location.name|default:"ไม่ระบุ" }}
-                    {% endif %}
-                </p>
-            </div>
-
-        </div>
-    </div>
-</div>
-
-
-            <!-- Logout -->
-            <form
-                method="post"
-                action="{% url 'logout' %}"
-                class="border-t border-white/10 pt-3 lg:ml-2 lg:border-t-0 lg:pl-3 lg:pt-0"
-            >
-                {% csrf_token %}
-
-                <button
-                    type="submit"
-                    class="w-full whitespace-nowrap rounded-lg border border-white/25 px-4 py-3 text-sm font-semibold transition hover:border-[#F47745] hover:bg-[#F47745] lg:py-2.5"
-                >
-                    ออกจากระบบ
-                </button>
-            </form>
-
-        </div>
-    </div>
-</nav>
-
-<!-- Avatar Dropdown Script -->
-<script>
-    (function () {
-        const button = document.getElementById("user-menu-button");
-        const dropdown = document.getElementById("user-menu-dropdown");
-        const container = document.getElementById("user-menu");
-
-        if (!button || !dropdown || !container) return;
-
-        function closeMenu() {
-            dropdown.classList.add("hidden");
-            button.setAttribute("aria-expanded", "false");
+    <style>
+        body {
+            font-family: 'Noto Sans Thai', sans-serif;
         }
 
-        button.addEventListener("click", function (event) {
-            event.stopPropagation();
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
 
-            const isOpen = !dropdown.classList.contains("hidden");
+        .sidebar-link:hover {
+            background: rgba(255, 255, 255, 0.10);
+            color: #ffffff;
+        }
 
-            dropdown.classList.toggle("hidden", isOpen);
-            button.setAttribute("aria-expanded", String(!isOpen));
-        });
+        .sidebar-link.active {
+            background: #F47745;
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(244, 119, 69, 0.15);
+        }
 
-        document.addEventListener("click", function (event) {
-            if (!container.contains(event.target)) {
-                closeMenu();
+        .sidebar-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,.2) transparent;
+        }
+
+        /* Sidebar transition */
+        .manage-sidebar {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .manage-sidebar.sidebar-open {
+            transform: translateX(0);
+        }
+
+        /* Desktop content transition */
+        #manage-main {
+            transition: padding-left 0.3s ease-in-out;
+        }
+
+        /* Desktop Sidebar */
+        @media (min-width: 1024px) {
+            .manage-sidebar.sidebar-open {
+                transform: translateX(0);
             }
-        });
+
+            .manage-sidebar.sidebar-closed {
+                transform: translateX(-100%);
+            }
+
+            .manage-overlay {
+                display: none !important;
+            }
+
+            body.sidebar-expanded #manage-main {
+                padding-left: 260px;
+            }
+
+            body.sidebar-collapsed #manage-main {
+                padding-left: 0;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .manage-sidebar,
+            #manage-main {
+                transition: none;
+            }
+        }
+    </style>
+</head>
+
+<body
+    class="min-h-screen bg-[#F8F5F0] text-[#30415D]"
+    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+>
+
+{% if request.user.is_authenticated and request.resolver_match.url_name != "login" %}
+
+    <!-- Mobile Overlay -->
+    <div
+        id="manage-overlay"
+        class="manage-overlay fixed inset-0 z-40 hidden bg-slate-950/50 backdrop-blur-[2px] lg:hidden"
+    ></div>
+
+    <!-- Sidebar -->
+    <aside
+        id="manage-sidebar"
+        class="manage-sidebar sidebar-scroll sidebar-closed fixed inset-y-0 left-0 z-50 flex w-[260px] flex-col overflow-y-auto bg-[#30415D] text-white shadow-xl"
+        aria-label="เมนูจัดการ"
+    >
+
+        <!-- Brand -->
+        <div class="flex h-[84px] shrink-0 items-center gap-3 border-b border-white/10 px-4">
+
+            <!-- Logo -->
+            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-b-2 border-[#F47745] bg-white/10 text-xl font-bold">
+                K
+            </div>
+
+            <!-- Brand Name -->
+            <div class="min-w-0 flex-1">
+                <p class="truncate text-base font-bold tracking-tight">
+                    KMUTNB SHOP
+                </p>
+                <p class="mt-0.5 text-xs tracking-[0.15em] text-white/55">
+                    MANAGEMENT
+                </p>
+            </div>
+
+            <!-- Close Button on Mobile -->
+            <button
+                type="button"
+                id="close-sidebar"
+                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-white/70 transition hover:bg-white/10 hover:text-white lg:hidden"
+                aria-label="ปิดเมนู"
+            >
+                <svg
+                    class="h-5 w-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    aria-hidden="true"
+                >
+                    <path d="m18 6-12 12M6 6l12 12"/>
+                </svg>
+            </button>
+
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 px-4 py-5">
+
+            <p class="mb-3 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/40">
+                Main Menu
+            </p>
+
+            <div class="space-y-1">
+
+                <!-- Dashboard -->
+                <a
+                    href="{% url 'dashboard' %}"
+                    class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+                    {% if request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %}
+                >
+                    <svg
+                        class="h-5 w-5 shrink-0"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.7"
+                        aria-hidden="true"
+                    >
+                        <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+                        <rect x="14" y="3" width="7" height="5" rx="1.5"/>
+                        <rect x="14" y="11" width="7" height="10" rx="1.5"/>
+                        <rect x="3" y="13" width="7" height="8" rx="1.5"/>
+                    </svg>
+                    <span>ภาพรวม</span>
+                </a>
+
+                {% if request.user.role == "admin" %}
+
+                <!-- Locations -->
+                <a
+                    href="{% url 'locations' %}"
+                    class="sidebar-link {% if request.resolver_match.url_name == 'locations' %}active{% endif %}"
+                    {% if request.resolver_match.url_name == 'locations' %}aria-current="page"{% endif %}
+                >
+                    <svg
+                        class="h-5 w-5 shrink-0"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.7"
+                        aria-hidden="true"
+                    >
+                        <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/>
+                        <circle cx="12" cy="10" r="2.5"/>
+                    </svg>
+                    <span>จัดการจุดจำหน่าย</span>
+                </a>
+
+                <!-- Categories -->
+                <a
+                    href="{% url 'categories' %}"
+                    class="sidebar-link {% if request.resolver_match.url_name == 'categories' %}active{% endif %}"
+                    {% if request.resolver_match.url_name == 'categories' %}aria-current="page"{% endif %}
+                >
+                    <svg
+                        class="h-5 w-5 shrink-0"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.7"
+                        aria-hidden="true"
+                    >
+                        <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+                        <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+                        <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+                        <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+                    </svg>
+                    <span>จัดการหมวดหมู่สินค้า</span>
+                </a>
+
+                {% endif %}
+
+                <!-- Reservations -->
+                <a
+                    href="{% url 'reservation_list' %}"
+                    class="sidebar-link {% if request.resolver_match.url_name == 'reservation_list' %}active{% endif %}"
+                    {% if request.resolver_match.url_name == 'reservation_list' %}aria-current="page"{% endif %}
+                >
+                    <svg
+                        class="h-5 w-5 shrink-0"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.7"
+                        aria-hidden="true"
+                    >
+                        <rect x="3" y="5" width="18" height="16" rx="2"/>
+                        <path d="M16 3v4M8 3v4M3 10h18"/>
+                        <path d="m9 15 2 2 4-4"/>
+                    </svg>
+                    <span>จัดการรายการจอง</span>
+                </a>
+
+                <!-- Stocks -->
+                <a
+                    href="{% url 'stocks' %}"
+                    class="sidebar-link {% if request.resolver_match.url_name == 'stocks' %}active{% endif %}"
+                    {% if request.resolver_match.url_name == 'stocks' %}aria-current="page"{% endif %}
+                >
+                    <svg
+                        class="h-5 w-5 shrink-0"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.7"
+                        aria-hidden="true"
+                    >
+                        <path d="m12 3 9 5-9 5-9-5 9-5Z"/>
+                        <path d="m3 12 9 5 9-5M3 16l9 5 9-5"/>
+                    </svg>
+                    <span>จัดการสต็อกสินค้า</span>
+                </a>
+
+                {% if request.user.role == "admin" %}
+
+                <!-- Products -->
+                <a
+                    href="{% url 'products' %}"
+                    class="sidebar-link {% if request.resolver_match.url_name == 'products' %}active{% endif %}"
+                    {% if request.resolver_match.url_name == 'products' %}aria-current="page"{% endif %}
+                >
+                    <svg
+                        class="h-5 w-5 shrink-0"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.7"
+                        aria-hidden="true"
+                    >
+                        <path d="m12 3 9 5-9 5-9-5 9-5Z"/>
+                        <path d="M3 8v9l9 5 9-5V8"/>
+                        <path d="M12 13v9"/>
+                    </svg>
+                    <span>จัดการสินค้าทั้งหมด</span>
+                </a>
+
+                <!-- Staff Management -->
+                <a
+                    href="{% url 'staffs' %}"
+                    class="sidebar-link {% if request.resolver_match.url_name == 'staffs' %}active{% endif %}"
+                    {% if request.resolver_match.url_name == 'staffs' %}aria-current="page"{% endif %}
+                >
+                    <svg
+                        class="h-5 w-5 shrink-0"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.7"
+                        aria-hidden="true"
+                    >
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="10" cy="7" r="4"/>
+                        <path d="M20 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    <span>จัดการบัญชี Staff</span>
+                </a>
+
+                {% endif %}
+
+            </div>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="shrink-0 border-t border-white/10 p-4">
+            <div class="flex items-center gap-3 rounded-xl bg-white/[0.06] p-3">
+
+                <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#F47745] text-sm font-bold">
+                    {{ request.user.username|slice:":1"|upper }}
+                </div>
+
+                <div class="min-w-0">
+                    <p class="truncate text-sm font-semibold">
+                        {% if request.user.first_name %}
+                            {{ request.user.first_name }}
+                            {% if request.user.last_name %}
+                                {{ request.user.last_name }}
+                            {% endif %}
+                        {% else %}
+                            {{ request.user.username }}
+                        {% endif %}
+                    </p>
+
+                    <p class="mt-0.5 text-xs text-white/55">
+                        {% if request.user.role == "admin" %}
+                            ผู้ดูแลระบบ
+                        {% else %}
+                            พนักงานประจำสาขา
+                        {% endif %}
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+    </aside>
+
+    <!-- Main Area -->
+    <div id="manage-main" class="min-h-screen">
+
+        <!-- Top Header -->
+        <header class="sticky top-0 z-30 border-b border-[#30415D]/10 bg-white/95 shadow-sm backdrop-blur">
+            <div class="flex min-h-[76px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+
+                <!-- Page Heading + Hamburger -->
+                <div class="flex min-w-0 items-center gap-3">
+
+                    <!-- Hamburger Button -->
+                    <button
+                        type="button"
+                        id="open-sidebar"
+                        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#30415D]/10 text-[#30415D] transition hover:bg-[#F8F5F0] focus:outline-none focus:ring-2 focus:ring-[#F47745]"
+                        aria-label="เปิดหรือปิดเมนู"
+                        aria-controls="manage-sidebar"
+                        aria-expanded="false"
+                    >
+                        <svg
+                            class="h-5 w-5"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            aria-hidden="true"
+                        >
+                            <path d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Account Information + Logout -->
+                <div class="ml-auto flex shrink-0 items-center gap-3 sm:gap-4">
+
+                    <!-- Account Information -->
+                    <div class="flex items-center gap-3">
+
+                        <!-- Avatar -->
+                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F47745] text-sm font-bold text-white">
+                            {{ request.user.username|slice:":1"|upper }}
+                        </div>
+
+                        <!-- User Details -->
+                        <div class="hidden min-w-0 sm:block">
+                            <p class="max-w-[180px] truncate text-sm font-semibold text-[#30415D]">
+                                {% if request.user.first_name %}
+                                    {{ request.user.first_name }}
+                                    {% if request.user.last_name %}
+                                        {{ request.user.last_name }}
+                                    {% endif %}
+                                {% else %}
+                                    {{ request.user.username }}
+                                {% endif %}
+                            </p>
+
+                            <p class="mt-0.5 text-xs text-gray-500">
+                                {% if request.user.role == "admin" %}
+                                    ผู้ดูแลระบบ · ทุกจุดจำหน่าย
+                                {% else %}
+                                    พนักงานประจำสาขา · {{ request.user.location.name|default:"ไม่ระบุจุดจำหน่าย" }}
+                                {% endif %}
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <!-- Logout Button -->
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="inline-flex items-center gap-2 rounded-xl bg-[#30415D] px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-[#243248] focus:outline-none focus:ring-2 focus:ring-[#F47745] focus:ring-offset-2 sm:px-4"
+                        >
+                            <svg
+                                class="h-4 w-4 shrink-0"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+                                <path d="M10 17l5-5-5-5M15 12H3"/>
+                                <path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7"/>
+                            </svg>
+                            <span>ออกจากระบบ</span>
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        </header>
+
+        <!-- Django Messages -->
+        {% if messages %}
+            <div class="mx-auto max-w-[1600px] px-4 pt-4 sm:px-6 lg:px-8">
+                {% for message in messages %}
+                    <div
+                        role="status"
+                        class="mb-3 rounded-xl border border-[#30415D]/10 bg-white px-4 py-3 text-sm shadow-sm"
+                    >
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+{% else %}
+
+    <!-- Public / Login Layout -->
+    <div id="manage-main" class="min-h-screen">
+
+        {% if messages %}
+            <div class="mx-auto max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
+                {% for message in messages %}
+                    <div
+                        role="status"
+                        class="mb-3 rounded-xl border border-[#30415D]/10 bg-white px-4 py-3 text-sm shadow-sm"
+                    >
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <main class="min-h-screen">
+
+{% endif %}
+
+            {% block content %}
+            {% endblock %}
+
+        </main>
+    </div>
+
+<!-- Sidebar Script -->
+<script>
+    (function () {
+        const sidebar = document.getElementById("manage-sidebar");
+        const main = document.getElementById("manage-main");
+        const overlay = document.getElementById("manage-overlay");
+
+        const toggleButton = document.getElementById("toggle-sidebar");
+        const openButton = document.getElementById("open-sidebar");
+        const closeButton = document.getElementById("close-sidebar");
+
+        if (!sidebar || !main) {
+            return;
+        }
+
+        const desktopQuery = window.matchMedia("(min-width: 1024px)");
+
+        function setSidebarState(isOpen) {
+            sidebar.classList.toggle("sidebar-open", isOpen);
+            sidebar.classList.toggle("sidebar-closed", !isOpen);
+
+            document.body.classList.toggle(
+                "sidebar-expanded",
+                isOpen && desktopQuery.matches
+            );
+
+            document.body.classList.toggle(
+                "sidebar-collapsed",
+                !isOpen && desktopQuery.matches
+            );
+
+            if (overlay) {
+                overlay.classList.toggle(
+                    "hidden",
+                    !isOpen || desktopQuery.matches
+                );
+            }
+
+            if (toggleButton) {
+                toggleButton.setAttribute("aria-expanded", String(isOpen));
+            }
+
+            if (openButton) {
+                openButton.setAttribute("aria-expanded", String(isOpen));
+            }
+
+            document.body.classList.toggle(
+                "overflow-hidden",
+                isOpen && !desktopQuery.matches
+            );
+        }
+
+        function toggleSidebar() {
+            const isOpen = sidebar.classList.contains("sidebar-open");
+            setSidebarState(!isOpen);
+        }
+
+        if (toggleButton) {
+            toggleButton.addEventListener("click", toggleSidebar);
+        }
+
+        if (openButton) {
+            openButton.addEventListener("click", toggleSidebar);
+        }
+
+        if (closeButton) {
+            closeButton.addEventListener("click", function () {
+                setSidebarState(false);
+            });
+        }
+
+        if (overlay) {
+            overlay.addEventListener("click", function () {
+                setSidebarState(false);
+            });
+        }
 
         document.addEventListener("keydown", function (event) {
             if (event.key === "Escape") {
-                closeMenu();
-                button.focus();
+                setSidebarState(false);
             }
         });
+
+        function handleScreenChange() {
+            if (desktopQuery.matches) {
+                document.body.classList.remove("overflow-hidden");
+
+                const isOpen = sidebar.classList.contains("sidebar-open");
+
+                document.body.classList.toggle("sidebar-expanded", isOpen);
+                document.body.classList.toggle("sidebar-collapsed", !isOpen);
+
+                if (overlay) {
+                    overlay.classList.add("hidden");
+                }
+            } else {
+                document.body.classList.remove(
+                    "sidebar-expanded",
+                    "sidebar-collapsed"
+                );
+
+                if (sidebar.classList.contains("sidebar-open")) {
+                    if (overlay) {
+                        overlay.classList.remove("hidden");
+                    }
+                } else if (overlay) {
+                    overlay.classList.add("hidden");
+                }
+            }
+        }
+
+        if (desktopQuery.addEventListener) {
+            desktopQuery.addEventListener("change", handleScreenChange);
+        } else {
+            desktopQuery.addListener(handleScreenChange);
+        }
+
+        // Initial state: open on desktop, closed on mobile.
+        setSidebarState(desktopQuery.matches);
     })();
 </script>
-
-{% endif %}
-
-<!-- Django Messages -->
-{% if messages %}
-    <div class="mx-auto max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
-        {% for message in messages %}
-            <div
-                role="status"
-                class="mb-3 rounded-xl border border-[#30415D]/10 bg-white px-4 py-3 text-sm shadow-sm"
-            >
-                {{ message }}
-            </div>
-        {% endfor %}
-    </div>
-{% endif %}
-
-<!-- Page Content -->
-{% block content %}
-{% endblock %}
 
 </body>
 </html>
