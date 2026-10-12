@@ -89,7 +89,7 @@ def staffs(request):
             return redirect("staffs")
     search_query = request.GET.get("q", "").strip()
 
-    qs = User.objects.filter(role=User.Role.STAFF).select_related("location").order_by("username")
+    qs = User.objects.select_related("location").order_by("username")
     if search_query:
         for term in search_query.split():
             qs = qs.filter(

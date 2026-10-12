@@ -6,8 +6,8 @@
 <main class="min-h-[calc(100vh-4rem)] bg-[#F8F5F0] text-[#30415D]">
     <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div class="mb-8">
-            {% include "manage/partials/page_header.html" with heading="จัดการบัญชี Staff" subtitle_prefix="ผู้ใช้งาน: " subtitle=user.username link_url="dashboard" link_label="กลับสู่ภาพรวม" %}
-            {% include "manage/partials/list_toolbar.html" with heading_id="staff-list-heading" section_heading="รายการบัญชี Staff" list_url="staffs" results_id="staff-results" search_id="staff-search" search_label="ค้นหาชื่อบัญชี Staff" search_placeholder="เช่น staff123" add_label="เพิ่มบัญชี Staff" %}
+            {% include "manage/partials/page_header.html" with heading="จัดการบัญชี Staff / Admin" subtitle_prefix="ผู้ใช้งาน: " subtitle=user.username link_url="dashboard" link_label="กลับสู่ภาพรวม" %}
+            {% include "manage/partials/list_toolbar.html" with heading_id="staff-list-heading" section_heading="รายการบัญชี Staff / Admin" list_url="staffs" results_id="staff-results" search_id="staff-search" search_label="ค้นหาชื่อบัญชี Staff / Admin" search_placeholder="เช่น staff123" add_label="เพิ่มบัญชี Staff / Admin" %}
         </div>
 
         <div id="staff-results">
@@ -56,6 +56,7 @@
                                 <th scope="col" class="px-5 py-3.5 font-semibold">Username</th>
                                 <th scope="col" class="px-5 py-3.5 font-semibold">ชื่อ - นามสกุล</th>
                                 <th scope="col" class="px-5 py-3.5 font-semibold">เบอร์โทรศัพท์</th>
+                                <th scope="col" class="px-5 py-3.5 font-semibold">บทบาท</th>
                                 <th scope="col" class="px-5 py-3.5 font-semibold">จุดจำหน่าย</th>
                                 <th scope="col" class="px-5 py-3.5 text-right font-semibold">จัดการ</th>
                             </tr>
@@ -72,6 +73,7 @@
                                     {% endif %}
                                 </td>
                                 <td class="px-5 py-4 align-middle text-[#30415D]/75">{{ staff.phone|default:"-" }}</td>
+                                <td class="px-5 py-4 align-middle text-[#30415D]/75">{{ staff.get_role_display|default:"-" }}</td>
                                 <td class="px-5 py-4 align-middle text-[#30415D]/75">{{ staff.location.name|default:"-" }}</td>
                                 <td class="px-5 py-4 align-middle">
                                     {% if request.user.role == "admin" %}
