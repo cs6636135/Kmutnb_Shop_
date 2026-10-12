@@ -29,6 +29,7 @@
     th { background:#f1f5f9; color:var(--navy); font-size:14px; }
     tr:last-child td { border-bottom:0; }
     .status { display:inline-block; color:var(--green); background:var(--green-bg); border-radius:999px; padding:2px 10px; font-size:13px; font-weight:600; white-space:nowrap; }
+    .status.fail { color:#b91c1c; background:#fee2e2; }
     code { background:#f1f5f9; padding:2px 6px; border-radius:5px; color:#334155; }
     .note { border-left:4px solid var(--blue); background:#eff6ff; padding:14px 16px; border-radius:8px; }
     footer { color:var(--muted); font-size:13px; padding:30px 0 50px; }
@@ -45,10 +46,10 @@
 
   <main class="wrap">
     <div class="summary" aria-label="สรุปผลการทดสอบ">
-      <div class="metric"><strong class="ok">39</strong><span>กรณีทดสอบทั้งหมด</span></div>
-      <div class="metric"><strong class="ok">39</strong><span>ผ่าน (Passed)</span></div>
-      <div class="metric"><strong>0</strong><span>ไม่ผ่าน (Failed)</span></div>
-      <div class="metric"><strong class="ok">100%</strong><span>อัตราการผ่าน</span></div>
+      <div class="metric"><strong>48</strong><span>กรณีทดสอบทั้งหมด</span></div>
+      <div class="metric"><strong class="ok">46</strong><span>ผ่าน (Passed)</span></div>
+      <div class="metric"><strong class="fail">2</strong><span>ไม่ผ่าน (Failed)</span></div>
+      <div class="metric"><strong>95.83%</strong><span>อัตราการผ่าน</span></div>
     </div>
 
     <section class="section">
@@ -112,6 +113,16 @@
             <tr><td>TC-SECURITY-001</td><td>Security</td><td>Anonymous ปลอม ID ลบสินค้า</td><td>ตรวจผู้ที่ยังไม่ login ไม่สามารถส่ง POST เพื่อลบสินค้าได้</td><td><span class="status">ผ่าน</span></td></tr>
             <tr><td>TC-SECURITY-002</td><td>Security</td><td>Staff ปลอม ID ลบสินค้า</td><td>ตรวจ Staff ไม่สามารถใช้คำสั่งลบของ Admin และข้อมูลยังอยู่</td><td><span class="status">ผ่าน</span></td></tr>
             <tr><td>TC-SECURITY-003</td><td>Security</td><td>POST ไม่มี CSRF</td><td>ตรวจคำขอลบที่ไม่มี CSRF Token ถูกปฏิเสธและข้อมูลไม่เปลี่ยนแปลง</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-STOCK-001</td><td>Stock</td><td>CRUD สต็อก</td><td>ตรวจ Admin เพิ่ม แก้ไข และลบข้อมูลสต็อกสินค้าได้</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-STOCK-002</td><td>Validation</td><td>สต็อกติดลบ</td><td>ตรวจฟอร์มปฏิเสธจำนวนสต็อกที่น้อยกว่า 0</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-STOCK-003</td><td>Search/Filter</td><td>รายการสต็อก</td><td>ตรวจค้นหาสินค้าและกรองตามหมวดหมู่กับจุดจำหน่าย</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-STOCK-004</td><td>Authorization</td><td>ขอบเขตสต็อกของ Staff</td><td>ตรวจ Staff เห็นเฉพาะสต็อกของจุดจำหน่ายที่ตนเองรับผิดชอบ</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-STOCK-005</td><td>Security</td><td>Staff เลือกจุดจำหน่ายอื่น</td><td>ตรวจ Staff ไม่สามารถปลอมจุดจำหน่ายอื่นตอนเพิ่มสต็อก</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-STOCK-006</td><td>Validation</td><td>เพิ่มสินค้า/สาขาซ้ำ</td><td>ตรวจไม่ให้สร้างคู่สินค้าและจุดจำหน่ายซ้ำ</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-STOCK-007</td><td>Validation</td><td>อัปเดตสต็อกติดลบ</td><td>ตรวจคำสั่งอัปเดตจำนวน -1 ไม่ทำให้ Server Error และไม่เปลี่ยนข้อมูล</td><td><span class="status fail">ไม่ผ่าน</span></td></tr>
+            <tr><td>TC-STOCK-008</td><td>Authorization</td><td>Staff อัปเดตสาขาตัวเอง</td><td>ตรวจ Staff แก้ไข Stock ของสาขาที่รับผิดชอบได้</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-STOCK-009</td><td>Security</td><td>Staff อัปเดตสาขาอื่น</td><td>ตรวจ Staff ไม่สามารถแก้ไข Stock ของสาขาอื่นได้</td><td><span class="status fail">ไม่ผ่าน</span></td></tr>
+            <tr><td>TC-STOCK-010</td><td>Security</td><td>Staff เพิ่มสาขาอื่น</td><td>ตรวจ Staff ไม่สามารถปลอมจุดจำหน่ายอื่นตอนเพิ่มสต็อก</td><td><span class="status">ผ่าน</span></td></tr>
             <tr><td>TC-CREATE-003</td><td>Accounts</td><td>สร้าง Staff</td><td>ตรวจ Admin สร้าง Staff พร้อมจุดจำหน่ายได้</td><td><span class="status">ผ่าน</span></td></tr>
             <tr><td>TC-CREATE-004</td><td>Reservation</td><td>สร้างการจอง</td><td>ตรวจสร้าง reservation สถานะ pending และตัดสต็อก</td><td><span class="status">ผ่าน</span></td></tr>
             <tr><td>TC-BUSINESS-001</td><td>Business Rule</td><td>อายุการจอง</td><td>ตรวจว่าการจองหมดอายุภายใน 4 ชั่วโมง</td><td><span class="status">ผ่าน</span></td></tr>
@@ -151,19 +162,19 @@
 
     <section class="section">
       <h2>7.14 ผลการทดสอบและหลักฐานประกอบ</h2>
-      <p>หลักฐานคือผลลัพธ์จาก Django test runner: พบ 39 test cases, ทุกกรณีจบด้วยสถานะ <strong class="ok">OK</strong> และ system check ไม่พบปัญหา</p>
-      <pre class="card" style="padding:16px; overflow:auto">Found 39 test(s).
+      <p>หลักฐานคือผลลัพธ์จาก Django test runner: พบ 48 test cases โดยมี 2 กรณีที่ยังไม่ผ่านตามข้อจำกัดของโค้ดปัจจุบัน</p>
+      <pre class="card" style="padding:16px; overflow:auto">Found 48 test(s).
 System check identified no issues (0 silenced).
-Ran 39 tests
-OK</pre>
+Ran 48 tests
+FAILED (1 failure, 1 error)</pre>
     </section>
 
     <section class="section">
       <h2>7.15 สรุปจำนวนกรณีทดสอบที่ผ่านและไม่ผ่าน</h2>
       <div class="card" style="padding:18px">
-        <p><strong class="ok">ผ่าน 39 กรณี</strong> จากทั้งหมด 39 กรณี</p>
-        <p><strong>ไม่ผ่าน 0 กรณี</strong></p>
-        <p><strong>คิดเป็น 100%</strong></p>
+        <p><strong class="ok">ผ่าน 46 กรณี</strong> จากทั้งหมด 48 กรณี</p>
+        <p><strong class="fail">ไม่ผ่าน 2 กรณี</strong></p>
+        <p><strong>คิดเป็น 95.83%</strong></p>
       </div>
     </section>
 

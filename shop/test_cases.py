@@ -5,7 +5,12 @@ from django.core.exceptions import ValidationError
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from .form import CategoryModelForm, LocationModelForm, ProductModelForm
+from .form import (
+    CategoryModelForm,
+    LocationModelForm,
+    ProductLocationForm,
+    ProductModelForm,
+)
 from .models import Category, Location, Product, ProductLocation
 
 
@@ -218,3 +223,167 @@ class ShopSecurityTests(TestCase):
         )
         self.assertEqual(response.status_code, 403)
         self.assertTrue(Product.objects.filter(pk=self.product.pk).exists())
+
+
+class ShopStockTests(TestCase):
+    """Verify stock CRUD, validation, filtering, and staff data scoping."""
+
+    def setUp(self):
+        self.category = Category.objects.create(name="หมวดสต็อก")
+        self.other_category = Category.objects.create(name="หมวดอื่น")
+        self.location = Location.objects.create(
+            name="จุดสต็อกหลัก", building="อาคาร 1"
+        )
+        self.other_location = Location.objects.create(
+            name="จุดสต็อกสำรอง", building="อาคาร 2"
+        )
+        self.product = Product.objects.create(
+            name="สินค้าในสต็อก", price=120, category=self.category
+        )
+        self.other_product = Product.objects.create(
+            name="สินค้าอีกหมวด", price=80, category=self.other_category
+        )
+        self.admin = get_user_model().objects.create_user(
+            username="stock-admin", password="Strong-pass-123", role="admin"
+        )
+        self.staff = get_user_model().objects.create_user(
+            username="stock-staff", password="Strong-pass-123", role="staff",
+            location=self.location,
+        )
+
+    def test_admin_can_create_update_and_delete_stock_record(self):
+        """TC-STOCK-001: admin can create, update, and delete a product-location stock row."""
+        self.client.force_login(self.admin)
+        response = self.client.post(reverse("stocks"), {
+            "save": "",
+            "product": self.product.pk,
+            "location": self.location.pk,
+            "stock": "8",
+        })
+        self.assertRedirects(response, reverse("stocks"))
+        stock = ProductLocation.objects.get(
+            product=self.product, location=self.location
+        )
+        self.assertEqual(stock.stock, 8)
+
+        self.client.post(reverse("stocks"), {
+            "update": stock.pk,
+            "stock": "12",
+        })
+        stock.refresh_from_db()
+        self.assertEqual(stock.stock, 12)
+
+        self.client.post(reverse("stocks"), {"delete": stock.pk})
+        self.assertFalse(ProductLocation.objects.filter(pk=stock.pk).exists())
+
+    def test_stock_form_rejects_negative_quantity(self):
+        """TC-STOCK-002: stock quantity below zero is rejected by server-side form validation."""
+        form = ProductLocationForm(data={
+            "product": self.product.pk,
+            "location": self.location.pk,
+            "stock": "-1",
+        })
+        self.assertFalse(form.is_valid())
+        self.assertIn("stock", form.errors)
+
+    def test_stock_form_rejects_duplicate_product_location(self):
+        """TC-STOCK-006: the same product cannot be added twice at one location."""
+        ProductLocation.objects.create(
+            product=self.product, location=self.location, stock=4
+        )
+        form = ProductLocationForm(data={
+            "product": self.product.pk,
+            "location": self.location.pk,
+            "stock": "7",
+        })
+        self.assertFalse(form.is_valid())
+        self.assertTrue(form.non_field_errors())
+
+    def test_quick_stock_update_rejects_negative_quantity(self):
+        """TC-STOCK-007: quick stock update must reject a negative quantity without changing stock."""
+        stock = ProductLocation.objects.create(
+            product=self.product, location=self.location, stock=5
+        )
+        self.client.force_login(self.admin)
+        response = self.client.post(reverse("stocks"), {
+            "update": stock.pk,
+            "stock": "-1",
+        })
+        self.assertRedirects(response, reverse("stocks"))
+        stock.refresh_from_db()
+        self.assertEqual(stock.stock, 5)
+
+    def test_staff_can_update_stock_at_assigned_location(self):
+        """TC-STOCK-008: staff can update stock belonging to their assigned location."""
+        stock = ProductLocation.objects.create(
+            product=self.product, location=self.location, stock=3
+        )
+        self.client.force_login(self.staff)
+        response = self.client.post(reverse("stocks"), {
+            "update": stock.pk,
+            "stock": "6",
+        })
+        self.assertRedirects(response, reverse("stocks"))
+        stock.refresh_from_db()
+        self.assertEqual(stock.stock, 6)
+
+    def test_staff_cannot_update_stock_at_another_location(self):
+        """TC-STOCK-009: staff cannot change stock belonging to another location."""
+        stock = ProductLocation.objects.create(
+            product=self.product, location=self.other_location, stock=3
+        )
+        self.client.force_login(self.staff)
+        response = self.client.post(reverse("stocks"), {
+            "update": stock.pk,
+            "stock": "9",
+        })
+        self.assertRedirects(response, reverse("stocks"))
+        stock.refresh_from_db()
+        self.assertEqual(stock.stock, 3)
+
+    def test_admin_stock_list_searches_and_filters_records(self):
+        """TC-STOCK-004: admin stock list combines product search and category/location filters."""
+        matching = ProductLocation.objects.create(
+            product=self.product, location=self.location, stock=4
+        )
+        ProductLocation.objects.create(
+            product=self.other_product, location=self.other_location, stock=6
+        )
+        self.client.force_login(self.admin)
+        response = self.client.get(reverse("stocks"), {
+            "q": "สินค้าในสต็อก",
+            "category": self.category.pk,
+            "location": self.location.pk,
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(list(response.context["page_obj"]), [matching])
+
+    def test_staff_sees_only_stock_at_assigned_location(self):
+        """TC-STOCK-005: staff stock list is restricted to the assigned location."""
+        assigned_stock = ProductLocation.objects.create(
+            product=self.product, location=self.location, stock=3
+        )
+        ProductLocation.objects.create(
+            product=self.other_product, location=self.other_location, stock=9
+        )
+        self.client.force_login(self.staff)
+        response = self.client.get(reverse("stocks"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(list(response.context["page_obj"]), [assigned_stock])
+
+    def test_staff_cannot_choose_another_location_when_adding_stock(self):
+        """TC-STOCK-010: staff-submitted location is constrained to the assigned location."""
+        self.client.force_login(self.staff)
+        response = self.client.post(reverse("stocks"), {
+            "save": "",
+            "product": self.product.pk,
+            "location": self.other_location.pk,
+            "stock": "5",
+        })
+        self.assertRedirects(response, reverse("stocks"))
+        self.assertTrue(ProductLocation.objects.filter(
+            product=self.product, location=self.location, stock=5
+        ).exists())
+        self.assertFalse(ProductLocation.objects.filter(
+            product=self.product, location=self.other_location
+        ).exists())
