@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="th">
 
@@ -12,7 +11,6 @@
     <!-- Google Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
     <link
         href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&display=swap"
         rel="stylesheet"
@@ -22,114 +20,300 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/htmx.org@2.0.4"></script>
 </head>
+
 <body class="min-h-screen bg-[#fff8f3]"style="font-family: 'Noto Sans Thai', sans-serif;"hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-    {% if request.user.is_authenticated and request.resolver_match.url_name != "login" %}
+
+{% if request.user.is_authenticated and request.resolver_match.url_name != "login" %}
         <nav class="bg-[#30415D] text-white" aria-label="เมนูจัดการ">
-            <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
-                <a href="{% url 'dashboard' %}" class="flex items-center gap-3">
-                    <span class="flex h-10 w-10 items-center justify-center rounded-lg border-b-2 border-[#F47745] bg-white/10 font-bold">K</span>
-                    <span>
-                        <span class="block text-sm font-bold">KMUTNB</span>
-                        <span class="block text-[10px] uppercase tracking-[0.12em] text-white/65">Shop</span>
-                    </span>
-                </a>
 
-                <input id="manage-menu-toggle" type="checkbox" class="peer sr-only">
-                <label for="manage-menu-toggle"
-                       class="flex h-11 w-11 cursor-pointer items-center justify-center rounded-md transition hover:bg-white/10 sm:hidden"
-                       role="button"
-                       aria-label="เปิดหรือปิดเมนู"
-                       title="เมนู">
-                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-                        <path d="M4 6h16M4 12h16M4 18h16"/>
-                    </svg>
-                </label>
+<div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
+        <!-- Brand -->
+        <a href="{% url 'dashboard' %}"
+           class="flex shrink-0 items-center gap-3"
+           aria-label="KMUTNB SHOP หน้าภาพรวม">
 
-                <div class="hidden w-full flex-col gap-1 border-t border-white/10 pt-3 text-sm peer-checked:flex sm:flex sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-1 sm:gap-y-1 sm:border-0 sm:pt-0">
-                    <a href="{% url 'dashboard' %}"
-                       class="rounded-lg px-4 py-3 transition sm:rounded-md sm:px-3 sm:py-2 {% if request.resolver_match.url_name == 'dashboard' %}bg-[#F47745] font-semibold text-white hover:bg-[#e86736]{% else %}hover:bg-white/10{% endif %}"
-                       {% if request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %}>
-                        ภาพรวม
-                    </a>
+            <span class="flex h-11 w-11 items-center justify-center rounded-xl border-b-2 border-[#F47745] bg-white/10 text-xl font-bold">
+                K
+            </span>
+
+            <span class="leading-tight">
+                <span class="block text-base font-bold tracking-tight">
+                    KMUTNB SHOP
+                </span>
+                <span class="block text-xs tracking-[0.18em] text-white/65">
+                    Management
+                </span>
+            </span>
+        </a>
+
+        <!-- Mobile Menu Toggle -->
+        <input
+            id="manage-menu-toggle"
+            type="checkbox"
+            class="peer sr-only"
+        >
+
+        <label
+            for="manage-menu-toggle"
+            class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg transition hover:bg-white/10 lg:hidden"
+            aria-label="เปิดหรือปิดเมนู"
+            title="เมนู"
+        >
+            <svg
+                class="h-6 w-6"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                aria-hidden="true"
+            >
+                <path d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+        </label>
+
+        <!-- Navigation Links -->
+        <div class="hidden w-full flex-col gap-1 border-t border-white/10 pt-3 peer-checked:flex lg:flex lg:w-auto lg:flex-1 lg:flex-row lg:items-center lg:justify-end lg:gap-1 lg:border-0 lg:pt-0">
+
+            <!-- Dashboard -->
+            <a
+                href="{% url 'dashboard' %}"
+                class="rounded-lg px-4 py-3 text-sm transition lg:py-3
+                {% if request.resolver_match.url_name == 'dashboard' %}
+                    bg-[#F47745] font-semibold text-white
+                {% else %}
+                    text-white/85 hover:bg-white/10 hover:text-white
+                {% endif %}"
+                {% if request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %}
+            >
+                ภาพรวม
+            </a>
+
+            {% if request.user.role == "admin" %}
+
+            <!-- Locations -->
+            <a
+                href="{% url 'locations' %}"
+                class="rounded-lg px-4 py-3 text-sm transition lg:py-3
+                {% if request.resolver_match.url_name == 'locations' %}
+                    bg-[#F47745] font-semibold text-white
+                {% else %}
+                    text-white/85 hover:bg-white/10 hover:text-white
+                {% endif %}"
+                {% if request.resolver_match.url_name == 'locations' %}aria-current="page"{% endif %}
+            >
+                จุดจำหน่าย
+            </a>
+
+            <!-- Categories -->
+            <a
+                href="{% url 'categories' %}"
+                class="rounded-lg px-4 py-3 text-sm transition lg:py-3
+                {% if request.resolver_match.url_name == 'categories' %}
+                    bg-[#F47745] font-semibold text-white
+                {% else %}
+                    text-white/85 hover:bg-white/10 hover:text-white
+                {% endif %}"
+                {% if request.resolver_match.url_name == 'categories' %}aria-current="page"{% endif %}
+            >
+                หมวดหมู่สินค้า
+            </a>
+
+            {% endif %}
+
+            <!-- Reservations -->
+            <a
+                href="{% url 'reservation_list' %}"
+                class="rounded-lg px-4 py-3 text-sm transition lg:py-3
+                {% if request.resolver_match.url_name == 'reservation_list' %}
+                    bg-[#F47745] font-semibold text-white
+                {% else %}
+                    text-white/85 hover:bg-white/10 hover:text-white
+                {% endif %}"
+                {% if request.resolver_match.url_name == 'reservation_list' %}aria-current="page"{% endif %}
+            >
+                รายการจอง
+            </a>
+
+            {% if request.user.role == "admin" %}
+
+            <!-- Products -->
+            <a
+                href="{% url 'products' %}"
+                class="rounded-lg px-4 py-3 text-sm transition lg:py-3
+                {% if request.resolver_match.url_name == 'products' %}
+                    bg-[#F47745] font-semibold text-white
+                {% else %}
+                    text-white/85 hover:bg-white/10 hover:text-white
+                {% endif %}"
+                {% if request.resolver_match.url_name == 'products' %}aria-current="page"{% endif %}
+            >
+                สินค้าทั้งหมด
+            </a>
+
+            <!-- Staff Management -->
+            <a
+                href="{% url 'staffs' %}"
+                class="rounded-lg px-4 py-3 text-sm transition lg:py-3
+                {% if request.resolver_match.url_name == 'staffs' %}
+                    bg-[#F47745] font-semibold text-white
+                {% else %}
+                    text-white/85 hover:bg-white/10 hover:text-white
+                {% endif %}"
+                {% if request.resolver_match.url_name == 'staffs' %}aria-current="page"{% endif %}
+            >
+                จัดการบัญชี Staff
+            </a>
+
+            {% endif %}
+
+            <!-- User Avatar Dropdown -->
+<div class="relative ml-2 border-l border-white/20 pl-3"
+     id="user-menu">
+
+    <button
+        type="button"
+        id="user-menu-button"
+        aria-expanded="false"
+        aria-controls="user-menu-dropdown"
+        aria-label="ดูข้อมูลบัญชีผู้ใช้"
+        class="flex h-10 w-10 items-center justify-center rounded-full bg-[#F47745] text-sm font-bold text-white transition hover:ring-2 hover:ring-white/40 focus:outline-none focus:ring-2 focus:ring-[#F47745]"
+    >
+        {{ request.user.username|slice:":1"|upper }}
+    </button>
+
+    <!-- Dropdown -->
+    <div
+        id="user-menu-dropdown"
+        class="absolute right-0 top-full z-50 mt-3 hidden w-72 overflow-hidden rounded-xl border border-gray-200 bg-white text-[#30415D] shadow-xl"
+    >
+
+        <!-- User Details -->
+        <div class="border-b border-gray-100 px-4 py-4">
+
+            <p class="truncate text-sm font-semibold">
+                {% if request.user.first_name %}
+                    {{ request.user.first_name }}
+                    {% if request.user.last_name %}{{ request.user.last_name }}{% endif %}
+                {% else %}
+                    {{ request.user.username }}
+                {% endif %}
+            </p>
+
+            <p class="mt-1 text-xs text-gray-500">
+                รหัสบัญชี: {{ request.user.id }}
+            </p>
+
+        </div>
+
+        <div class="space-y-3 px-4 py-4">
+
+            <!-- Permission -->
+            <div>
+                <p class="text-xs text-gray-500">สิทธิ์การใช้งาน</p>
+                <p class="mt-1 text-sm font-medium">
                     {% if request.user.role == "admin" %}
-                        <a href="{% url 'locations' %}"
-                           class="rounded-lg px-4 py-3 transition sm:rounded-md sm:px-3 sm:py-2 {% if request.resolver_match.url_name == 'locations' %}bg-[#F47745] font-semibold text-white hover:bg-[#e86736]{% else %}hover:bg-white/10{% endif %}"
-                           {% if request.resolver_match.url_name == 'locations' %}aria-current="page"{% endif %}>
-                            จุดจำหน่าย
-                        </a>
-                        <a href="{% url 'categories' %}"
-                           class="rounded-lg px-4 py-3 transition sm:rounded-md sm:px-3 sm:py-2 {% if request.resolver_match.url_name == 'categories' %}bg-[#F47745] font-semibold text-white hover:bg-[#e86736]{% else %}hover:bg-white/10{% endif %}"
-                           {% if request.resolver_match.url_name == 'categories' %}aria-current="page"{% endif %}>
-                            หมวดหมู่สินค้า
-                        </a>
+                        ผู้ดูแลระบบ
+                    {% else %}
+                        พนักงานประจำสาขา
                     {% endif %}
-                    <a href="{% url 'reservation_list' %}"
-                       class="rounded-lg px-4 py-3 transition sm:rounded-md sm:px-3 sm:py-2 {% if request.resolver_match.url_name == 'reservation_list' %}bg-[#F47745] font-semibold text-white hover:bg-[#e86736]{% else %}hover:bg-white/10{% endif %}"
-                       {% if request.resolver_match.url_name == 'reservation_list' %}aria-current="page"{% endif %}>
-                        รายการจอง
-                    </a>
-                    {% if request.user.role == "admin" %}
-                        <a href="{% url 'products' %}"
-                           class="rounded-lg px-4 py-3 transition sm:rounded-md sm:px-3 sm:py-2 {% if request.resolver_match.url_name == 'products' %}bg-[#F47745] font-semibold text-white hover:bg-[#e86736]{% else %}hover:bg-white/10{% endif %}"
-                           {% if request.resolver_match.url_name == 'products' %}aria-current="page"{% endif %}>
-                            สินค้าทั้งหมด
-                        </a>
-                         <a href="{% url 'staffs' %}"
-                           class="rounded-lg px-4 py-3 transition sm:rounded-md sm:px-3 sm:py-2 {% if request.resolver_match.url_name == 'staffs' %}bg-[#F47745] font-semibold text-white hover:bg-[#e86736]{% else %}hover:bg-white/10{% endif %}"
-                           {% if request.resolver_match.url_name == 'staffs' %}aria-current="page"{% endif %}>
-                            จัดการบัญชี Staff
-                        </a>
-                    {% endif %}
-
-
-                    <!-- Logout -->
-                    <form
-                        method="post"
-                        action="{% url 'logout' %}"
-                        class="pt-2 sm:ml-2 sm:pt-0"
-                    >
-                        {% csrf_token %}
-
-                        <button
-                            type="submit"
-                            class="w-full rounded-lg border border-white/30 px-4 py-3 text-left font-semibold text-white transition hover:border-[#F47745] hover:bg-[#F47745] sm:w-auto sm:rounded-md sm:px-3 sm:py-2 sm:text-center"
-                        >
-                            ออกจากระบบ
-                        </button>
-
-                    </form>
-
-                </div>
-
+                </p>
             </div>
-        </nav>
 
-    {% endif %}
+            <!-- Location -->
+            <div>
+                <p class="text-xs text-gray-500">จุดจำหน่ายประจำ</p>
+                <p class="mt-1 break-words text-sm font-medium">
+                    {% if request.user.role == "admin" %}
+                        ทุกจุดจำหน่าย
+                    {% else %}
+                        {{ request.user.location.name|default:"ไม่ระบุ" }}
+                    {% endif %}
+                </p>
+            </div>
+
+        </div>
+    </div>
+</div>
 
 
-    <!-- =========================
-         Django Messages
-    ========================== -->
-    {% if messages %}
+            <!-- Logout -->
+            <form
+                method="post"
+                action="{% url 'logout' %}"
+                class="border-t border-white/10 pt-3 lg:ml-2 lg:border-t-0 lg:pl-3 lg:pt-0"
+            >
+                {% csrf_token %}
 
+                <button
+                    type="submit"
+                    class="w-full whitespace-nowrap rounded-lg border border-white/25 px-4 py-3 text-sm font-semibold transition hover:border-[#F47745] hover:bg-[#F47745] lg:py-2.5"
+                >
+                    ออกจากระบบ
+                </button>
+            </form>
+
+        </div>
+    </div>
+</nav>
+
+<!-- Avatar Dropdown Script -->
+<script>
+    (function () {
+        const button = document.getElementById("user-menu-button");
+        const dropdown = document.getElementById("user-menu-dropdown");
+        const container = document.getElementById("user-menu");
+
+        if (!button || !dropdown || !container) return;
+
+        function closeMenu() {
+            dropdown.classList.add("hidden");
+            button.setAttribute("aria-expanded", "false");
+        }
+
+        button.addEventListener("click", function (event) {
+            event.stopPropagation();
+
+            const isOpen = !dropdown.classList.contains("hidden");
+
+            dropdown.classList.toggle("hidden", isOpen);
+            button.setAttribute("aria-expanded", String(!isOpen));
+        });
+
+        document.addEventListener("click", function (event) {
+            if (!container.contains(event.target)) {
+                closeMenu();
+            }
+        });
+
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape") {
+                closeMenu();
+                button.focus();
+            }
+        });
+    })();
+</script>
+
+{% endif %}
+
+<!-- Django Messages -->
+{% if messages %}
+    <div class="mx-auto max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
         {% for message in messages %}
-
-            <script>
-                alert("{{ message|escapejs }}");
-            </script>
-
+            <div
+                role="status"
+                class="mb-3 rounded-xl border border-[#30415D]/10 bg-white px-4 py-3 text-sm shadow-sm"
+            >
+                {{ message }}
+            </div>
         {% endfor %}
+    </div>
+{% endif %}
 
-    {% endif %}
-
-
-    <!-- =========================
-         Page Content
-    ========================== -->
-    {% block content %}
-
-    {% endblock %}
+<!-- Page Content -->
+{% block content %}
+{% endblock %}
 
 </body>
-
 </html>
