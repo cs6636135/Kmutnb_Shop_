@@ -4,69 +4,255 @@
 
 {% block content %}
 <main class="min-h-[calc(100vh-4rem)] bg-[#F8F5F0] text-[#30415D]">
-    <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+
+        <!-- Page Header -->
         <div class="mb-8">
-        {% include "manage/partials/page_header.html" with heading="จัดการรายการจอง" subtitle_prefix="ผู้ใช้งาน: " subtitle=user.username link_url="dashboard" link_label="กลับสู่ภาพรวม" %}
+            {% include "manage/partials/page_header.html" with heading="จัดการรายการจอง" subtitle_prefix="ผู้ใช้งาน: " subtitle=user.username link_url="dashboard" link_label="กลับสู่ภาพรวม" %}
         </div>
-        <section class="rounded-2xl border border-[#30415D]/10 bg-white p-4 shadow-sm sm:p-6">
-            <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div class="flex flex-wrap gap-2 text-sm">
-                    <a href="{% url 'reservation_list' %}" class="rounded-full px-3 py-1.5 font-semibold {% if not status %}bg-[#30415D] text-white{% else %}bg-[#F8F5F0] text-[#30415D] hover:bg-[#30415D]/10{% endif %}">ทั้งหมด</a>
-                    {% for value, label in reservation_status_choices %}
-                    <a href="{% url 'reservation_list' %}?status={{ value }}" class="rounded-full px-3 py-1.5 font-semibold {% if status == value %}bg-[#30415D] text-white{% else %}bg-[#F8F5F0] text-[#30415D] hover:bg-[#30415D]/10{% endif %}">{{ label }}</a>
-                    {% endfor %}
+
+        <section class="space-y-5">
+
+<!-- Status Filter Card -->
+<div class="rounded-2xl border border-[#30415D]/10 bg-white p-4 shadow-sm sm:p-5">
+
+    <div class="flex items-center justify-between gap-3">
+
+        <!-- Status Filters -->
+        <div class="flex flex-wrap gap-2">
+
+            <!-- All -->
+            <a href="{% url 'reservation_list' %}"
+               class="inline-flex items-center rounded-full border px-4 py-2 text-sm font-semibold transition duration-200
+               {% if not status %}
+                   border-[#30415D] bg-[#30415D] text-white shadow-sm
+               {% else %}
+                   border-[#30415D]/10 bg-[#F8F5F0] text-[#30415D] hover:border-[#30415D]/30 hover:bg-[#30415D]/5
+               {% endif %}">
+                ทั้งหมด
+            </a>
+
+            <!-- Status Options -->
+            {% for value, label in reservation_status_choices %}
+            <a href="{% url 'reservation_list' %}?status={{ value }}"
+               class="inline-flex items-center rounded-full border px-4 py-2 text-sm font-semibold transition duration-200
+               {% if status == value %}
+                   border-[#30415D] bg-[#30415D] text-white shadow-sm
+               {% else %}
+                   border-[#30415D]/10 bg-[#F8F5F0] text-[#30415D] hover:border-[#30415D]/30 hover:bg-[#30415D]/5
+               {% endif %}">
+                {{ label }}
+            </a>
+            {% endfor %}
+
+        </div>
+
+        <!-- Clear Filter -->
+        {% if status %}
+        <a href="{% url 'reservation_list' %}"
+           class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[#F47745] transition hover:bg-[#F47745]/10 hover:text-[#c9572c]"
+           title="ล้างตัวกรอง"
+           aria-label="ล้างตัวกรอง">
+
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 class="h-4 w-4"
+                 fill="none"
+                 viewBox="0 0 24 24"
+                 stroke="currentColor"
+                 stroke-width="1.8">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M6 18 18 6M6 6l12 12"/>
+            </svg>
+
+        </a>
+        {% endif %}
+
+    </div>
+</div>
+
+            <!-- Reservation Table Card -->
+            <div class="hidden overflow-hidden rounded-2xl border border-[#30415D]/10 bg-white shadow-sm md:block">
+
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse text-left text-sm">
+
+                        <!-- Table Header -->
+                        <thead class="bg-[#30415D] text-white">
+                            <tr>
+                                <th class="whitespace-nowrap px-4 py-4 font-semibold">
+                                    รหัสจอง
+                                </th>
+                                <th class="whitespace-nowrap px-4 py-4 font-semibold">
+                                    รหัสลูกค้า
+                                </th>
+                                <th class="whitespace-nowrap px-4 py-4 font-semibold">
+                                    สินค้า
+                                </th>
+                                <th class="whitespace-nowrap px-4 py-4 font-semibold">
+                                    จุดรับ
+                                </th>
+                                <th class="whitespace-nowrap px-4 py-4 text-center font-semibold">
+                                    จำนวน
+                                </th>
+                                <th class="whitespace-nowrap px-4 py-4 font-semibold">
+                                    จองเมื่อ
+                                </th>
+                                <th class="whitespace-nowrap px-4 py-4 font-semibold">
+                                    สถานะ
+                                </th>
+                                <th class="whitespace-nowrap px-4 py-4 text-right font-semibold">
+                                    จัดการ
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <!-- Table Body -->
+                        <tbody class="divide-y divide-[#30415D]/10">
+
+                            {% for reservation in page_obj %}
+                            <tr class="transition duration-150 hover:bg-[#F8F5F0]/70">
+
+                                <!-- Reservation Code -->
+                                <td class="whitespace-nowrap px-4 py-4">
+                                    <a href="{% url 'reservation_manage' reservation.reservation_code %}"
+                                       class="font-mono text-xs font-bold text-[#F47745] transition hover:text-[#c9572c] hover:underline"
+                                       title="คลิกเพื่อจัดการรายการนี้">
+                                        {{ reservation.reservation_code }}
+                                    </a>
+                                </td>
+
+                                <!-- Customer ID -->
+                                <td class="whitespace-nowrap px-4 py-4 text-[#30415D]/80">
+                                    {{ reservation.customer_id }}
+                                </td>
+
+                                <!-- Product -->
+                                <td class="min-w-40 px-4 py-4">
+                                    <span class="font-medium text-[#30415D]">
+                                        {{ reservation.product.name }}
+                                    </span>
+                                </td>
+
+                                <!-- Pickup Location -->
+                                <td class="whitespace-nowrap px-4 py-4 text-[#30415D]/80">
+                                    {{ reservation.location.name }}
+                                </td>
+
+                                <!-- Quantity -->
+                                <td class="px-4 py-4 text-center">
+                                    <span class="inline-flex min-w-8 items-center justify-center rounded-lg bg-[#F8F5F0] px-2.5 py-1 font-semibold text-[#30415D]">
+                                        {{ reservation.quantity }}
+                                    </span>
+                                </td>
+
+                                <!-- Reservation Date -->
+                                <td class="whitespace-nowrap px-4 py-4 text-xs text-[#30415D]/65">
+                                    {{ reservation.reserved_at|date:"d/m/Y H:i" }}
+                                </td>
+
+                                <!-- Status -->
+                                <td class="whitespace-nowrap px-4 py-4">
+                                    <span class="inline-flex items-center rounded-full px-3 py-1.5 text-xs font-semibold
+                                        {% if reservation.status == 'pending' %}
+                                            bg-[#F47745]/10 text-[#c9572c]
+                                        {% elif reservation.status == 'picked_up' %}
+                                            bg-emerald-50 text-emerald-700
+                                        {% elif reservation.status == 'expired' %}
+                                            bg-slate-100 text-slate-600
+                                        {% elif reservation.status == 'cancelled' %}
+                                            bg-red-50 text-red-700
+                                        {% else %}
+                                            bg-slate-100 text-slate-600
+                                        {% endif %}">
+                                        <span class="mr-1.5 h-1.5 w-1.5 rounded-full
+                                            {% if reservation.status == 'pending' %}
+                                                bg-[#F47745]
+                                            {% elif reservation.status == 'picked_up' %}
+                                                bg-emerald-500
+                                            {% elif reservation.status == 'expired' %}
+                                                bg-slate-400
+                                            {% elif reservation.status == 'cancelled' %}
+                                                bg-red-500
+                                            {% else %}
+                                                bg-slate-400
+                                            {% endif %}">
+                                        </span>
+                                        {{ reservation.get_status_display }}
+                                    </span>
+                                </td>
+
+                                <!-- Action -->
+<td class="whitespace-nowrap px-4 py-4 text-right">
+    <a href="{% url 'reservation_manage' reservation.reservation_code %}"
+       class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[#30415D]/15 text-[#30415D] transition duration-200 hover:border-[#30415D] hover:bg-[#30415D] hover:text-white"
+       title="จัดการรายการจอง"
+       aria-label="จัดการรายการจอง {{ reservation.reservation_code }}">
+
+        <svg xmlns="http://www.w3.org/2000/svg"
+             class="h-4 w-4"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke="currentColor"
+             stroke-width="1.8">
+            <path stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="m16.862 4.487 1.687-1.687a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z"/>
+            <path stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19.5 7.125 16.875 4.5"/>
+        </svg>
+
+    </a>
+</td>
+                            </tr>
+
+                            {% empty %}
+                            <tr>
+                                <td colspan="8" class="px-5 py-14 text-center">
+                                    <div class="mx-auto flex max-w-sm flex-col items-center">
+                                        <div class="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-[#F8F5F0] text-[#30415D]/50">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                 class="h-7 w-7"
+                                                 fill="none"
+                                                 viewBox="0 0 24 24"
+                                                 stroke="currentColor"
+                                                 stroke-width="1.5">
+                                                <path stroke-linecap="round"
+                                                      stroke-linejoin="round"
+                                                      d="M8 7V3m8 4V3M4 11h16M5 5h14a1 1 0 011 1v13a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1z"/>
+                                            </svg>
+                                        </div>
+
+                                        <p class="font-semibold text-[#30415D]">
+                                            ยังไม่มีรายการจอง
+                                        </p>
+
+                                        <p class="mt-1 text-sm text-[#30415D]/55">
+                                            ไม่พบรายการจองในสถานะที่เลือก
+                                        </p>
+
+                                        {% if status %}
+                                        <a href="{% url 'reservation_list' %}"
+                                           class="mt-4 text-sm font-semibold text-[#F47745] hover:underline">
+                                            ดูรายการจองทั้งหมด
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <div class="overflow-x-auto">
-                <table class="w-full min-w-[760px] border-collapse text-left text-sm">
-                    <thead class="bg-[#30415D] text-white">
-                        <tr>
-                            <th class="px-4 py-3 font-semibold">รหัสจอง</th>
-                            <th class="px-4 py-3 font-semibold">รหัสลูกค้า</th>
-                            <th class="px-4 py-3 font-semibold">สินค้า</th>
-                            <th class="px-4 py-3 font-semibold">จุดรับ</th>
-                            <th class="px-4 py-3 font-semibold">จำนวน</th>
-                            <th class="px-4 py-3 font-semibold">จองเมื่อ</th>
-                            <th class="px-4 py-3 font-semibold">สถานะ</th>
-                            <th class="px-4 py-3 text-right font-semibold">จัดการ</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-[#30415D]/10">
-                        {% for reservation in page_obj %}
-                        <tr class="bg-white hover:bg-[#F8F5F0]/60">
-                            <td class="px-4 py-3 font-mono text-xs font-semibold">
-                                <a href="{% url 'reservation_manage' reservation.reservation_code %}" class="text-[#F47745] hover:underline" title="คลิกเพื่อจัดการรายการนี้">
-                                    {{ reservation.reservation_code }}
-                                </a>
-                            </td>
-                            <td class="px-4 py-3">{{ reservation.customer_id }}</td>
-                            <td class="px-4 py-3">{{ reservation.product.name }}</td>
-                            <td class="px-4 py-3">{{ reservation.location.name }}</td>
-                            <td class="px-4 py-3">{{ reservation.quantity }}</td>
-                            <td class="px-4 py-3 whitespace-nowrap text-[#30415D]/70">{{ reservation.reserved_at|date:"d/m/Y H:i" }}</td>
-                            <td class="px-4 py-3">
-                                <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold {% if reservation.status == 'pending' %}bg-[#F47745]/10 text-[#c9572c]{% elif reservation.status == 'picked_up' %}bg-emerald-50 text-emerald-700{% elif reservation.status == 'expired' %}bg-slate-100 text-slate-600{% elif reservation.status == 'cancelled' %}bg-red-100 text-red-700{% else %}bg-slate-100 text-slate-600{% endif %}">
-                                    {{ reservation.get_status_display }}
-                                </span>
-                            </td>
-                            <td class="px-4 py-3 text-right">
-                                <a href="{% url 'reservation_manage' reservation.reservation_code %}"
-                                   class="inline-flex items-center rounded-md border border-[#30415D] px-2.5 py-1 text-xs font-semibold text-[#30415D] transition hover:bg-[#30415D] hover:text-white">
-                                    แก้ไข
-                                </a>
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="8" class="px-5 py-8 text-center text-sm text-[#30415D]/55">ยังไม่มีรายการจอง</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+            <!-- Pagination -->
+            <div>
+                {% include "manage/partials/pagination.html" %}
             </div>
 
-            {% include "manage/partials/pagination.html" %}
         </section>
     </div>
 </main>
