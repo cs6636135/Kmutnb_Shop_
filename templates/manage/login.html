@@ -207,4 +207,54 @@
     </div>
 </main>
 
+<!-- แสดงระหว่างส่ง Login และรอให้หน้า Dashboard โหลดเสร็จ -->
+<div
+    id="login-loading"
+    class="fixed inset-0 z-[100] hidden items-center justify-center bg-[#30415D]/55 px-4 backdrop-blur-sm"
+    role="status"
+    aria-live="polite"
+    aria-label="กำลังเข้าสู่ระบบ"
+>
+    <div class="flex min-w-[220px] flex-col items-center rounded-2xl bg-white px-8 py-7 text-center shadow-2xl">
+        <span
+            class="mb-4 h-10 w-10 animate-spin rounded-full border-4 border-[#F47745]/25 border-t-[#F47745]"
+            aria-hidden="true"
+        ></span>
+        <p class="font-semibold text-[#30415D]">กำลังเข้าสู่ระบบ</p>
+        <p class="mt-1 text-sm text-gray-500">กรุณารอสักครู่...</p>
+    </div>
+</div>
+
+<script>
+    (() => {
+        const form = document.querySelector('form[action="{% url "login" %}"]');
+        const loading = document.getElementById("login-loading");
+        const submitButton = form?.querySelector('button[type="submit"]');
+
+        if (!form || !loading) return;
+
+        form.addEventListener("submit", () => {
+            loading.classList.remove("hidden");
+            loading.classList.add("flex");
+
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.setAttribute("aria-busy", "true");
+                submitButton.textContent = "กำลังเข้าสู่ระบบ...";
+                submitButton.classList.add("cursor-wait", "opacity-75");
+            }
+        });
+
+        // ซ่อน Overlay หากผู้ใช้ย้อนกลับมาหน้า Login จาก browser history
+        window.addEventListener("pageshow", () => {
+            loading.classList.add("hidden");
+            loading.classList.remove("flex");
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.removeAttribute("aria-busy");
+            }
+        });
+    })();
+</script>
+
 {% endblock %}

@@ -2,7 +2,7 @@
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
-from django.test import TestCase
+from django.test import Client, TestCase
 from django.urls import reverse
 
 from .form import CategoryModelForm, LocationModelForm, ProductModelForm
@@ -175,3 +175,46 @@ class ShopPublicAndCrudTests(TestCase):
         self.assertEqual(product.name, "สินค้าแก้ไข")
         self.client.post(reverse("products"), {"delete": product.pk})
         self.assertFalse(Product.objects.filter(pk=product.pk).exists())
+
+
+class ShopSecurityTests(TestCase):
+    """Verify access control and CSRF protection for admin CRUD actions."""
+
+    def setUp(self):
+        self.category = Category.objects.create(name="หมวดความปลอดภัย")
+        self.product = Product.objects.create(
+            name="สินค้าทดสอบสิทธิ์", price=100, category=self.category
+        )
+        self.admin = get_user_model().objects.create_user(
+            username="security-admin", password="Strong-pass-123", role="admin"
+        )
+        self.staff = get_user_model().objects.create_user(
+            username="security-staff", password="Strong-pass-123", role="staff"
+        )
+
+    def test_anonymous_cannot_delete_product_by_posting_id(self):
+        """TC-SECURITY-001: an anonymous request cannot delete a product by forging its ID."""
+        response = self.client.post(
+            reverse("products"), {"delete": self.product.pk}
+        )
+        self.assertRedirects(response, reverse("login"))
+        self.assertTrue(Product.objects.filter(pk=self.product.pk).exists())
+
+    def test_staff_cannot_delete_product_by_posting_id(self):
+        """TC-SECURITY-002: a staff user cannot invoke an admin-only delete action."""
+        self.client.force_login(self.staff)
+        response = self.client.post(
+            reverse("products"), {"delete": self.product.pk}
+        )
+        self.assertRedirects(response, reverse("dashboard"))
+        self.assertTrue(Product.objects.filter(pk=self.product.pk).exists())
+
+    def test_delete_without_csrf_token_is_rejected(self):
+        """TC-SECURITY-003: an admin POST without a CSRF token is rejected and changes nothing."""
+        csrf_client = Client(enforce_csrf_checks=True)
+        csrf_client.force_login(self.admin)
+        response = csrf_client.post(
+            reverse("products"), {"delete": self.product.pk}
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(Product.objects.filter(pk=self.product.pk).exists())

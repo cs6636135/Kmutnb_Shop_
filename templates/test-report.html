@@ -45,8 +45,8 @@
 
   <main class="wrap">
     <div class="summary" aria-label="สรุปผลการทดสอบ">
-      <div class="metric"><strong class="ok">31</strong><span>กรณีทดสอบทั้งหมด</span></div>
-      <div class="metric"><strong class="ok">31</strong><span>ผ่าน (Passed)</span></div>
+      <div class="metric"><strong class="ok">39</strong><span>กรณีทดสอบทั้งหมด</span></div>
+      <div class="metric"><strong class="ok">39</strong><span>ผ่าน (Passed)</span></div>
       <div class="metric"><strong>0</strong><span>ไม่ผ่าน (Failed)</span></div>
       <div class="metric"><strong class="ok">100%</strong><span>อัตราการผ่าน</span></div>
     </div>
@@ -109,6 +109,9 @@
             <tr><td>TC-AUTHZ-001</td><td>Authorization</td><td>Anonymous</td><td>ตรวจผู้ใช้ที่ยังไม่ login เข้า protected page ไม่ได้</td><td><span class="status">ผ่าน</span></td></tr>
             <tr><td>TC-AUTHZ-002</td><td>Authorization</td><td>Staff เข้า Admin page</td><td>ตรวจ Staff ถูก redirect เมื่อเข้าหน้าจัดการบัญชี</td><td><span class="status">ผ่าน</span></td></tr>
             <tr><td>TC-AUTHZ-003</td><td>Authorization</td><td>Staff เข้า Shared page</td><td>ตรวจ Staff เข้า Dashboard ที่ได้รับอนุญาตได้</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-SECURITY-001</td><td>Security</td><td>Anonymous ปลอม ID ลบสินค้า</td><td>ตรวจผู้ที่ยังไม่ login ไม่สามารถส่ง POST เพื่อลบสินค้าได้</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-SECURITY-002</td><td>Security</td><td>Staff ปลอม ID ลบสินค้า</td><td>ตรวจ Staff ไม่สามารถใช้คำสั่งลบของ Admin และข้อมูลยังอยู่</td><td><span class="status">ผ่าน</span></td></tr>
+            <tr><td>TC-SECURITY-003</td><td>Security</td><td>POST ไม่มี CSRF</td><td>ตรวจคำขอลบที่ไม่มี CSRF Token ถูกปฏิเสธและข้อมูลไม่เปลี่ยนแปลง</td><td><span class="status">ผ่าน</span></td></tr>
             <tr><td>TC-CREATE-003</td><td>Accounts</td><td>สร้าง Staff</td><td>ตรวจ Admin สร้าง Staff พร้อมจุดจำหน่ายได้</td><td><span class="status">ผ่าน</span></td></tr>
             <tr><td>TC-CREATE-004</td><td>Reservation</td><td>สร้างการจอง</td><td>ตรวจสร้าง reservation สถานะ pending และตัดสต็อก</td><td><span class="status">ผ่าน</span></td></tr>
             <tr><td>TC-BUSINESS-001</td><td>Business Rule</td><td>อายุการจอง</td><td>ตรวจว่าการจองหมดอายุภายใน 4 ชั่วโมง</td><td><span class="status">ผ่าน</span></td></tr>
@@ -148,17 +151,17 @@
 
     <section class="section">
       <h2>7.14 ผลการทดสอบและหลักฐานประกอบ</h2>
-      <p>หลักฐานคือผลลัพธ์จาก Django test runner: พบ 36 test cases, ทุกกรณีจบด้วยสถานะ <strong class="ok">OK</strong> และ system check ไม่พบปัญหา</p>
-      <pre class="card" style="padding:16px; overflow:auto">Found 36 test(s).
+      <p>หลักฐานคือผลลัพธ์จาก Django test runner: พบ 39 test cases, ทุกกรณีจบด้วยสถานะ <strong class="ok">OK</strong> และ system check ไม่พบปัญหา</p>
+      <pre class="card" style="padding:16px; overflow:auto">Found 39 test(s).
 System check identified no issues (0 silenced).
-Ran 36 tests in 128.929s
+Ran 39 tests
 OK</pre>
     </section>
 
     <section class="section">
       <h2>7.15 สรุปจำนวนกรณีทดสอบที่ผ่านและไม่ผ่าน</h2>
       <div class="card" style="padding:18px">
-        <p><strong class="ok">ผ่าน 36 กรณี</strong> จากทั้งหมด 36 กรณี</p>
+        <p><strong class="ok">ผ่าน 39 กรณี</strong> จากทั้งหมด 39 กรณี</p>
         <p><strong>ไม่ผ่าน 0 กรณี</strong></p>
         <p><strong>คิดเป็น 100%</strong></p>
       </div>
