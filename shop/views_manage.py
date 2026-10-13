@@ -93,25 +93,29 @@ def products(request):
     })
 
 def get_stock_for_user(request, pk):
+    if not pk:
+        return None
     qs = ProductLocation.objects.select_related("location")
 
     if request.user.role == "staff":
         if not request.user.location_id:
-            raise Http404
-    
+            return None
         qs = qs.filter(location_id=request.user.location_id)
 
-    return get_object_or_404(qs, pk=pk)
+    try:
+        return qs.get(pk=pk)
+    except (ProductLocation.DoesNotExist, ValueError):
+        return None
 
 @role_required("admin", "staff")
 def stocks(request):
     if request.method == "POST":
         if "update" in request.POST:
             pk = request.POST.get("update")
-            if not pk:
-                messages.error(request, "ไม่พบรายการสต็อกที่ต้องการแก้ไข")
-                return redirect("stocks")
             product = get_stock_for_user(request, pk)
+            if not product:
+                messages.error(request, "ไม่พบรายการสต็อกที่ต้องการแก้ไขหรือคุณไม่มีสิทธิ์")
+                return redirect("stocks")
             try:
                 stock = int(request.POST.get("stock", ""))
                 if stock < 0:
@@ -130,10 +134,13 @@ def stocks(request):
             })
         elif "save" in request.POST:
             pk = request.POST.get("save")
-            if not pk:
-                messages.error(request, "ไม่พบรายการสต็อกที่ต้องการบันทึก")
-                return redirect("stocks")
-            product = get_stock_for_user(request, pk)
+            product = None
+            if pk:
+                product = get_stock_for_user(request, pk)
+                if not product:
+                    messages.error(request, "ไม่พบรายการสต็อกที่ต้องการบันทึกหรือคุณไม่มีสิทธิ์")
+                    return redirect("stocks")
+
             form = ProductLocationForm(request.POST, request.FILES or None, instance=product, user=request.user)
             #instance คือ
             if form.is_valid():
@@ -158,7 +165,11 @@ def stocks(request):
             })
             
         elif "delete" in request.POST:                  # ลบ
-            product = get_stock_for_user(request, request.POST["delete"])
+            pk = request.POST.get("delete")
+            product = get_stock_for_user(request, pk)
+            if not product:
+                messages.error(request, "ไม่พบรายการสต็อกที่ต้องการลบหรือคุณไม่มีสิทธิ์")
+                return redirect("stocks")
             try:
                 product.delete()
                 messages.success(request, "ลบสินค้าออกจากสต็อกเรียบร้อยแล้ว")
