@@ -11,6 +11,7 @@ from django.core.paginator import Paginator
 from django.utils import timezone
 from reservations.services import expire_overdue_reservations
 from datetime import timedelta
+from django.http import Http404
 
 @role_required("admin")
 def products(request):
@@ -92,28 +93,51 @@ def products(request):
         "category_query": category_query,
     })
 
+def get_stock_for_user(request, pk):
+    qs = ProductLocation.objects.select_related("location")
+
+    if request.user.role == "staff":
+        if not request.user.location_id:
+            raise Http404
+    
+        qs = qs.filter(location_id=request.user.location_id)
+
+    return get_object_or_404(qs, pk=pk)
+
 @role_required("admin", "staff")
 def stocks(request):
     if request.method == "POST":
         if "update" in request.POST:
             pk = request.POST.get("update")
-            product = get_object_or_404(ProductLocation, pk=pk) if pk else None
-            stock = request.POST.get("stock")
-            if stock:
-                product.stock = stock
-                product.save()
-                messages.success(request, "บันทึกสต็อกเรียบร้อยแล้ว")
+            if not pk:
+                messages.error(request, "ไม่พบรายการสต็อกที่ต้องการแก้ไข")
                 return redirect("stocks")
+            product = get_stock_for_user(request, pk)
+            try:
+                stock = int(request.POST.get("stock", ""))
+                if stock < 0:
+                    raise ValueError
+            except (ValueError, TypeError):
+                messages.error(request, "จำนวนสินค้าต้องเป็นจำนวนเต็มที่ไม่ติดลบ")
+                return redirect("stocks")
+            
+            product.stock = stock
+            product.save(update_fields=["stock"])
+            messages.success(request, "บันทึกสต็อกเรียบร้อยแล้ว")
+            return redirect("stocks")
         elif "add" in request.POST:
             return render(request, "manage/stock_form.html", {
                 "form": ProductLocationForm(user=request.user),
             })
         elif "save" in request.POST:
             pk = request.POST.get("save")
-            product = get_object_or_404(ProductLocation, pk=pk) if pk else None
+            if not pk:
+                messages.error(request, "ไม่พบรายการสต็อกที่ต้องการบันทึก")
+                return redirect("stocks")
+            product = get_stock_for_user(request, pk)
             form = ProductLocationForm(request.POST, request.FILES or None, instance=product, user=request.user)
             #instance คือ
-            if form.is_valid() and form.is_valid():
+            if form.is_valid():
                 try:
                     with transaction.atomic(): #ถ้าล้มจะไปต่อได้
                         form.save() #ในรุปถ้าเรียกแบบไม่มีค่า commit = true
@@ -135,7 +159,7 @@ def stocks(request):
             })
             
         elif "delete" in request.POST:                  # ลบ
-            product = get_object_or_404(ProductLocation, pk=request.POST["delete"])
+            product = get_stock_for_user(request, request.POST["delete"])
             try:
                 product.delete()
                 messages.success(request, "ลบสินค้าออกจากสต็อกเรียบร้อยแล้ว")
