@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>บทที่ 7 การทดสอบระบบ | KMUTNB Shop</title>
+  <title>การทดสอบระบบ | KMUTNB Shop</title>
   <style>
     :root{--navy:#17233c;--blue:#2563eb;--green:#15803d;--red:#b91c1c;--line:#dbe3ee;--bg:#f8fafc}
     *{box-sizing:border-box}body{margin:0;background:var(--bg);color:#1e293b;font-family:"Segoe UI",Tahoma,sans-serif;line-height:1.55}.hero{background:linear-gradient(135deg,var(--navy),#30415d);color:#fff;padding:38px 20px}.wrap{max-width:1500px;margin:auto;padding:0 20px}h1{margin:0 0 8px;font-size:clamp(25px,4vw,40px)}h2{color:var(--navy);margin:34px 0 12px}.subtitle{margin:0;color:#dbeafe}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:-22px;position:relative}.metric,.card{background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 4px 14px #0f172a0b}.metric{padding:16px}.metric strong{display:block;color:var(--navy);font-size:27px}.metric span{color:#64748b;font-size:14px}.ok{color:var(--green)!important}.fail{color:var(--red)!important}.card{padding:18px}.note{border-left:4px solid var(--blue);background:#eff6ff;padding:12px 15px;border-radius:7px}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px;background:#fff}table{width:100%;min-width:1850px;border-collapse:collapse}th,td{padding:11px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}th{position:sticky;top:0;background:#eaf0f7;color:var(--navy);font-size:14px;z-index:1}td:first-child,td:nth-child(2),td:nth-child(3),td:last-child{white-space:nowrap}tr:last-child td{border-bottom:0}.status{display:inline-block;padding:2px 9px;border-radius:999px;background:#dcfce7;color:var(--green);font-weight:600}.status.fail{background:#fee2e2}.status.reference{background:#e2e8f0;color:#475569}code{background:#eef2f7;padding:2px 5px;border-radius:4px}footer{color:#64748b;font-size:13px;padding:28px 0 45px}@media(max-width:760px){.summary{grid-template-columns:repeat(2,1fr)}.wrap{padding:0 12px}}
@@ -25,7 +25,7 @@
   </style>
 </head>
 <body>
-  <header class="hero"><div class="wrap"><h1>บทที่ 7 การทดสอบระบบ</h1><p class="subtitle">รายงานผลการทดสอบระบบ KMUTNB Shop</p></div></header>
+  <header class="hero"><div class="wrap"><h1>การทดสอบระบบ</h1><p class="subtitle">รายงานผลการทดสอบระบบ KMUTNB Shop</p></div></header>
   <main class="wrap">
     <section class="summary" aria-label="สรุปผลการทดสอบ">
       <div class="metric"><strong>68</strong><span>Automated Test Cases ทั้งหมด</span></div>
@@ -34,14 +34,14 @@
       <div class="metric"><strong>100%</strong><span>อัตราการผ่านอัตโนมัติ</span></div>
     </section>
 
-    <section><h2>7.1 ขอบเขตและวิธีทดสอบ</h2><div class="card">
+    <section><h2>ขอบเขตและวิธีทดสอบ</h2><div class="card">
       <p>ทดสอบระบบแบบ System Testing ครอบคลุม CRUD, Authentication, Authorization, Validation, Error Handling, Search and Filter และ Security รวมถึง workflow การจองและการจัดการสต็อก</p>
       <p><strong>เครื่องมือ:</strong> Django TestCase, Django Test Client, PostgreSQL, Python 3.13.12</p>
       <p><strong>คำสั่งที่ใช้:</strong> <code>python manage.py test --keepdb --verbosity 2</code></p>
       <p class="note">ผลจากการรัน <code>python manage.py test --keepdb --verbosity 2</code>: <code>Ran 68 tests in 212.241s</code> — <strong>OK</strong> (Passed 68, Failed 0, Error 0)</p>
     </div></section>
 
-    <section><h2>7.2 Coverage Overview</h2><div class="card"><ul>
+    <section><h2>Coverage Overview</h2><div class="card"><ul>
       <li><strong>CRUD:</strong> create, read, update และ delete สินค้า หมวดหมู่ จุดจำหน่าย สต็อก บัญชี และ reservation</li>
       <li><strong>Authentication:</strong> login สำเร็จ/ผิดพลาด และ logout</li>
       <li><strong>Authorization:</strong> anonymous, staff และ admin รวมถึงการจำกัด stock ตาม location</li>
@@ -53,17 +53,17 @@
     </ul><p class="note">Trigger คืน stock ที่ตรวจแล้ว: สร้าง reservation, status lookup, reservation list และ product detail — ทั้ง 4 จุดผ่าน test เฉพาะทาง</p></div></section>
 
 
-    <section><h2>7.3 Requirements Register</h2><div class="card">
+    <section><h2>Requirements Register</h2><div class="card">
       <p class="note">รายการต่อไปนี้ถอดตามเอกสาร Requirements ที่ให้มา โดยคงรหัส FR-01 ถึง FR-41 และ NFR-01 ถึง NFR-12 ตามลำดับของเอกสารต้นฉบับ</p>
       <div class="table-wrap"><table class="report-table requirements-table"><thead><tr><th>ID</th><th>ประเภท</th><th>กลุ่มหน้าที่</th><th>รายละเอียด Requirement</th></tr></thead><tbody id="requirementsTable"></tbody></table></div>
     </div></section>
 
-    <section><h2>7.4 Requirement Traceability Matrix</h2><div class="card">
+    <section><h2>Requirement Traceability Matrix</h2><div class="card">
       <p class="note">Coverage แสดงความเชื่อมโยงระหว่าง Requirement กับ Test Case ที่ตรวจรายละเอียดตรงตามข้อความ ข้อ NFR-07 ระบุเป็น Manual; NFR-09 ครอบคลุมด้วยการตรวจข้อมูลระบุตัวตนที่แสดงบนหน้ายืนยัน</p>
       <div class="table-wrap"><table class="report-table traceability-table"><thead><tr><th>Requirement ID</th><th>รายละเอียด</th><th>Test Case ID ที่ครอบคลุม</th><th>สถานะ Coverage</th></tr></thead><tbody id="traceabilityTable"></tbody></table></div>
     </div></section>
 
-    <section><h2>7.5 Test Cases</h2>
+    <section><h2>Test Cases</h2>
       <p class="note">เรียงกรณีทดสอบตาม Requirement; กรณีที่ไม่ตรงกับ Requirement จัดไว้ท้ายตารางเป็น Additional Test และกรณี Manual ระบุชัดเจน ช่องผลจริงอัปเดตหลังรันคำสั่งทดสอบ</p>
       <div class="table-wrap"><table class="report-table functional-table">
         <thead><tr><th>ลำดับ</th><th>Test Case ID</th><th>Requirement Reference</th><th>Category</th><th>Scenario</th><th>Prerequisites</th><th>Test Data</th><th>Test Steps</th><th>Expected Results</th><th>Actual Results</th><th>ผล</th></tr></thead>
@@ -71,17 +71,17 @@
       </table></div>
     </section>
 
-    <section><h2>7.6 Manual Test</h2><div class="card">
+    <section><h2>Manual Test</h2><div class="card">
       <p class="note">TC-NFR-07-01 เป็น Manual Test: เปิดหน้ารายการสินค้าและหน้ารายละเอียดบนจอ 360px, 768px และ 1366px; ตรวจว่าไม่มีเนื้อหาล้นแนวนอน ข้อความสำคัญอ่านได้ และปุ่มค้นหา/เลือกสินค้า/จองกดใช้งานได้ ระบุผลเป็น Manual จนกว่าจะทดสอบจริงด้วยผู้ตรวจ</p>
       <p>TC-NFR-09-01 ตรวจว่าหน้ายืนยันแสดงข้อมูลระบุตัวตนที่ผู้ใช้กรอกตามการทำงานของระบบ (รหัสนักศึกษาหรือเบอร์โทรศัพท์) โดย Requirement ไม่ได้กำหนดให้ปกปิดรหัสนักศึกษา</p>
     </div></section>
 
-    <section><h2>7.7 Additional Tests</h2><div class="card">
+    <section><h2>Additional Tests</h2><div class="card">
       <p class="note">Additional Test คือกรณีไม่มี Requirement รองรับโดยตรง เช่น ความเร็ว Query, CSRF และการตรวจค่าราคาหรือรูปแบบข้อมูลนอกขอบเขตข้อความ Requirements ไม่ได้สร้าง NFR เพิ่ม</p>
       <p>เคสเหล่านี้อยู่ท้ายตาราง Test Cases และไม่ถูกนับเป็น Coverage ของ Requirement</p>
     </div></section>
 
-    <section><h2>7.8 สรุปผลรวม</h2><div class="card">
+    <section><h2>สรุปผลรวม</h2><div class="card">
       <p><strong>Automated Test Cases:</strong> <span id="automatedTotal">รอผลรัน</span></p>
       <p><strong>ผ่าน:</strong> <span id="passedTotal">รอผลรัน</span></p>
       <p><strong>ไม่ผ่าน:</strong> <span id="failedTotal">รอผลรัน</span></p>
