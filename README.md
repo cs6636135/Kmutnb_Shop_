@@ -22,6 +22,8 @@ KMUTNB Shop เป็นเว็บไซต์สำหรับค้นห�
 
 ## เว็บไซต์
 https://kmutnb-shop-ktnr.onrender.com
+## เทสเคส
+https://kmutnb-shop-ktnr.onrender.com/test-report/
 
 ## ผู้จัดทำ
 1. 6604062636127 นางสาว ซีตีฮาย๊าต วรวัฒนาชัย
