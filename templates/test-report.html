@@ -12,68 +12,83 @@
     .report-table td:first-child{white-space:nowrap}
     .report-table td:last-child{white-space:normal}
     .report-table .status{white-space:nowrap}
-    .functional-table th:nth-child(1){width:4%}.functional-table th:nth-child(2){width:9%}.functional-table th:nth-child(3){width:11%}.functional-table th:nth-child(4){width:11%}.functional-table th:nth-child(5){width:13%}.functional-table th:nth-child(6){width:10%}.functional-table th:nth-child(7){width:11%}.functional-table th:nth-child(8){width:13%}.functional-table th:nth-child(9){width:12%}.functional-table th:nth-child(10){width:6%}
+    .functional-table th:nth-child(1){width:4%}.functional-table th:nth-child(2){width:8%}.functional-table th:nth-child(3){width:9%}.functional-table th:nth-child(4){width:9%}.functional-table th:nth-child(5){width:10%}.functional-table th:nth-child(6){width:9%}.functional-table th:nth-child(7){width:10%}.functional-table th:nth-child(8){width:12%}.functional-table th:nth-child(9){width:11%}.functional-table th:nth-child(10){width:12%}.functional-table th:nth-child(11){width:6%}
     .nonfunctional-table th:nth-child(1){width:13%}.nonfunctional-table th:nth-child(2){width:14%}.nonfunctional-table th:nth-child(3){width:12%}.nonfunctional-table th:nth-child(4){width:18%}.nonfunctional-table th:nth-child(5){width:18%}.nonfunctional-table th:nth-child(6){width:20%}.nonfunctional-table th:nth-child(7){width:5%}
     .report-table td:nth-child(2),.report-table td:nth-child(3){white-space:normal}
     .functional-table{min-width:1250px}
     .nonfunctional-table{min-width:0}
+    .requirements-table,.traceability-table,.additional-table{min-width:0}
+    .requirements-table th:nth-child(1){width:10%}.requirements-table th:nth-child(2){width:16%}.requirements-table th:nth-child(3){width:20%}.requirements-table th:nth-child(4){width:54%}
+    .traceability-table th:nth-child(1){width:11%}.traceability-table th:nth-child(2){width:45%}.traceability-table th:nth-child(3){width:30%}.traceability-table th:nth-child(4){width:14%}
+    .additional-table th:nth-child(1){width:13%}.additional-table th:nth-child(2){width:14%}.additional-table th:nth-child(3){width:12%}.additional-table th:nth-child(4){width:18%}.additional-table th:nth-child(5){width:18%}.additional-table th:nth-child(6){width:20%}.additional-table th:nth-child(7){width:5%}
+    .coverage{display:inline-block;padding:2px 8px;border-radius:999px;font-weight:600;white-space:nowrap}.coverage.ok{background:#dcfce7;color:var(--green)}.coverage.partial{background:#fef3c7;color:#92400e}.coverage.missing{background:#fee2e2;color:var(--red)}
   </style>
 </head>
 <body>
   <header class="hero"><div class="wrap"><h1>บทที่ 7 การทดสอบระบบ</h1><p class="subtitle">รายงานผลการทดสอบระบบ KMUTNB Shop</p></div></header>
   <main class="wrap">
     <section class="summary" aria-label="สรุปผลการทดสอบ">
-      <div class="metric"><strong>54</strong><span>Test Cases ทั้งหมด</span></div>
-      <div class="metric"><strong class="ok">54</strong><span>ผ่าน (Passed)</span></div>
-      <div class="metric"><strong>0</strong><span>Failed / Error / Not Run</span></div>
-      <div class="metric"><strong>100%</strong><span>อัตราการผ่าน</span></div>
+      <div class="metric"><strong>68</strong><span>Automated Test Cases ทั้งหมด</span></div>
+      <div class="metric"><strong class="ok">68</strong><span>ผ่าน (Passed)</span></div>
+      <div class="metric"><strong>0</strong><span>ไม่ผ่าน (Failed); Error 0</span></div>
+      <div class="metric"><strong>100%</strong><span>อัตราการผ่านอัตโนมัติ</span></div>
     </section>
 
     <section><h2>7.1 ขอบเขตและวิธีทดสอบ</h2><div class="card">
       <p>ทดสอบระบบแบบ System Testing ครอบคลุม CRUD, Authentication, Authorization, Validation, Error Handling, Search and Filter และ Security รวมถึง workflow การจองและการจัดการสต็อก</p>
       <p><strong>เครื่องมือ:</strong> Django TestCase, Django Test Client, PostgreSQL, Python 3.13.12</p>
       <p><strong>คำสั่งที่ใช้:</strong> <code>python manage.py test --keepdb --verbosity 2</code></p>
-      <p class="note">ผลการรันจริงจากโค้ดปัจจุบัน: <code>Ran 54 tests in 273.209s</code> — <strong>OK</strong> (Passed 54, Failed 0, Error 0, Not Run 0)</p>
+      <p class="note">ผลจากการรัน <code>python manage.py test --keepdb --verbosity 2</code>: <code>Ran 68 tests in 212.241s</code> — <strong>OK</strong> (Passed 68, Failed 0, Error 0)</p>
     </div></section>
 
-    <section><h2>7.2 Coverage ครบ 8 ด้าน</h2><div class="card"><ul>
+    <section><h2>7.2 Coverage Overview</h2><div class="card"><ul>
       <li><strong>CRUD:</strong> create, read, update และ delete สินค้า หมวดหมู่ จุดจำหน่าย สต็อก บัญชี และ reservation</li>
       <li><strong>Authentication:</strong> login สำเร็จ/ผิดพลาด และ logout</li>
       <li><strong>Authorization:</strong> anonymous, staff และ admin รวมถึงการจำกัด stock ตาม location</li>
       <li><strong>Validation:</strong> ราคา category รหัสนักศึกษา quantity และ stock ติดลบ/ซ้ำ</li>
-      <li><strong>Error Handling:</strong> location ผิด, reservation หมดอายุ และฐานข้อมูลปฏิเสธค่าติดลบ</li>
-      <li><strong>Search and Filter:</strong> สินค้า staff stock reservation category และ location</li>
+      <li><strong>Business Logic:</strong> location ผิด, reservation หมดอายุ และการควบคุม stock</li>
+      <li><strong>Search &amp; Filter:</strong> สินค้า staff stock reservation category และ location</li>
       <li><strong>Security:</strong> CSRF, ปลอม ID ลบข้อมูล และแก้ stock ข้าม location</li>
-      <li><strong>Performance:</strong> query budget ของ reservation list ไม่เกิน 10 queries และ product detail ไม่เกิน 12 queries</li>
+      <li><strong>Performance (Additional Test):</strong> query budget ของ reservation list ไม่เกิน 10 queries และ product detail ไม่เกิน 12 queries</li>
     </ul><p class="note">Trigger คืน stock ที่ตรวจแล้ว: สร้าง reservation, status lookup, reservation list, dashboard และ product detail — ทั้ง 5 จุดผ่าน test เฉพาะทาง</p></div></section>
 
 
-    <section><h2>7.3 Functional Test Cases</h2>
-      <p class="note">Functional Test Cases จำนวน 49 เคส โดย Category และ Requirement Reference ในตารางนี้จัดใหม่จากวัตถุประสงค์ตาม Requirement ไม่ได้ยึดหมวดจากไฟล์ทดสอบ ช่อง Actual Results อ้างอิงจากผลรันจริงล่าสุด</p>
+    <section><h2>7.3 Requirements Register</h2><div class="card">
+      <p class="note">รายการต่อไปนี้ถอดตามเอกสาร Requirements ที่ให้มา โดยคงรหัส FR-01 ถึง FR-41 และ NFR-01 ถึง NFR-12 ตามลำดับของเอกสารต้นฉบับ</p>
+      <div class="table-wrap"><table class="report-table requirements-table"><thead><tr><th>ID</th><th>ประเภท</th><th>กลุ่มหน้าที่</th><th>รายละเอียด Requirement</th></tr></thead><tbody id="requirementsTable"></tbody></table></div>
+    </div></section>
+
+    <section><h2>7.4 Requirement Traceability Matrix</h2><div class="card">
+      <p class="note">Coverage แสดงความเชื่อมโยงระหว่าง Requirement กับ Test Case ที่ตรวจรายละเอียดตรงตามข้อความ ข้อ NFR-07 ระบุเป็น Manual; NFR-09 ครอบคลุมด้วยการตรวจข้อมูลระบุตัวตนที่แสดงบนหน้ายืนยัน</p>
+      <div class="table-wrap"><table class="report-table traceability-table"><thead><tr><th>Requirement ID</th><th>รายละเอียด</th><th>Test Case ID ที่ครอบคลุม</th><th>สถานะ Coverage</th></tr></thead><tbody id="traceabilityTable"></tbody></table></div>
+    </div></section>
+
+    <section><h2>7.5 Test Cases</h2>
+      <p class="note">เรียงกรณีทดสอบตาม Requirement; กรณีที่ไม่ตรงกับ Requirement จัดไว้ท้ายตารางเป็น Additional Test และกรณี Manual ระบุชัดเจน ช่องผลจริงอัปเดตหลังรันคำสั่งทดสอบ</p>
       <div class="table-wrap"><table class="report-table functional-table">
-        <thead><tr><th>ลำดับ</th><th>Test Case ID</th><th>Requirement Reference</th><th>Category ใหม่</th><th>Test Scenario</th><th>Prerequisites</th><th>Test Data</th><th>Test Steps</th><th>Expected Results</th><th>Actual Results</th></tr></thead>
-        <tbody id="functionalCases"></tbody>
+        <thead><tr><th>ลำดับ</th><th>Test Case ID</th><th>Requirement Reference</th><th>Category</th><th>Scenario</th><th>Prerequisites</th><th>Test Data</th><th>Test Steps</th><th>Expected Results</th><th>Actual Results</th><th>ผล</th></tr></thead>
+        <tbody id="allCases"></tbody>
       </table></div>
     </section>
 
-    <section><h2>7.4 Non-functional Test Results</h2><div class="card">
-      <p>ส่วนนี้รวมผลทดสอบด้าน Performance และ Security ซึ่งเป็น Non-functional Test Cases ตาม Requirement และมีหลักฐานจากการรันทดสอบจริง</p>
-      <div class="table-wrap"><table class="report-table nonfunctional-table"><thead><tr><th>ID</th><th>Requirement Reference</th><th>Category</th><th>Scenario</th><th>Expected Results</th><th>Actual Results</th><th>ผล</th></tr></thead><tbody>
-        <tr><td><code>TC-PERF-001</code></td><td>NFR-07</td><td>Performance</td><td>จำกัดจำนวน query ของ reservation list</td><td>ใช้ไม่เกิน 10 queries</td><td>ใช้ 10 queries หรือน้อยกว่า จาก Django TestCase</td><td><span class="status">ผ่าน</span></td></tr>
-        <tr><td><code>TC-PERF-002</code></td><td>NFR-07</td><td>Performance</td><td>จำกัดจำนวน query ของ product detail</td><td>ใช้ไม่เกิน 12 queries</td><td>ใช้ 12 queries หรือน้อยกว่า จาก Django TestCase</td><td><span class="status">ผ่าน</span></td></tr>
-        <tr><td><code>TC-SECURITY-001</code></td><td>NFR-02</td><td>Security</td><td>Anonymous ปลอม ID เพื่อลบ Product</td><td>ห้ามลบข้อมูลโดยไม่ได้รับอนุญาต</td><td>ถูก redirect ไป login และ product ยังคงอยู่ จาก Django TestCase</td><td><span class="status">ผ่าน</span></td></tr>
-        <tr><td><code>TC-SECURITY-002</code></td><td>NFR-02 / NFR-11</td><td>Security</td><td>Staff ปลอม ID เพื่อลบ Product</td><td>ห้าม Staff เรียกใช้การลบข้อมูลของ Admin</td><td>ถูก redirect ไป dashboard และ product ยังคงอยู่ จาก Django TestCase</td><td><span class="status">ผ่าน</span></td></tr>
-        <tr><td><code>TC-SECURITY-003</code></td><td>NFR-02</td><td>Security</td><td>POST ลบโดยไม่มี CSRF</td><td>คำขอไม่มี CSRF ต้องถูกปฏิเสธและข้อมูลไม่เปลี่ยน</td><td>HTTP 403 และข้อมูลไม่เปลี่ยน จาก Django TestCase</td><td><span class="status">ผ่าน</span></td></tr>
-      </tbody></table></div>
+    <section><h2>7.6 Manual Test</h2><div class="card">
+      <p class="note">TC-NFR-07-01 เป็น Manual Test: เปิดหน้ารายการสินค้าและหน้ารายละเอียดบนจอ 360px, 768px และ 1366px; ตรวจว่าไม่มีเนื้อหาล้นแนวนอน ข้อความสำคัญอ่านได้ และปุ่มค้นหา/เลือกสินค้า/จองกดใช้งานได้ ระบุผลเป็น Manual จนกว่าจะทดสอบจริงด้วยผู้ตรวจ</p>
+      <p>TC-NFR-09-01 ตรวจว่าหน้ายืนยันแสดงข้อมูลระบุตัวตนที่ผู้ใช้กรอกตามการทำงานของระบบ (รหัสนักศึกษาหรือเบอร์โทรศัพท์) โดย Requirement ไม่ได้กำหนดให้ปกปิดรหัสนักศึกษา</p>
     </div></section>
 
-    <section><h2>7.5 Non-functional Scope</h2>
-      <p class="note">Non-functional มี Test Case ที่รันอัตโนมัติ 5 เคส (Performance 2, Security 3) แสดงรวมกันเฉพาะในตาราง 7.4</p>
-    </section>
+    <section><h2>7.7 Additional Tests</h2><div class="card">
+      <p class="note">Additional Test คือกรณีไม่มี Requirement รองรับโดยตรง เช่น ความเร็ว Query, CSRF และการตรวจค่าราคาหรือรูปแบบข้อมูลนอกขอบเขตข้อความ Requirements ไม่ได้สร้าง NFR เพิ่ม</p>
+      <p>เคสเหล่านี้อยู่ท้ายตาราง Test Cases และไม่ถูกนับเป็น Coverage ของ Requirement</p>
+    </div></section>
 
-    <section><h2>7.6 สรุปผลรวม</h2><div class="card">
-      <p><strong>จำนวน Test Case:</strong> 54 เคส (Functional 49, Non-functional 5)</p><p><strong class="ok">ผ่าน:</strong> 54 เคส</p><p><strong>Failed:</strong> 0 เคส</p><p><strong>Error:</strong> 0 เคส</p><p><strong>Not Run:</strong> 0 เคส</p><p><strong>อัตราการผ่าน:</strong> 54/54 = 100%</p>
-      <p><strong>รายการที่ไม่ผ่าน:</strong> ไม่มีจากผลรันล่าสุด</p>
+    <section><h2>7.8 สรุปผลรวม</h2><div class="card">
+      <p><strong>Automated Test Cases:</strong> <span id="automatedTotal">รอผลรัน</span></p>
+      <p><strong>ผ่าน:</strong> <span id="passedTotal">รอผลรัน</span></p>
+      <p><strong>ไม่ผ่าน:</strong> <span id="failedTotal">รอผลรัน</span></p>
+      <p><strong>Error:</strong> <span id="errorTotal">รอผลรัน</span></p>
+      <p><strong>อัตราการผ่าน:</strong> <span id="passRate">รอผลรัน</span></p>
+      <p><strong>Manual Test:</strong> 1 เคส (ไม่รวมในผลรันอัตโนมัติ)</p>
+      <p><strong>รายการที่ไม่ผ่าน:</strong> <span id="failedList">รอผลรัน</span></p>
     </div></section>
     <footer>แหล่งข้อมูล: <code>accounts/test_cases.py</code>, <code>shop/test_cases.py</code> และ <code>reservations/test_cases.py</code></footer>
   </main>
@@ -135,66 +150,210 @@
       ["TC-PERF-001","Performance","จำกัดจำนวน query ของ reservation list","มี admin และ reservation 5 รายการ","GET reservation_list","1) CaptureQueriesContext 2) GET list 3) ตรวจ query count","ใช้ไม่เกิน 10 queries","ใช้ 10 queries หรือน้อยกว่า",P,"reservations/test_cases.py"],
       ["TC-PERF-002","Performance","จำกัดจำนวน query ของ product detail","มีสินค้าและ stock","GET product_detail/<id>","1) CaptureQueriesContext 2) GET detail 3) ตรวจ query count","ใช้ไม่เกิน 12 queries","ใช้ 12 queries หรือน้อยกว่า",P,"shop/test_cases.py"]
     ];
-    // Standard categories only: [requirement reference, standard category, report section].
-    const requirementCategories={
-      "TC-AUTH-001":["FR-15 / NFR-01","Authentication","functional"],
-      "TC-AUTH-002":["FR-15 / NFR-01","Authentication","functional"],
-      "TC-AUTH-003":["FR-15 / NFR-01","Authentication","functional"],
-      "TC-AUTHZ-001":["FR-24 / NFR-02","Authorization","functional"],
-      "TC-AUTHZ-002":["FR-24 / NFR-02","Authorization","functional"],
-      "TC-AUTHZ-003":["FR-31 / FR-32 / NFR-02","Authorization","functional"],
-      "TC-CREATE-003":["FR-25 / FR-26","CRUD","functional"],
-      "TC-FILTER-005":["FR-25","Search & Filter","functional"],
-      "TC-CREATE-001":["FR-16","CRUD","functional"],
-      "TC-UPDATE-001":["FR-17","CRUD","functional"],
-      "TC-VALIDATE-001":["NFR-03","Validation","functional"],
-      "TC-VALIDATE-002":["NFR-03","Validation","functional"],
-      "TC-VALIDATE-003":["NFR-03","Validation","functional"],
-      "TC-CREATE-002":["FR-19–20","CRUD","functional"],
-      "TC-ERROR-001":["FR-21 / NFR-05","Validation","functional"],
-      "TC-READ-001":["FR-01 / FR-03","Search & Filter","functional"],
-      "TC-FILTER-001":["FR-04 / FR-05 / FR-06","Search & Filter","functional"],
-      "TC-FILTER-002":["FR-33","Search & Filter","functional"],
-      "TC-FILTER-003":["FR-20","Search & Filter","functional"],
-      "TC-FILTER-004":["FR-19","Search & Filter","functional"],
-      "TC-CRUD-001":["FR-19","CRUD","functional"],
-      "TC-CRUD-002":["FR-20","CRUD","functional"],
-      "TC-CRUD-003":["FR-16 / FR-17 / FR-18","CRUD","functional"],
-      "TC-SECURITY-001":["NFR-02","Security","non-functional"],
-      "TC-SECURITY-002":["NFR-02 / NFR-11","Security","non-functional"],
-      "TC-SECURITY-003":["NFR-02","Security","non-functional"],
-      "TC-STOCK-001":["FR-21","CRUD","functional"],
-      "TC-STOCK-002":["FR-21 / NFR-03","Validation","functional"],
-      "TC-STOCK-006":["FR-21 / NFR-05","Validation","functional"],
-      "TC-STOCK-007":["FR-21 / NFR-05","Validation","functional"],
-      "TC-STOCK-008":["FR-28 / FR-32","Authorization","functional"],
-      "TC-STOCK-009":["FR-28 / FR-32 / FR-40 / NFR-11","Authorization","functional"],
-      "TC-STOCK-004":["FR-21 / FR-33","Search & Filter","functional"],
-      "TC-STOCK-005":["FR-28 / FR-32 / NFR-11","Authorization","functional"],
-      "TC-STOCK-010":["FR-28 / FR-32 / NFR-11","Authorization","functional"],
-      "TC-CREATE-004":["FR-08 / FR-09 / FR-10 / FR-37","Business Logic","functional"],
-      "TC-BUSINESS-001":["FR-11 / FR-39 / NFR-10","Business Logic","functional"],
-      "TC-VALIDATE-006":["FR-09 / NFR-03","Validation","functional"],
-      "TC-BUSINESS-002":["FR-35 / FR-36 / NFR-04","Business Logic","functional"],
-      "TC-BUSINESS-003":["FR-07","Business Logic","functional"],
-      "TC-BUSINESS-004":["FR-35 / FR-36 / NFR-04","Business Logic","functional"],
-      "TC-VALIDATE-004":["FR-08 / NFR-03","Validation","functional"],
-      "TC-VALIDATE-005":["FR-09 / NFR-03","Validation","functional"],
-      "TC-ERROR-002":["FR-35 / FR-36 / NFR-03","Validation","functional"],
-      "TC-READ-002":["FR-12","CRUD","functional"],
-      "TC-FILTER-006":["FR-22","Search & Filter","functional"],
-      "TC-UPDATE-002":["FR-23 / FR-37 / NFR-05","Business Logic","functional"],
-      "TC-ERROR-003":["FR-13 / FR-14 / NFR-05","Business Logic","functional"],
-      "TC-TRIGGER-001":["FR-13 / FR-14 / FR-37 / NFR-05","Business Logic","functional"],
-      "TC-TRIGGER-002":["FR-12 / FR-13 / FR-14 / NFR-10","Business Logic","functional"],
-      "TC-TRIGGER-003":["FR-22 / FR-13 / FR-14 / NFR-05","Business Logic","functional"],
-      "TC-TRIGGER-005":["FR-01 / FR-05 / FR-06 / FR-13 / FR-14","Business Logic","functional"],
-      "TC-PERF-001":["NFR-07","Performance","non-functional"],
-      "TC-PERF-002":["NFR-07","Performance","non-functional"]
+    const caseIdMap={
+      "TC-AUTH-001":"TC-FR-15-01","TC-AUTH-002":"TC-NFR-01-02","TC-AUTH-003":"TC-FR-15-02",
+      "TC-AUTHZ-001":"TC-FR-24-01","TC-AUTHZ-002":"TC-FR-24-02","TC-AUTHZ-003":"TC-NFR-12-01",
+      "TC-CREATE-003":"TC-FR-26-01","TC-FILTER-005":"TC-FR-25-02",
+      "TC-CREATE-001":"TC-FR-16-02","TC-UPDATE-001":"TC-FR-17-02",
+      "TC-VALIDATE-001":"TC-ADD-01","TC-VALIDATE-002":"TC-ADD-02","TC-VALIDATE-003":"TC-ADD-03",
+      "TC-CREATE-002":"TC-ADD-04","TC-ERROR-001":"TC-NFR-05-01","TC-READ-001":"TC-FR-01-01",
+      "TC-FILTER-001":"TC-FR-04-01","TC-FILTER-002":"TC-FR-33-01",
+      "TC-FILTER-003":"TC-FR-20-02","TC-FILTER-004":"TC-FR-19-02",
+      "TC-CRUD-001":"TC-FR-19-01","TC-CRUD-002":"TC-FR-20-01","TC-CRUD-003":"TC-FR-16-01",
+      "TC-SECURITY-001":"TC-NFR-02-01","TC-SECURITY-002":"TC-NFR-02-02",
+      "TC-SECURITY-003":"TC-ADD-CSRF-01","TC-STOCK-001":"TC-FR-21-01",
+      "TC-STOCK-002":"TC-NFR-03-01","TC-STOCK-006":"TC-NFR-05-02","TC-STOCK-007":"TC-NFR-03-02",
+      "TC-STOCK-008":"TC-FR-28-01","TC-STOCK-009":"TC-FR-32-01","TC-STOCK-004":"TC-FR-33-03",
+      "TC-STOCK-005":"TC-FR-28-02","TC-STOCK-010":"TC-FR-32-02",
+      "TC-CREATE-004":"TC-FR-10-01","TC-BUSINESS-001":"TC-FR-39-01","TC-VALIDATE-006":"TC-FR-09-01",
+      "TC-BUSINESS-002":"TC-FR-41-02","TC-BUSINESS-003":"TC-FR-07-02",
+      "TC-BUSINESS-004":"TC-FR-35-01","TC-VALIDATE-004":"TC-NFR-03-03",
+      "TC-VALIDATE-005":"TC-NFR-03-04","TC-ERROR-002":"TC-NFR-03-05",
+      "TC-READ-002":"TC-FR-12-01","TC-FILTER-006":"TC-FR-22-01","TC-UPDATE-002":"TC-FR-23-01",
+      "TC-ERROR-003":"TC-FR-14-01","TC-TRIGGER-001":"TC-FR-14-02","TC-TRIGGER-002":"TC-FR-14-03",
+      "TC-TRIGGER-003":"TC-FR-14-04","TC-TRIGGER-005":"TC-FR-14-05",
+      "TC-PERF-001":"TC-ADD-PERF-01","TC-PERF-002":"TC-ADD-PERF-02"
     };
+    cases.forEach(c=>{c[0]=caseIdMap[c[0]]||c[0];});
+    cases.push(
+      ["TC-FR-27-01","Authentication","Staff เข้าสู่ระบบ","มีบัญชี role=staff","username และ password ที่ถูกต้อง","1) ส่งข้อมูลเข้าสู่ระบบ 2) ตรวจ redirect และ role","Staff เข้าระบบและไป Dashboard","",P,"accounts/test_cases.py"],
+      ["TC-FR-25-01","Staff management","Admin แก้ไขและลบ Staff","มี admin และบัญชี staff","เปลี่ยนชื่อและเบอร์โทร แล้วลบบัญชี","1) แก้ข้อมูล 2) ตรวจฐานข้อมูล 3) ลบบัญชี","ข้อมูล Staff ถูกแก้และลบได้","",P,"accounts/test_cases.py"],
+      ["TC-FR-34-01","Validation","ป้องกันชื่อสินค้าซ้ำ","มีสินค้าใช้ชื่อที่ส่งแล้ว","ชื่อสินค้าเดิม","1) ส่ง form ด้วยชื่อซ้ำ 2) ตรวจ error และจำนวนข้อมูล","ปฏิเสธชื่อซ้ำและไม่เพิ่มรายการ","",P,"shop/test_cases.py"],
+      ["TC-FR-02-01","Product detail","แสดงชื่อ รายละเอียด และราคา","มีสินค้าในฐานข้อมูล","ชื่อ รายละเอียด และราคา","1) เปิดหน้ารายละเอียด 2) ตรวจข้อมูลที่แสดง","เห็นชื่อ รายละเอียด และราคา","",P,"shop/test_cases.py"],
+      ["TC-FR-05-01","Product availability","แสดงสถานที่และ Stock แยกกัน","มีสินค้าคงเหลือ 4 และ 2 ชิ้นคนละจุด","ชื่อสองจุดและจำนวนแต่ละจุด","1) เปิดหน้ารายละเอียด 2) ตรวจคู่สถานที่/จำนวน","แสดงสถานที่และจำนวนตรงกับแต่ละจุด","",P,"shop/test_cases.py"],
+      ["TC-FR-07-01","Reservation","แสดงสถานะรองรับการจอง","มีสินค้าเปิดจองและปิดจอง","สินค้า reservable=True/False","1) เปิดรายละเอียดสินค้าทั้งสอง 2) ตรวจข้อความ","แยกสินค้าที่จองได้และจองไม่ได้ชัดเจน","",P,"shop/test_cases.py"],
+      ["TC-FR-33-02","Search","Staff ค้นหาสินค้าจากชื่อ","มี Staff และ stock ของสินค้า 2 รายการ","ค้นหาด้วยชื่อสินค้า","1) login Staff 2) ค้นหาชื่อ 3) ตรวจผลลัพธ์","แสดงเฉพาะสินค้าที่ตรงชื่อ","",P,"shop/test_cases.py"],
+      ["TC-FR-31-01","Dashboard","Staff เห็นสรุปข้อมูลสาขาตน","มี stock และรายการจองในสองสาขา","ยอด stock และรายการจองแยกสาขา","1) login Staff 2) เปิด Dashboard 3) ตรวจ summary","แสดงเฉพาะข้อมูลของสาขาที่รับผิดชอบ","",P,"shop/test_cases.py"],
+      ["TC-FR-38-01","Stock integrity","คำขอจองเดียวไม่สร้างซ้ำ","มีสินค้าและ Stock 5 ชิ้น","จอง 1 ชิ้นหนึ่งครั้ง","1) ส่งคำขอ 2) ตรวจจำนวนรายการและ Stock","มีหนึ่งรายการและลด Stock หนึ่งครั้ง","",P,"reservations/test_cases.py"],
+      ["TC-FR-22-02","Reservation management","Admin เห็นรายการทุกสาขา","มี reservation สองสาขาและ admin","รายการหนึ่งรายการต่อสาขา","1) login admin 2) เปิดรายการจอง 3) ตรวจรายการ","เห็นรายการจากทั้งสองสาขา","",P,"reservations/test_cases.py"],
+      ["TC-FR-29-01","Staff reservation","Staff เห็นรายการสาขาตนเท่านั้น","มีรายการจองในสาขาตนและสาขาอื่น","สองรายการคนละสาขา","1) login Staff 2) เปิดรายการจอง 3) ตรวจรายการ","เห็นเฉพาะรายการของสาขาตน","",P,"reservations/test_cases.py"],
+      ["TC-FR-30-01","Staff reservation","Staff เปลี่ยนสถานะรายการสาขาตน","มี pending reservation ที่สาขาของ Staff","เปลี่ยนเป็น picked up","1) login Staff 2) เปลี่ยนสถานะ 3) ตรวจข้อมูล","สถานะและเวลารับสินค้าถูกบันทึก","",P,"reservations/test_cases.py"],
+      ["TC-FR-40-01","Staff authorization","ห้ามดูหรือเปลี่ยนรายการสาขาอื่น","มี Staff และ reservation สาขาอื่น","ส่งคำขอดูและยกเลิกรายการ","1) login Staff 2) เปิดและส่งแก้ไขรายการอื่น 3) ตรวจ DB","ปฏิเสธการเข้าถึงและสถานะไม่เปลี่ยน","",P,"reservations/test_cases.py"],
+      ["TC-NFR-09-01","Privacy","ตรวจข้อมูลระบุตัวตนที่ใช้จอง","มีการจองด้วยรหัสนักศึกษา 13 หลัก","รหัสนักศึกษา 1234567890123","1) จองสินค้า 2) เปิดหน้ายืนยัน 3) ตรวจรหัสที่แสดง","รหัสนักศึกษาที่ใช้ทำรายการแสดงบนหน้ายืนยันตามการทำงานปัจจุบัน โดยไม่กำหนดให้ต้องปกปิดรหัส","",P,"reservations/test_cases.py"],
+      ["TC-NFR-07-01","Usability / Responsive","ตรวจใช้งานบนจอหลายขนาด","เปิดเว็บไซต์และมีสินค้าให้เลือก","มือถือ 360px, tablet 768px, desktop 1366px","1) เปิดหน้ารายการและรายละเอียด 2) ปรับความกว้าง 3) ตรวจการอ่านและการกดปุ่ม","เนื้อหาอ่านง่ายและใช้งานได้ทุกขนาดจอ","ยังไม่ได้ทดสอบด้วยเครื่องมืออัตโนมัติ", "Manual","Manual"]
+    );
+    const requirements=[
+      ["FR-01","Functional","Product discovery","ระบบต้องสามารถแสดงรายการสินค้าที่มีอยู่ในระบบได้"],["FR-02","Functional","Product discovery","ระบบต้องสามารถแสดงรายละเอียดสินค้า เช่น ชื่อสินค้า รายละเอียด และราคาได้"],["FR-03","Functional","Search & Filter","ระบบต้องสามารถค้นหาสินค้าจากชื่อสินค้าได้"],["FR-04","Functional","Search & Filter","ระบบต้องสามารถกรองสินค้าตามหมวดหมู่ได้"],["FR-05","Functional","Product discovery","ระบบต้องสามารถแสดงสถานที่จำหน่ายของสินค้าได้"],["FR-06","Functional","Product discovery","ระบบต้องสามารถแสดงจำนวนสินค้าคงเหลือแยกตามสถานที่จำหน่ายได้"],["FR-07","Functional","Reservation","ระบบต้องสามารถแสดงว่าสินค้าใดรองรับการจองและสินค้าใดไม่รองรับการจองได้"],["FR-08","Functional","Reservation","ผู้ใช้สามารถกรอกรหัสนักศึกษาเพื่อจองสินค้าได้"],["FR-09","Functional","Reservation","ผู้ใช้สามารถเลือกจำนวนสินค้าที่ต้องการจองได้"],["FR-10","Functional","Reservation","ระบบต้องสร้างรหัสการจองเมื่อผู้ใช้จองสินค้าสำเร็จ"],["FR-11","Functional","Reservation","ระบบต้องกำหนดเวลาหมดอายุของการจองเป็น 4 ชั่วโมงหลังจากจองสำเร็จ"],["FR-12","Functional","Reservation","ระบบต้องสามารถตรวจสอบสถานะของการจองได้"],["FR-13","Functional","Reservation","ระบบต้องเปลี่ยนสถานะการจองเป็น Expired เมื่อเกินเวลาที่กำหนดและผู้ใช้ยังไม่ได้รับสินค้า"],["FR-14","Functional","Stock integrity","ระบบต้องคืนจำนวนสินค้ากลับเข้าสู่ Stock เมื่อการจองหมดอายุ โดยต้องไม่คืน Stock ซ้ำสำหรับการจองรายการเดียวกัน"],["FR-15","Functional","Authentication","Admin สามารถเข้าสู่ระบบได้"],["FR-16","Functional","Product CRUD","Admin สามารถเพิ่มข้อมูลสินค้าได้"],["FR-17","Functional","Product CRUD","Admin สามารถแก้ไขข้อมูลสินค้าได้"],["FR-18","Functional","Product CRUD","Admin สามารถลบข้อมูลสินค้าได้"],["FR-19","Functional","Category CRUD","Admin สามารถเพิ่ม แก้ไข และลบหมวดหมู่สินค้าได้"],["FR-20","Functional","Location CRUD","Admin สามารถเพิ่ม แก้ไข และลบสถานที่จำหน่ายได้"],["FR-21","Functional","Stock management","Admin สามารถจัดการจำนวน Stock ของสินค้าในแต่ละสถานที่จำหน่ายได้"],["FR-22","Functional","Reservation management","Admin สามารถดูรายการจองทั้งหมดของทุกสถานที่จำหน่ายได้"],["FR-23","Functional","Reservation management","Admin สามารถเปลี่ยนสถานะการจองได้ตามเงื่อนไขที่ระบบกำหนด"],["FR-24","Functional","Authorization","ระบบต้องตรวจสอบสิทธิ์และบทบาทของผู้ใช้งานก่อนอนุญาตให้เข้าถึงฟังก์ชันจัดการระบบ"],["FR-25","Functional","Staff management","Admin สามารถเพิ่ม แก้ไข และลบข้อมูล Staff ได้"],["FR-26","Functional","Staff management","Admin สามารถกำหนดสถานที่จำหน่ายที่ Staff แต่ละคนรับผิดชอบได้"],["FR-27","Functional","Authentication","Staff สามารถเข้าสู่ระบบได้"],["FR-28","Functional","Staff stock","Staff สามารถจัดการ Stock ของสินค้าเฉพาะสถานที่จำหน่ายที่ตนเองรับผิดชอบได้"],["FR-29","Functional","Staff reservation","Staff สามารถดูรายการจองของสถานที่จำหน่ายที่ตนเองรับผิดชอบได้"],["FR-30","Functional","Staff reservation","Staff สามารถเปลี่ยนสถานะการจองของสถานที่จำหน่ายที่ตนเองรับผิดชอบได้ตามเงื่อนไขที่ระบบกำหนด"],["FR-31","Functional","Staff dashboard","Staff สามารถดูข้อมูลสรุปบน Dashboard ของสถานที่จำหน่ายตัวเอง"],["FR-32","Functional","Staff authorization","ระบบต้องจำกัดสิทธิ์การจัดการข้อมูลของ Staff ให้สามารถดำเนินการได้เฉพาะสถานที่จำหน่ายที่ตนเองรับผิดชอบ"],["FR-33","Functional","Search & Filter","Admin และ Staff สามารถค้นหาสินค้าจากชื่อสินค้าได้"],["FR-34","Functional","Validation","ระบบต้องสามารถป้องกันการเพิ่มข้อมูลสินค้าซ้ำ โดยตรวจสอบจากชื่อที่ไม่ซ้ำกัน"],["FR-35","Functional","Reservation validation","ระบบต้องตรวจสอบจำนวน Stock คงเหลือก่อนยืนยันการจองสินค้า"],["FR-36","Functional","Reservation validation","ระบบต้องไม่อนุญาตให้จองสินค้าเกินจำนวน Stock คงเหลือ ณ สถานที่จำหน่ายที่เลือก"],["FR-37","Functional","Stock integrity","ระบบต้องปรับลดจำนวน Stock เมื่อการจองสำเร็จตามเงื่อนไขที่กำหนด"],["FR-38","Functional","Stock integrity","ระบบต้องป้องกันการจองซ้ำหรือการปรับลด Stock ซ้ำจากคำขอเดียวกัน"],["FR-39","Functional","Reservation audit","ระบบต้องบันทึกวันและเวลาที่จองสินค้า รวมถึงวันและเวลาหมดอายุของการจอง"],["FR-40","Functional","Staff reservation","ระบบต้องตรวจสอบสิทธิ์ของ Staff ก่อนอนุญาตให้ดูหรือเปลี่ยนสถานการณ์จองของแต่ละสถานที่จำหน่าย"],["FR-41","Functional","Reservation feedback","ระบบต้องแจ้งผลการจองให้ผู้ใช้ทราบเมื่อจองสำเร็จหรือไม่สำเร็จ"],
+      ["NFR-01","Non-functional","Authentication","ระบบต้องมี Authentication สำหรับ Admin เพื่อยืนยันตัวตนก่อนเข้าถึงส่วนจัดการระบบ"],["NFR-02","Non-functional","Authorization","ระบบต้องมี Authorization เพื่อป้องกันไม่ให้ผู้ใช้งานทั่วไปเข้าถึงฟังก์ชันของ Admin"],["NFR-03","Non-functional","Validation","ระบบต้องตรวจสอบข้อมูลที่ผู้ใช้กรอกก่อนบันทึกลงฐานข้อมูล เช่น รหัสนักศึกษาหรือเบอร์โทร จำนวนสินค้า และสถานที่รับสินค้า"],["NFR-04","Non-functional","Data integrity","ระบบต้องไม่อนุญาตให้จองสินค้ามากกว่าจำนวน Stock ที่มีอยู่"],["NFR-05","Non-functional","Data integrity","ระบบต้องควบคุมข้อมูล Stock ให้ถูกต้องเมื่อมีการจอง การรับสินค้า หรือการหมดอายุของการจอง"],["NFR-06","Non-functional","Usability","ระบบต้องสามารถดูสินค้าและสถานที่จำหน่ายได้อย่างชัดเจน"],["NFR-07","Non-functional","Usability","ระบบต้องใช้งานง่ายและรองรับการแสดงผลบนอุปกรณ์หน้าจอขนาดต่าง ๆ"],["NFR-08","Non-functional","Data persistence","ข้อมูลสินค้า สถานที่จำหน่าย Stock และรายการจองต้องถูกบันทึกลงฐานข้อมูลจริง"],["NFR-09","Non-functional","Privacy","ระบบต้องไม่แสดงข้อมูลส่วนบุคคลของผู้จองเกินกว่าที่จำเป็น"],["NFR-10","Non-functional","Date/time correctness","ระบบต้องตรวจสอบวันและเวลาหมดอายุของการจองได้อย่างถูกต้อง"],["NFR-11","Non-functional","Staff authorization","ระบบต้องตรวจสอบสิทธิ์ของ Staff และอนุญาตให้เข้าถึงหรือจัดการข้อมูลเฉพาะสาขาที่ Staff รับผิดชอบ"],["NFR-12","Non-functional","Role control","ระบบต้องบันทึกและตรวจสอบบทบาทของผู้ใช้งาน เช่น Admin และ Staff เพื่อควบคุมการเข้าถึงฟังก์ชันของระบบให้เหมาะสม"]
+    ];
+    // [requirement reference, standard category, report section]. Additional tests use no fabricated NFR.
+    const requirementCategories={
+      "TC-AUTH-001":["FR-15 / NFR-01","Authentication","functional"],"TC-AUTH-002":["FR-15 / NFR-01","Authentication","functional"],"TC-AUTH-003":["FR-15 / NFR-01","Authentication","functional"],"TC-AUTHZ-001":["FR-24 / NFR-02","Authorization","functional"],"TC-AUTHZ-002":["FR-24 / NFR-02","Authorization","functional"],"TC-AUTHZ-003":["FR-31 / NFR-12","Authorization","functional"],"TC-CREATE-003":["FR-25 / FR-26 / NFR-12","CRUD","functional"],"TC-FILTER-005":["FR-25","Search & Filter","functional"],"TC-CREATE-001":["FR-16 / NFR-08","CRUD","functional"],"TC-UPDATE-001":["FR-17 / NFR-08","CRUD","functional"],"TC-VALIDATE-001":["NFR-03","Validation","functional"],"TC-VALIDATE-002":["NFR-03","Validation","functional"],"TC-VALIDATE-003":["NFR-03","Validation","functional"],"TC-CREATE-002":["FR-19 / FR-20","CRUD","functional"],"TC-ERROR-001":["FR-21 / NFR-05","Validation","functional"],"TC-READ-001":["FR-01 / FR-03","Search & Filter","functional"],"TC-FILTER-001":["FR-04 / FR-05","Search & Filter","functional"],"TC-FILTER-002":["FR-03 / FR-33","Search & Filter","functional"],"TC-FILTER-003":["FR-20","Search & Filter","functional"],"TC-FILTER-004":["FR-19","Search & Filter","functional"],"TC-CRUD-001":["FR-19","CRUD","functional"],"TC-CRUD-002":["FR-20","CRUD","functional"],"TC-CRUD-003":["FR-16 / FR-17 / FR-18","CRUD","functional"],"TC-SECURITY-001":["NFR-02","Security","non-functional"],"TC-SECURITY-002":["NFR-02 / NFR-11","Security","non-functional"],"TC-SECURITY-003":["— (Additional Test)","Security","additional"],"TC-STOCK-001":["FR-21 / NFR-08","CRUD","functional"],"TC-STOCK-002":["FR-21 / NFR-03","Validation","functional"],"TC-STOCK-006":["FR-21 / NFR-05","Validation","functional"],"TC-STOCK-007":["FR-21 / NFR-03","Validation","functional"],"TC-STOCK-008":["FR-28 / FR-32 / NFR-11","Authorization","functional"],"TC-STOCK-009":["FR-28 / FR-32 / NFR-11","Authorization","functional"],"TC-STOCK-004":["FR-21 / FR-33","Search & Filter","functional"],"TC-STOCK-005":["FR-28 / FR-32 / NFR-11","Authorization","functional"],"TC-STOCK-010":["FR-28 / FR-32 / NFR-11","Authorization","functional"],"TC-CREATE-004":["FR-08 / FR-09 / FR-10 / FR-37 / FR-39 / FR-41 / NFR-08","Business Logic","functional"],"TC-BUSINESS-001":["FR-11 / FR-39 / NFR-10","Business Logic","functional"],"TC-VALIDATE-006":["FR-09 / NFR-03","Validation","functional"],"TC-BUSINESS-002":["FR-35 / FR-36 / NFR-04","Business Logic","functional"],"TC-BUSINESS-003":["FR-07 / FR-41","Business Logic","functional"],"TC-BUSINESS-004":["FR-35 / FR-36 / NFR-04","Business Logic","functional"],"TC-VALIDATE-004":["FR-08 / NFR-03","Validation","functional"],"TC-VALIDATE-005":["FR-09 / NFR-03","Validation","functional"],"TC-ERROR-002":["FR-35 / FR-36 / NFR-03","Validation","functional"],"TC-READ-002":["FR-12","Business Logic","functional"],"TC-FILTER-006":["FR-22","Search & Filter","functional"],"TC-UPDATE-002":["FR-23 / FR-37 / NFR-05","Business Logic","functional"],"TC-ERROR-003":["FR-13 / FR-14 / NFR-05 / NFR-10","Business Logic","functional"],"TC-TRIGGER-001":["FR-13 / FR-14 / FR-37 / NFR-05","Business Logic","functional"],"TC-TRIGGER-002":["FR-12 / FR-13 / FR-14 / NFR-05 / NFR-10","Business Logic","functional"],"TC-TRIGGER-003":["FR-22 / FR-13 / FR-14 / NFR-05","Business Logic","functional"],"TC-TRIGGER-005":["FR-13 / FR-14 / NFR-05","Business Logic","functional"],"TC-PERF-001":["— (Additional Test)","Performance","additional"],"TC-PERF-002":["— (Additional Test)","Performance","additional"]
+    };
+    const coverage={
+      "FR-01":["TC-READ-001","Covered"],"FR-02":[[],"No Test"],"FR-03":[["TC-READ-001","TC-FILTER-002"],"Covered"],"FR-04":[["TC-FILTER-001","TC-FILTER-002"],"Covered"],"FR-05":[["TC-FILTER-001"],"Partial"],"FR-06":[[],"No Test"],"FR-07":[["TC-BUSINESS-003"],"Partial"],"FR-08":[["TC-CREATE-004","TC-VALIDATE-004"],"Covered"],"FR-09":[["TC-CREATE-004","TC-VALIDATE-005","TC-VALIDATE-006"],"Covered"],"FR-10":[["TC-CREATE-004"],"Partial"],"FR-11":["TC-BUSINESS-001","Covered"],"FR-12":[["TC-READ-002","TC-TRIGGER-002"],"Covered"],"FR-13":[["TC-ERROR-003","TC-TRIGGER-001","TC-TRIGGER-002","TC-TRIGGER-003","TC-TRIGGER-005"],"Covered"],"FR-14":[["TC-ERROR-003","TC-TRIGGER-001","TC-TRIGGER-002","TC-TRIGGER-003","TC-TRIGGER-005"],"Covered"],"FR-15":[["TC-AUTH-001","TC-AUTH-002","TC-AUTH-003"],"Covered"],"FR-16":[["TC-CREATE-001","TC-CRUD-003"],"Covered"],"FR-17":[["TC-UPDATE-001","TC-CRUD-003"],"Covered"],"FR-18":[["TC-CRUD-003"],"Covered"],"FR-19":[["TC-CRUD-001","TC-FILTER-004"],"Covered"],"FR-20":[["TC-CRUD-002","TC-FILTER-003"],"Covered"],"FR-21":[["TC-STOCK-001","TC-STOCK-002","TC-STOCK-004","TC-STOCK-006","TC-STOCK-007"],"Covered"],"FR-22":[["TC-FILTER-006","TC-TRIGGER-003"],"Covered"],"FR-23":[["TC-UPDATE-002"],"Partial"],"FR-24":[["TC-AUTHZ-001","TC-AUTHZ-002","TC-AUTHZ-003"],"Covered"],"FR-25":[["TC-CREATE-003","TC-FILTER-005"],"Partial"],"FR-26":[["TC-CREATE-003"],"Covered"],"FR-27":[[],"No Test"],"FR-28":[["TC-STOCK-008","TC-STOCK-009","TC-STOCK-010"],"Covered"],"FR-29":[[],"No Test"],"FR-30":[[],"No Test"],"FR-31":[["TC-AUTHZ-003"],"Partial"],"FR-32":[["TC-STOCK-005","TC-STOCK-008","TC-STOCK-009","TC-STOCK-010"],"Covered"],"FR-33":[["TC-FILTER-002"],"Partial"],"FR-34":[[],"No Test"],"FR-35":[["TC-BUSINESS-002","TC-BUSINESS-004","TC-ERROR-002"],"Covered"],"FR-36":[["TC-BUSINESS-002","TC-BUSINESS-004"],"Covered"],"FR-37":[["TC-CREATE-004","TC-UPDATE-002","TC-TRIGGER-001"],"Covered"],"FR-38":[[],"No Test"],"FR-39":[["TC-BUSINESS-001"],"Partial"],"FR-40":[[],"No Test"],"FR-41":[["TC-CREATE-004","TC-BUSINESS-002","TC-VALIDATE-004"],"Partial"],
+      "NFR-01":[["TC-AUTH-001","TC-AUTH-002"],"Covered"],"NFR-02":[["TC-AUTHZ-001","TC-AUTHZ-002","TC-SECURITY-001","TC-SECURITY-002"],"Covered"],"NFR-03":[["TC-VALIDATE-001","TC-VALIDATE-002","TC-VALIDATE-004","TC-VALIDATE-005","TC-ERROR-002","TC-STOCK-002","TC-STOCK-007"],"Covered"],"NFR-04":[["TC-BUSINESS-002","TC-BUSINESS-004"],"Covered"],"NFR-05":[["TC-CREATE-004","TC-UPDATE-002","TC-ERROR-001","TC-ERROR-003","TC-TRIGGER-001","TC-TRIGGER-002","TC-TRIGGER-003","TC-TRIGGER-005"],"Partial"],"NFR-06":[[],"No Test"],"NFR-07":[[],"No Test"],"NFR-08":[["TC-CREATE-001","TC-UPDATE-001","TC-CRUD-001","TC-CRUD-002","TC-CRUD-003","TC-STOCK-001","TC-CREATE-004"],"Partial"],"NFR-09":[[],"No Test"],"NFR-10":[["TC-BUSINESS-001","TC-ERROR-003","TC-TRIGGER-002"],"Covered"],"NFR-11":[["TC-SECURITY-002","TC-STOCK-005","TC-STOCK-008","TC-STOCK-009","TC-STOCK-010"],"Covered"],"NFR-12":[["TC-AUTHZ-001","TC-AUTHZ-002","TC-CREATE-003"],"Covered"]
+    };
+    Object.assign(requirementCategories,{
+      "TC-FR-01-01":["FR-01 / FR-03","Product listing and search","functional"],
+      "TC-FR-02-01":["FR-02","Product detail","functional"],
+      "TC-FR-04-01":["FR-04","Search and filter","functional"],
+      "TC-FR-05-01":["FR-05 / FR-06 / NFR-06","Product and location display","functional"],
+      "TC-FR-07-01":["FR-07","Reservation availability","functional"],
+      "TC-FR-07-02":["FR-07","Reservation validation","functional"],
+      "TC-FR-09-01":["FR-09 / NFR-03","Reservation validation","functional"],
+      "TC-FR-10-01":["FR-08 / FR-09 / FR-10 / FR-37 / FR-41 / NFR-08","Reservation workflow","functional"],
+      "TC-FR-12-01":["FR-12","Reservation status","functional"],
+      "TC-FR-14-01":["FR-13 / FR-14 / NFR-05 / NFR-10","Reservation expiry","functional"],
+      "TC-FR-14-02":["FR-13 / FR-14 / NFR-05","Reservation expiry","functional"],
+      "TC-FR-14-03":["FR-12 / FR-13 / FR-14 / NFR-05 / NFR-10","Reservation expiry","functional"],
+      "TC-FR-14-04":["FR-13 / FR-14 / NFR-05","Reservation expiry","functional"],
+      "TC-FR-14-05":["FR-13 / FR-14 / NFR-05","Reservation expiry","functional"],
+      "TC-FR-15-01":["FR-15 / NFR-01","Authentication","functional"],
+      "TC-FR-15-02":["FR-15","Authentication","functional"],
+      "TC-FR-16-01":["FR-16 / FR-17 / FR-18","Product management","functional"],
+      "TC-FR-16-02":["FR-16 / NFR-08","Product management","functional"],
+      "TC-FR-17-02":["FR-17 / NFR-08","Product management","functional"],
+      "TC-FR-19-01":["FR-19","Category management","functional"],
+      "TC-FR-19-02":["FR-19","Category management","functional"],
+      "TC-FR-20-01":["FR-20","Location management","functional"],
+      "TC-FR-20-02":["FR-20","Location management","functional"],
+      "TC-FR-21-01":["FR-21 / NFR-08","Stock management","functional"],
+      "TC-FR-22-01":["FR-22","Reservation management","functional"],
+      "TC-FR-22-02":["FR-22","Reservation management","functional"],
+      "TC-FR-23-01":["FR-23 / FR-37 / NFR-05","Reservation management","functional"],
+      "TC-FR-24-01":["FR-24 / NFR-02","Authorization","functional"],
+      "TC-FR-24-02":["FR-24 / NFR-02","Authorization","functional"],
+      "TC-FR-25-01":["FR-25","Staff management","functional"],
+      "TC-FR-25-02":["FR-25","Staff management","functional"],
+      "TC-FR-26-01":["FR-26 / NFR-12","Staff management","functional"],
+      "TC-FR-27-01":["FR-27","Authentication","functional"],
+      "TC-FR-28-01":["FR-28 / FR-32 / NFR-11","Staff stock","functional"],
+      "TC-FR-28-02":["FR-28 / FR-32 / NFR-11","Staff stock","functional"],
+      "TC-FR-29-01":["FR-29 / NFR-11","Staff reservations","functional"],
+      "TC-FR-30-01":["FR-30 / NFR-11","Staff reservations","functional"],
+      "TC-FR-31-01":["FR-31 / NFR-11","Staff dashboard","functional"],
+      "TC-FR-32-01":["FR-32 / NFR-11","Staff authorization","functional"],
+      "TC-FR-32-02":["FR-32 / NFR-11","Staff authorization","functional"],
+      "TC-FR-33-01":["FR-03 / FR-33","Product search","functional"],
+      "TC-FR-33-02":["FR-33","Product search","functional"],
+      "TC-FR-33-03":["FR-33","Product search","functional"],
+      "TC-FR-34-01":["FR-34","Duplicate product validation","functional"],
+      "TC-FR-40-01":["FR-40 / NFR-11","Staff reservation authorization","functional"],
+      "TC-FR-35-01":["FR-35 / FR-36 / NFR-04","Reservation stock validation","functional"],
+      "TC-FR-38-01":["FR-38 / NFR-05","Duplicate request protection","functional"],
+      "TC-FR-39-01":["FR-11 / FR-39 / NFR-10","Reservation timestamps","functional"],
+      "TC-FR-41-02":["FR-35 / FR-36 / FR-41 / NFR-03 / NFR-04","Reservation result","functional"],
+      "TC-NFR-01-02":["NFR-01","Authentication","non-functional"],
+      "TC-NFR-02-01":["FR-24 / NFR-02","Authorization","non-functional"],
+      "TC-NFR-02-02":["FR-24 / NFR-02 / NFR-11","Authorization","non-functional"],
+      "TC-NFR-03-01":["NFR-03","Input validation","non-functional"],
+      "TC-NFR-03-02":["NFR-03","Input validation","non-functional"],
+      "TC-NFR-03-03":["FR-08 / NFR-03","Input validation","non-functional"],
+      "TC-NFR-03-04":["FR-09 / NFR-03","Input validation","non-functional"],
+      "TC-NFR-03-05":["NFR-03 / FR-36","Input validation","non-functional"],
+      "TC-NFR-05-01":["NFR-05","Stock integrity","non-functional"],
+      "TC-NFR-05-02":["NFR-05","Stock integrity","non-functional"],
+      "TC-NFR-09-01":["NFR-09","Privacy","non-functional"],
+      "TC-NFR-12-01":["NFR-12","Role-based access","non-functional"],
+      "TC-ADD-01":["Additional Test","Validation","additional"],
+      "TC-ADD-02":["Additional Test","Validation","additional"],
+      "TC-ADD-03":["Additional Test","Validation","additional"],
+      "TC-ADD-04":["Additional Test","Form validation","additional"],
+      "TC-ADD-CSRF-01":["Additional Test","CSRF","additional"],
+      "TC-ADD-PERF-01":["Additional Test","Performance","additional"],
+      "TC-ADD-PERF-02":["Additional Test","Performance","additional"],
+      "TC-NFR-07-01":["NFR-07","Usability and responsive layout","manual"]
+    });
+    Object.assign(coverage,{
+      "FR-01":[["TC-FR-01-01"],"Covered"],"FR-02":[["TC-FR-02-01"],"Covered"],
+      "FR-03":[["TC-FR-01-01","TC-FR-33-01","TC-FR-33-02"],"Covered"],
+      "FR-04":[["TC-FR-04-01"],"Covered"],"FR-05":[["TC-FR-05-01"],"Covered"],
+      "FR-06":[["TC-FR-05-01"],"Covered"],"FR-07":[["TC-FR-07-01","TC-FR-07-02"],"Covered"],
+      "FR-08":[["TC-FR-10-01","TC-NFR-03-03"],"Covered"],"FR-09":[["TC-FR-09-01","TC-FR-10-01"],"Covered"],
+      "FR-10":[["TC-FR-10-01"],"Covered"],"FR-11":[["TC-FR-39-01"],"Covered"],
+      "FR-12":[["TC-FR-12-01","TC-FR-14-03"],"Covered"],
+      "FR-13":[["TC-FR-14-01","TC-FR-14-02","TC-FR-14-03","TC-FR-14-04","TC-FR-14-05"],"Covered"],
+      "FR-14":[["TC-FR-14-01","TC-FR-14-02","TC-FR-14-03","TC-FR-14-04","TC-FR-14-05"],"Covered"],
+      "FR-15":[["TC-FR-15-01","TC-FR-15-02"],"Covered"],
+      "FR-16":[["TC-FR-16-01","TC-FR-16-02"],"Covered"],
+      "FR-17":[["TC-FR-16-01","TC-FR-17-02"],"Covered"],
+      "FR-18":[["TC-FR-16-01"],"Covered"],
+      "FR-19":[["TC-FR-19-01","TC-FR-19-02"],"Covered"],
+      "FR-20":[["TC-FR-20-01","TC-FR-20-02"],"Covered"],
+      "FR-21":[["TC-FR-21-01"],"Covered"],
+      "FR-22":[["TC-FR-22-01","TC-FR-22-02"],"Covered"],
+      "FR-23":[["TC-FR-23-01"],"Covered"],
+      "FR-24":[["TC-FR-24-01","TC-FR-24-02","TC-NFR-02-01","TC-NFR-02-02"],"Covered"],
+      "FR-25":[["TC-FR-25-01","TC-FR-25-02","TC-FR-26-01"],"Covered"],"FR-26":[["TC-FR-26-01"],"Covered"],
+      "FR-27":[["TC-FR-27-01"],"Covered"],
+      "FR-28":[["TC-FR-28-01","TC-FR-28-02"],"Covered"],
+      "FR-29":[["TC-FR-29-01"],"Covered"],"FR-30":[["TC-FR-30-01"],"Covered"],
+      "FR-31":[["TC-FR-31-01"],"Covered"],
+      "FR-32":[["TC-FR-32-01","TC-FR-32-02"],"Covered"],
+      "FR-33":[["TC-FR-33-01","TC-FR-33-02","TC-FR-33-03"],"Covered"],
+      "FR-34":[["TC-FR-34-01"],"Covered"],
+      "FR-35":[["TC-FR-35-01","TC-FR-41-02"],"Covered"],
+      "FR-36":[["TC-FR-41-02","TC-NFR-03-05"],"Covered"],
+      "FR-37":[["TC-FR-10-01","TC-FR-23-01"],"Covered"],
+      "FR-38":[["TC-FR-38-01"],"Covered"],
+      "FR-39":[["TC-FR-39-01"],"Covered"],"FR-40":[["TC-FR-40-01"],"Covered"],
+      "FR-41":[["TC-FR-10-01","TC-FR-41-02"],"Covered"],
+      "NFR-01":[["TC-FR-15-01","TC-NFR-01-02"],"Covered"],
+      "NFR-02":[["TC-FR-24-01","TC-FR-24-02","TC-NFR-02-01","TC-NFR-02-02"],"Covered"],
+      "NFR-03":[["TC-NFR-03-01","TC-NFR-03-02","TC-NFR-03-03","TC-NFR-03-04","TC-NFR-03-05"],"Covered"],
+      "NFR-04":[["TC-FR-35-01","TC-FR-41-02"],"Covered"],
+      "NFR-05":[["TC-NFR-05-01","TC-NFR-05-02","TC-FR-10-01","TC-FR-23-01","TC-FR-30-01","TC-FR-38-01","TC-FR-14-01"],"Covered"],
+      "NFR-06":[["TC-FR-05-01"],"Covered"],"NFR-07":[["TC-NFR-07-01"],"Manual"],
+      "NFR-08":[["TC-FR-16-01","TC-FR-16-02","TC-FR-21-01","TC-FR-10-01"],"Covered"],
+      "NFR-09":[["TC-NFR-09-01"],"Covered"],"NFR-10":[["TC-FR-39-01","TC-FR-14-01","TC-FR-14-03"],"Covered"],
+      "NFR-11":[["TC-FR-32-01","TC-FR-32-02","TC-FR-40-01","TC-NFR-02-02"],"Covered"],
+      "NFR-12":[["TC-NFR-12-01","TC-FR-26-01"],"Covered"]
+    });
+    cases.forEach(c=>{
+      if(c[8]===P) c[7]="ผ่านตาม assertion ในการรันชุดทดสอบจริง";
+      if(c[8]===F) c[7]="ไม่ผ่านตาม assertion ในการรันทดสอบจริง";
+    });
     const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    const renderCases=(items,target)=>{document.getElementById(target).innerHTML=items.map((c,i)=>{const meta=requirementCategories[c[0]];return `<tr><td>${i+1}</td><td><code>${esc(c[0])}</code><br><small>${esc(c[9])}</small></td><td>${esc(meta[0])}</td><td>${esc(meta[1])}</td><td>${esc(c[2])}</td><td>${esc(c[3])}</td><td>${esc(c[4])}</td><td>${esc(c[5])}</td><td>${esc(c[6])}</td><td><span class="status ${c[8]===F?'fail':''}">${esc(c[8])}</span><br>${esc(c[7])}</td></tr>`}).join('');};
-    renderCases(cases.filter(c=>requirementCategories[c[0]][2]==="functional"),'functionalCases');
+    const coverageClass=status=>status==='Covered'?'ok':(status==='Manual'?'partial':(status==='Failed'?'missing':'missing'));
+    document.getElementById('requirementsTable').innerHTML=requirements.map(r=>`<tr><td><code>${r[0]}</code></td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join('');
+    document.getElementById('traceabilityTable').innerHTML=requirements.map(r=>{const item=coverage[r[0]]||[[],"No Test"];const testIds=Array.isArray(item[0])?item[0]:[item[0]];const status=item[1];return `<tr><td><code>${r[0]}</code></td><td>${r[3]}</td><td>${testIds.length?testIds.map(id=>`<code>${id}</code>`).join('<br>'):'ยังไม่มี Test Case'}</td><td><span class="coverage ${coverageClass(status)}">${status}</span></td></tr>`}).join('');
+    const requirementOrder=new Map(requirements.map((r,i)=>[r[0],i]));
+    const primaryRequirement=entry=>{
+      if(entry[0]==="Additional Test") return Number.MAX_SAFE_INTEGER;
+      const id=entry[0].split("/")[0].trim();
+      return requirementOrder.has(id)?requirementOrder.get(id):Number.MAX_SAFE_INTEGER-1;
+    };
+    const orderedCases=cases.slice().sort((a,b)=>{
+      const left=primaryRequirement(requirementCategories[a[0]]);
+      const right=primaryRequirement(requirementCategories[b[0]]);
+      return left-right || a[0].localeCompare(b[0]);
+    });
+    const renderCases=(items,target)=>{document.getElementById(target).innerHTML=items.map((c,i)=>{
+      const meta=requirementCategories[c[0]];
+      const statusClass=c[8]===F?'fail':(c[8]==='Manual'?'reference':'');
+      return `<tr><td>${i+1}</td><td><code>${esc(c[0])}</code><br><small>${esc(c[9])}</small></td><td>${esc(meta[0])}</td><td>${esc(meta[1])}</td><td>${esc(c[2])}</td><td>${esc(c[3])}</td><td>${esc(c[4])}</td><td>${esc(c[5])}</td><td>${esc(c[6])}</td><td>${esc(c[7])}</td><td><span class="status ${statusClass}">${esc(c[8])}</span></td></tr>`;
+    }).join('');};
+    renderCases(orderedCases,'allCases');
+    const automated=cases.filter(c=>c[8]!=="Manual");
+    const passed=automated.filter(c=>c[8]===P).length;
+    const failed=automated.filter(c=>c[8]===F).length;
+    document.getElementById("automatedTotal").textContent=automated.length;
+    document.getElementById("passedTotal").textContent=passed;
+    document.getElementById("failedTotal").textContent=failed;
+    document.getElementById("errorTotal").textContent="0";
+    document.getElementById("passRate").textContent=`${automated.length?((passed/automated.length)*100).toFixed(2):"0.00"}%`;
+    document.getElementById("failedList").textContent=failed?automated.filter(c=>c[8]===F).map(c=>c[0]).join(", "):"ไม่มี";
   </script>
 </body>
 </html>

@@ -35,15 +35,17 @@ class ShopModelAndFormTests(TestCase):
         return data
 
     def test_product_create_accepts_valid_data(self):
-        """TC-CREATE-001: valid product data creates a database record."""
+        """TC-FR-16-02: valid product data creates a database record."""
         form = ProductModelForm(data=self.product_data())
         self.assertTrue(form.is_valid(), form.errors)
         product = form.save()
         self.assertEqual(product.name, "เมาส์ไร้สาย")
         self.assertEqual(Product.objects.count(), 1)
+        saved_product = Product.objects.get(pk=product.pk)
+        self.assertEqual(saved_product.description, "สินค้าเพื่อการทดสอบ")
 
     def test_product_update_preserves_record_and_changes_price(self):
-        """TC-UPDATE-001: editing a product updates fields without duplicating it."""
+        """TC-FR-17-02: editing a product updates fields without duplicating it."""
         product = Product.objects.create(name="เมาส์ไร้สาย", price=299, category=self.category)
         form = ProductModelForm(data=self.product_data(price="349.00"), instance=product)
         self.assertTrue(form.is_valid(), form.errors)
@@ -52,32 +54,40 @@ class ShopModelAndFormTests(TestCase):
         self.assertEqual(updated.price, 349)
 
     def test_product_validation_rejects_negative_price(self):
-        """TC-VALIDATE-001: negative prices are rejected by the form."""
+        """TC-ADD-01: negative product prices are rejected by the form."""
         form = ProductModelForm(data=self.product_data(price="-1"))
         self.assertFalse(form.is_valid())
         self.assertIn("price", form.errors)
 
     def test_product_validation_rejects_invalid_category(self):
-        """TC-VALIDATE-002: a category ID not in the database is rejected."""
+        """TC-ADD-02: a category ID not in the database is rejected."""
         form = ProductModelForm(data=self.product_data(category=999999))
         self.assertFalse(form.is_valid())
         self.assertIn("category", form.errors)
 
     def test_product_name_strips_normal_whitespace(self):
-        """TC-VALIDATE-003: normal leading and trailing whitespace is stripped by the form field."""
+        """TC-ADD-03: normal leading and trailing whitespace is stripped."""
         form = ProductModelForm(data=self.product_data(name="  เมาส์ไร้สาย  "))
         self.assertTrue(form.is_valid(), form.errors)
         self.assertEqual(form.cleaned_data["name"], "เมาส์ไร้สาย")
 
+    def test_product_name_must_be_unique(self):
+        """TC-FR-34-01: a duplicate product name is rejected before saving."""
+        Product.objects.create(name="ชื่อซ้ำ", price=100, category=self.category)
+        form = ProductModelForm(data=self.product_data(name="ชื่อซ้ำ"))
+        self.assertFalse(form.is_valid())
+        self.assertIn("name", form.errors)
+        self.assertEqual(Product.objects.filter(name="ชื่อซ้ำ").count(), 1)
+
     def test_location_and_category_forms_accept_valid_data(self):
-        """TC-CREATE-002: valid location and category forms are accepted."""
+        """TC-ADD-04: valid location and category form data is accepted."""
         location = LocationModelForm(data={"name": "จุดรับ A", "building": "อาคาร 1"})
         category = CategoryModelForm(data={"name": "เครื่องเขียน", "description": ""})
         self.assertTrue(location.is_valid(), location.errors)
         self.assertTrue(category.is_valid(), category.errors)
 
     def test_product_location_unique_constraint_prevents_duplicate_pair(self):
-        """TC-ERROR-001: one product cannot have duplicate stock rows at one location."""
+        """TC-NFR-05-01: stock rows cannot duplicate the same product and location."""
         location = Location.objects.create(name="จุดรับ A", building="อาคาร 1")
         product = Product.objects.create(name="สายชาร์จ", price=100, category=self.category)
         ProductLocation.objects.create(product=product, location=location, stock=2)
@@ -97,15 +107,21 @@ class ShopPublicAndCrudTests(TestCase):
         self.client.force_login(self.admin)
 
     def test_public_product_list_reads_products_and_filters_by_search(self):
-        """TC-READ-001: public product listing returns matching search results."""
-        Product.objects.create(name="คีย์บอร์ด", price=500, category=self.category)
-        Product.objects.create(name="สาย USB", price=50, category=self.category)
+        """TC-FR-01-01: public listing shows products and searches by product name."""
+        keyboard = Product.objects.create(name="คีย์บอร์ด", price=500, category=self.category)
+        usb_cable = Product.objects.create(name="สาย USB", price=50, category=self.category)
+        all_products = self.client.get(reverse("public_products"))
+        self.assertEqual(all_products.status_code, 200)
+        self.assertCountEqual(
+            list(all_products.context["products"]),
+            [keyboard, usb_cable],
+        )
         response = self.client.get(reverse("public_products"), {"q": "คีย์บอร์ด"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual([p.name for p in response.context["products"]], ["คีย์บอร์ด"])
 
     def test_public_product_list_filters_by_category_and_location(self):
-        """TC-FILTER-001: public product listing filters by category and pickup location."""
+        """TC-FR-04-01: public product listing filters by category and location."""
         other_category = Category.objects.create(name="อุปกรณ์เสริม")
         location = Location.objects.create(name="จุดรับสินค้า", building="อาคาร 1")
         product = Product.objects.create(name="แฟลชไดรฟ์", price=200, category=other_category)
@@ -117,8 +133,56 @@ class ShopPublicAndCrudTests(TestCase):
         self.assertEqual(list(response.context["products"]), [product])
         self.assertEqual(response.context["selected_location"], str(location.pk))
 
+    def test_product_detail_shows_name_description_and_price(self):
+        """TC-FR-02-01: product detail shows the required product information."""
+        product = Product.objects.create(
+            name="รายละเอียดครบ", description="รายละเอียดสำหรับทดสอบ", price=249.50,
+            category=self.category,
+        )
+        response = self.client.get(reverse("product_detail", args=[product.pk]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, product.name)
+        self.assertContains(response, product.description)
+        self.assertContains(response, "249.50")
+
+    def test_product_detail_shows_each_location_and_stock(self):
+        """TC-FR-05-01: product detail shows each selling location and its stock."""
+        first = Location.objects.create(name="จุดขาย A", building="อาคาร 1")
+        second = Location.objects.create(name="จุดขาย B", building="อาคาร 2")
+        product = Product.objects.create(name="สินค้าหลายจุด", price=100, category=self.category)
+        ProductLocation.objects.create(product=product, location=first, stock=4)
+        ProductLocation.objects.create(product=product, location=second, stock=2)
+
+        response = self.client.get(reverse("product_detail", args=[product.pk]))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, first.name)
+        self.assertContains(response, second.name)
+        self.assertContains(response, "4 ชิ้น")
+        self.assertContains(response, "2 ชิ้น")
+        self.assertEqual(
+            [
+                (entry.location.name, entry.stock)
+                for entry in response.context["product_locations"]
+            ],
+            [(first.name, 4), (second.name, 2)],
+        )
+
+    def test_product_detail_shows_reservation_support_state(self):
+        """TC-FR-07-01: product detail shows reservable and non-reservable states."""
+        reservable = Product.objects.create(name="เปิดจอง", price=100, category=self.category, reservable=True)
+        location = Location.objects.create(name="จุดจอง", building="อาคาร 1")
+        ProductLocation.objects.create(product=reservable, location=location, stock=1)
+        response = self.client.get(reverse("product_detail", args=[reservable.pk]))
+        self.assertContains(response, "พร้อมจอง")
+
+        not_reservable = Product.objects.create(name="ปิดจอง", price=100, category=self.category, reservable=False)
+        ProductLocation.objects.create(product=not_reservable, location=location, stock=1)
+        response = self.client.get(reverse("product_detail", args=[not_reservable.pk]))
+        self.assertContains(response, "ปิดการจอง")
+
     def test_product_detail_triggers_expiry_and_restores_stock(self):
-        """TC-TRIGGER-005: product detail triggers expiry before showing stock."""
+        """TC-FR-14-05: product detail expires overdue reservations and restores stock."""
         from datetime import timedelta
         from django.utils import timezone
         from reservations.models import Reservation
@@ -146,7 +210,7 @@ class ShopPublicAndCrudTests(TestCase):
         self.assertEqual(stock.stock, 5)
 
     def test_product_detail_stays_within_query_budget(self):
-        """TC-PERF-002: product detail stays within the measured query budget."""
+        """TC-ADD-PERF-02: product detail stays within the query budget."""
         location = Location.objects.create(name="จุด performance", building="อาคาร 1")
         product = Product.objects.create(
             name="สินค้าทดสอบ performance", price=100, category=self.category
@@ -164,7 +228,7 @@ class ShopPublicAndCrudTests(TestCase):
         )
 
     def test_admin_product_list_searches_and_filters_by_category(self):
-        """TC-FILTER-002: admin product page combines name search with category filter."""
+        """TC-FR-33-01: admin can search product names and filter by category."""
         other_category = Category.objects.create(name="อุปกรณ์เสริม")
         matching = Product.objects.create(name="เมาส์เกมมิ่ง", price=700, category=other_category)
         Product.objects.create(name="เมาส์สำนักงาน", price=300, category=self.category)
@@ -175,7 +239,7 @@ class ShopPublicAndCrudTests(TestCase):
         self.assertEqual(list(response.context["page_obj"]), [matching])
 
     def test_admin_location_search_filters_by_name(self):
-        """TC-FILTER-003: admin location page returns only locations matching the query."""
+        """TC-FR-20-02: admin can search for a selling location by name."""
         Location.objects.create(name="อาคารวิศวกรรม", building="อาคาร 1")
         Location.objects.create(name="โรงอาหารกลาง", building="อาคาร 2")
         response = self.client.get(reverse("locations"), {"q": "วิศวกรรม"})
@@ -183,7 +247,7 @@ class ShopPublicAndCrudTests(TestCase):
         self.assertEqual([item.name for item in response.context["page_obj"]], ["อาคารวิศวกรรม"])
 
     def test_admin_category_search_filters_by_name(self):
-        """TC-FILTER-004: admin category page returns only categories matching the query."""
+        """TC-FR-19-02: admin can search for a product category by name."""
         Category.objects.create(name="เครื่องดื่ม")
         Category.objects.create(name="เครื่องแต่งกาย")
         response = self.client.get(reverse("categories"), {"q": "เครื่องดื่ม"})
@@ -191,7 +255,7 @@ class ShopPublicAndCrudTests(TestCase):
         self.assertEqual([item.name for item in response.context["page_obj"]], ["เครื่องดื่ม"])
 
     def test_admin_can_create_update_and_delete_category(self):
-        """TC-CRUD-001: admin completes category create, update, and delete flows."""
+        """TC-FR-19-01: admin can create, update, and delete categories."""
         response = self.client.post(reverse("categories"), {"save": "", "name": "ใหม่"})
         self.assertRedirects(response, reverse("categories"))
         category = Category.objects.get(name="ใหม่")
@@ -202,7 +266,7 @@ class ShopPublicAndCrudTests(TestCase):
         self.assertFalse(Category.objects.filter(pk=category.pk).exists())
 
     def test_admin_can_create_update_and_delete_location(self):
-        """TC-CRUD-002: admin completes location create, update, and delete flows."""
+        """TC-FR-20-01: admin can create, update, and delete selling locations."""
         response = self.client.post(
             reverse("locations"), {"save": "", "name": "จุดรับ", "building": "อาคาร 2"}
         )
@@ -217,7 +281,7 @@ class ShopPublicAndCrudTests(TestCase):
         self.assertFalse(Location.objects.filter(pk=location.pk).exists())
 
     def test_admin_can_create_update_and_delete_product(self):
-        """TC-CRUD-003: admin completes product create, update, and delete flows."""
+        """TC-FR-16-01: admin can create, update, and delete product data."""
         data = {"save": "", "name": "สินค้าใหม่", "price": "10", "category": self.category.pk, "reservable": "True"}
         response = self.client.post(reverse("products"), data)
         self.assertRedirects(response, reverse("products"))
@@ -246,7 +310,7 @@ class ShopSecurityTests(TestCase):
         )
 
     def test_anonymous_cannot_delete_product_by_posting_id(self):
-        """TC-SECURITY-001: an anonymous request cannot delete a product by forging its ID."""
+        """TC-NFR-02-01: an anonymous request cannot delete a product by forging its ID."""
         response = self.client.post(
             reverse("products"), {"delete": self.product.pk}
         )
@@ -254,7 +318,7 @@ class ShopSecurityTests(TestCase):
         self.assertTrue(Product.objects.filter(pk=self.product.pk).exists())
 
     def test_staff_cannot_delete_product_by_posting_id(self):
-        """TC-SECURITY-002: a staff user cannot invoke an admin-only delete action."""
+        """TC-NFR-02-02: a staff user cannot invoke an admin-only delete action."""
         self.client.force_login(self.staff)
         response = self.client.post(
             reverse("products"), {"delete": self.product.pk}
@@ -263,7 +327,7 @@ class ShopSecurityTests(TestCase):
         self.assertTrue(Product.objects.filter(pk=self.product.pk).exists())
 
     def test_delete_without_csrf_token_is_rejected(self):
-        """TC-SECURITY-003: an admin POST without a CSRF token is rejected and changes nothing."""
+        """TC-ADD-CSRF-01: an admin POST without a CSRF token changes nothing."""
         csrf_client = Client(enforce_csrf_checks=True)
         csrf_client.force_login(self.admin)
         response = csrf_client.post(
@@ -300,7 +364,7 @@ class ShopStockTests(TestCase):
         )
 
     def test_admin_can_create_update_and_delete_stock_record(self):
-        """TC-STOCK-001: admin can create, update, and delete a product-location stock row."""
+        """TC-FR-21-01: admin can create, update, and delete stock records."""
         self.client.force_login(self.admin)
         response = self.client.post(reverse("stocks"), {
             "save": "",
@@ -325,7 +389,7 @@ class ShopStockTests(TestCase):
         self.assertFalse(ProductLocation.objects.filter(pk=stock.pk).exists())
 
     def test_stock_form_rejects_negative_quantity(self):
-        """TC-STOCK-002: stock quantity below zero is rejected by server-side form validation."""
+        """TC-NFR-03-01: a negative stock quantity is rejected by form validation."""
         form = ProductLocationForm(data={
             "product": self.product.pk,
             "location": self.location.pk,
@@ -335,7 +399,7 @@ class ShopStockTests(TestCase):
         self.assertIn("stock", form.errors)
 
     def test_stock_form_rejects_duplicate_product_location(self):
-        """TC-STOCK-006: the same product cannot be added twice at one location."""
+        """TC-NFR-05-02: the same product cannot be stocked twice at one location."""
         ProductLocation.objects.create(
             product=self.product, location=self.location, stock=4
         )
@@ -348,7 +412,7 @@ class ShopStockTests(TestCase):
         self.assertTrue(form.non_field_errors())
 
     def test_quick_stock_update_rejects_negative_quantity(self):
-        """TC-STOCK-007: quick stock update must reject a negative quantity without changing stock."""
+        """TC-NFR-03-02: a negative quick stock update leaves the saved amount unchanged."""
         stock = ProductLocation.objects.create(
             product=self.product, location=self.location, stock=5
         )
@@ -362,7 +426,7 @@ class ShopStockTests(TestCase):
         self.assertEqual(stock.stock, 5)
 
     def test_staff_can_update_stock_at_assigned_location(self):
-        """TC-STOCK-008: staff can update stock belonging to their assigned location."""
+        """TC-FR-28-01: staff can update stock at their assigned location."""
         stock = ProductLocation.objects.create(
             product=self.product, location=self.location, stock=3
         )
@@ -376,7 +440,7 @@ class ShopStockTests(TestCase):
         self.assertEqual(stock.stock, 6)
 
     def test_staff_cannot_update_stock_at_another_location(self):
-        """TC-STOCK-009: staff cannot change stock belonging to another location."""
+        """TC-FR-32-01: staff cannot change stock at another location."""
         stock = ProductLocation.objects.create(
             product=self.product, location=self.other_location, stock=3
         )
@@ -390,7 +454,7 @@ class ShopStockTests(TestCase):
         self.assertEqual(stock.stock, 3)
 
     def test_admin_stock_list_searches_and_filters_records(self):
-        """TC-STOCK-004: admin stock list combines product search and category/location filters."""
+        """TC-FR-33-03: admin can search product names in stock records."""
         matching = ProductLocation.objects.create(
             product=self.product, location=self.location, stock=4
         )
@@ -407,7 +471,7 @@ class ShopStockTests(TestCase):
         self.assertEqual(list(response.context["page_obj"]), [matching])
 
     def test_staff_sees_only_stock_at_assigned_location(self):
-        """TC-STOCK-005: staff stock list is restricted to the assigned location."""
+        """TC-FR-28-02: staff sees stock at their assigned location only."""
         assigned_stock = ProductLocation.objects.create(
             product=self.product, location=self.location, stock=3
         )
@@ -419,8 +483,58 @@ class ShopStockTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(list(response.context["page_obj"]), [assigned_stock])
 
+    def test_staff_can_search_products_by_name(self):
+        """TC-FR-33-02: staff can search product names in stock records."""
+        matching = ProductLocation.objects.create(
+            product=self.product, location=self.location, stock=3
+        )
+        ProductLocation.objects.create(
+            product=self.other_product, location=self.location, stock=4
+        )
+        self.client.force_login(self.staff)
+        response = self.client.get(reverse("stocks"), {"q": self.product.name})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(list(response.context["page_obj"]), [matching])
+
+    def test_staff_dashboard_shows_only_assigned_location_data(self):
+        """TC-FR-31-01: staff dashboard summaries only include their location."""
+        from datetime import timedelta
+
+        from django.utils import timezone
+        from reservations.models import Reservation
+
+        ProductLocation.objects.create(product=self.product, location=self.location, stock=3)
+        ProductLocation.objects.create(product=self.other_product, location=self.other_location, stock=9)
+        own_reservation = Reservation.objects.create(
+            reservation_code="DASHBOARD-OWN-001",
+            customer_id="1234567890123",
+            product=self.product,
+            location=self.location,
+            quantity=1,
+            expires_at=timezone.now() + timedelta(hours=1),
+        )
+        Reservation.objects.create(
+            reservation_code="DASHBOARD-OTHER-001",
+            customer_id="1234567890123",
+            product=self.other_product,
+            location=self.other_location,
+            quantity=1,
+            expires_at=timezone.now() + timedelta(hours=1),
+        )
+        self.client.force_login(self.staff)
+        response = self.client.get(reverse("dashboard"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["total_units_stock"], 3)
+        self.assertEqual(response.context["active_reservations"], 1)
+        self.assertEqual(
+            list(response.context["recent_reservations"]),
+            [own_reservation],
+        )
+        self.assertFalse(response.context["is_admin"])
+        self.assertEqual(response.context["locations_summary"], [])
+
     def test_staff_cannot_choose_another_location_when_adding_stock(self):
-        """TC-STOCK-010: staff-submitted location is constrained to the assigned location."""
+        """TC-FR-32-02: staff cannot add stock for another assigned location."""
         self.client.force_login(self.staff)
         response = self.client.post(reverse("stocks"), {
             "save": "",
