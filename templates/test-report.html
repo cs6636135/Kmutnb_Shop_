@@ -14,9 +14,9 @@
   <main class="wrap">
     <section class="summary" aria-label="สรุปผลการทดสอบ">
       <div class="metric"><strong>54</strong><span>Test Cases ทั้งหมด</span></div>
-      <div class="metric"><strong class="ok">52</strong><span>ผ่าน (Passed)</span></div>
-      <div class="metric"><strong class="fail">2</strong><span>ไม่ผ่าน (Failed/Error)</span></div>
-      <div class="metric"><strong>96.30%</strong><span>อัตราการผ่าน</span></div>
+      <div class="metric"><strong class="ok">51</strong><span>ผ่าน (Passed)</span></div>
+      <div class="metric"><strong class="fail">3</strong><span>ไม่ผ่าน (Failed/Error)</span></div>
+      <div class="metric"><strong>94.44%</strong><span>อัตราการผ่าน</span></div>
     </section>
 
     <section><h2>7.1 ขอบเขตและวิธีทดสอบ</h2><div class="card">
@@ -59,9 +59,9 @@
     </section>
 
     <section><h2>7.5 สรุปผลรวม</h2><div class="card">
-      <p><strong>จำนวนเคสทั้งหมด:</strong> 54 เคส</p><p><strong class="ok">ผ่าน:</strong> 52 เคส</p><p><strong class="fail">ไม่ผ่าน:</strong> 2 เคส</p><p><strong>อัตราการผ่าน:</strong> 52/54 = 96.30%</p>
+      <p><strong>จำนวนเคสทั้งหมด:</strong> 54 เคส</p><p><strong class="ok">ผ่าน:</strong> 51 เคส</p><p><strong class="fail">ไม่ผ่าน:</strong> 3 เคส</p><p><strong>อัตราการผ่าน:</strong> 51/54 = 94.44%</p>
       <p><strong class="fail">รายการที่ไม่ผ่าน:</strong></p>
-      <ol><li><code>TC-STOCK-007</code> — ส่งจำนวนสต็อก -1 แล้วเกิด <code>django.db.utils.IntegrityError</code> จากฐานข้อมูล แทนที่จะ redirect และคงค่าเดิม</li><li><code>TC-STOCK-009</code> — Staff แก้ไขสต็อกของ location อื่นได้ ทำให้ค่าจาก 3 เปลี่ยนเป็น 9</li></ol>
+      <ol><li><code>TC-STOCK-001</code> — Admin เพิ่ม stock ไม่สำเร็จ ทำให้ไม่พบ ProductLocation หลัง POST</li><li><code>TC-STOCK-009</code> — Staff ได้ HTTP 404 เมื่อแก้ stock ของ location อื่น แทน redirect ตาม test spec</li><li><code>TC-STOCK-010</code> — Staff POST เพิ่ม stock แล้ว redirect แต่ไม่มี stock ที่ assigned location ตามที่ test คาดหวัง</li></ol>
     </div></section>
     <footer>แหล่งข้อมูล: <code>accounts/test_cases.py</code>, <code>shop/test_cases.py</code> และ <code>reservations/test_cases.py</code></footer>
   </main>
@@ -94,15 +94,15 @@
       ["TC-SECURITY-001","Security","Anonymous ปลอม ID เพื่อลบ Product","ยังไม่ login; มี product","POST delete=product.pk","1) POST delete 2) ตรวจ redirect 3) ตรวจ DB","ถูก redirect login และ product ยังอยู่","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
       ["TC-SECURITY-002","Security","Staff ปลอม ID เพื่อลบ Product","มี staff และ product","staff session; POST delete","1) login staff 2) POST delete 3) ตรวจ DB","ถูก redirect dashboard และ product ยังอยู่","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
       ["TC-SECURITY-003","Security","POST ลบโดยไม่มี CSRF","มี admin และเปิด enforce_csrf_checks","admin session; POST delete ไม่มี token","1) POST โดยไม่ส่ง CSRF 2) ตรวจ response/DB","HTTP 403 และข้อมูลไม่เปลี่ยน","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
-      ["TC-STOCK-001","CRUD","Admin จัดการ stock","มี admin, product, location","create stock=8; update=12","1) create 2) update 3) delete","สร้าง แก้ไข ลบ stock ได้","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
+      ["TC-STOCK-001","CRUD","Admin จัดการ stock","มี admin, product, location","create stock=8; update=12","1) create 2) update 3) delete","สร้าง แก้ไข ลบ stock ได้","ไม่พบ ProductLocation หลัง POST create; test error",F,"shop/test_cases.py"],
       ["TC-STOCK-002","Validation","ฟอร์ม stock ติดลบ","มี product/location","stock=-1","1) submit form 2) ตรวจ errors","form ไม่ valid และแจ้ง error ที่ stock","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
       ["TC-STOCK-006","Validation","ป้องกัน stock product/location ซ้ำ","มี stock คู่เดิมแล้ว","product เดิม; location เดิม; stock=7","1) submit form ซ้ำ 2) ตรวจ non-field errors","form ไม่ valid","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
-      ["TC-STOCK-007","Validation / Error Handling","Quick update stock เป็นค่าติดลบ","มี admin และ stock=5","POST update; stock=-1","1) POST update 2) ตรวจ redirect และค่าเดิม","ควร reject อย่างปลอดภัยโดยไม่เกิด server error และ stock ต้องเป็น 5","เกิด django.db.utils.IntegrityError จาก check constraint; test error",F,"shop/test_cases.py"],
+      ["TC-STOCK-007","Validation / Error Handling","Quick update stock เป็นค่าติดลบ","มี admin และ stock=5","POST update; stock=-1","1) POST update 2) ตรวจ redirect และค่าเดิม","ควร reject อย่างปลอดภัยโดยไม่เกิด server error และ stock ต้องเป็น 5","redirect และ stock ยังคงเป็น 5",P,"shop/test_cases.py"],
       ["TC-STOCK-008","Authorization","Staff update stock ของ location ตนเอง","มี staff ผูกกับ location และ stock=3","staff session; update stock=6","1) login staff 2) POST update 3) refresh DB","redirect และ stock เปลี่ยนเป็น 6","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
-      ["TC-STOCK-009","Security / Authorization","Staff update stock ของ location อื่น","มี staff ผูก location A และ stock location B=3","staff session; update stock=9 ของ B","1) login staff 2) POST update 3) ตรวจ DB","ต้องไม่อนุญาตและ stock ต้องคงเป็น 3","stock เปลี่ยนเป็น 9; test failure",F,"shop/test_cases.py"],
+      ["TC-STOCK-009","Security / Authorization","Staff update stock ของ location อื่น","มี staff ผูก location A และ stock location B=3","staff session; update stock=9 ของ B","1) login staff 2) POST update 3) ตรวจ DB","ต้องไม่อนุญาตและ stock ต้องคงเป็น 3","HTTP 404 แทน redirect; test failure",F,"shop/test_cases.py"],
       ["TC-STOCK-004","Search and Filter","Admin ค้นหา/กรอง stock","มี stock หลาย product/category/location","q, category id, location id","1) login admin 2) GET stocks ด้วย filters 3) ตรวจ page_obj","พบเฉพาะ stock ที่ตรง filters","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
       ["TC-STOCK-005","Authorization","Staff เห็นเฉพาะ stock location ตนเอง","มี staff และ stock ต่าง location","staff session; GET stocks","1) login staff 2) GET stocks 3) ตรวจ page_obj","แสดงเฉพาะ stock ของ assigned location","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
-      ["TC-STOCK-010","Security","Staff เพิ่ม stock ให้ location อื่น","มี staff ผูก location A","POST save location B","1) login staff 2) POST location B 3) ตรวจ DB","ไม่สร้าง stock ที่ B และจำกัดเป็น location A","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
+      ["TC-STOCK-010","Security","Staff เพิ่ม stock ให้ location อื่น","มี staff ผูก location A","POST save location B","1) login staff 2) POST location B 3) ตรวจ DB","ไม่สร้าง stock ที่ B และจำกัดเป็น location A","redirect แต่ไม่สร้าง stock ที่ assigned location; test failure",F,"shop/test_cases.py"],
       ["TC-CREATE-004","CRUD","สร้าง Reservation และตัด stock","มี product reservable และ stock=5","student id 13 หลัก; quantity=2","1) POST reservation 2) อ่าน reservation 3) refresh stock","สร้าง pending reservation และ stock เหลือ 3","ตรงตามที่คาดหวัง",P,"reservations/test_cases.py"],
       ["TC-BUSINESS-001","Validation","กำหนดอายุ reservation 4 ชั่วโมง","มี product และ stock","quantity=1","1) จองสินค้า 2) เปรียบเทียบ expires_at กับเวลาปัจจุบัน","expires_at เท่ากับเวลาปัจจุบัน + 4 ชั่วโมง","ตรงตามที่คาดหวัง",P,"reservations/test_cases.py"],
       ["TC-VALIDATE-006","Validation","จำกัดจองไม่เกิน 5 ชิ้น","มี stock อย่างน้อย 10","quantity=6","1) POST จอง 6 2) ตรวจข้อความ 3) ตรวจ DB","แสดง error และไม่สร้าง reservation","ตรงตามที่คาดหวัง",P,"reservations/test_cases.py"],

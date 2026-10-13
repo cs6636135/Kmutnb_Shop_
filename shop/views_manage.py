@@ -213,6 +213,7 @@ def stocks(request):
         "location_query": location_query,
     })
 
+
 @role_required("admin")
 def locations(request):
     if request.method == "POST":
