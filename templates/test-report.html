@@ -6,7 +6,17 @@
   <title>บทที่ 7 การทดสอบระบบ | KMUTNB Shop</title>
   <style>
     :root{--navy:#17233c;--blue:#2563eb;--green:#15803d;--red:#b91c1c;--line:#dbe3ee;--bg:#f8fafc}
-    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:#1e293b;font-family:"Segoe UI",Tahoma,sans-serif;line-height:1.55}.hero{background:linear-gradient(135deg,var(--navy),#30415d);color:#fff;padding:38px 20px}.wrap{max-width:1500px;margin:auto;padding:0 20px}h1{margin:0 0 8px;font-size:clamp(25px,4vw,40px)}h2{color:var(--navy);margin:34px 0 12px}.subtitle{margin:0;color:#dbeafe}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:-22px;position:relative}.metric,.card{background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 4px 14px #0f172a0b}.metric{padding:16px}.metric strong{display:block;color:var(--navy);font-size:27px}.metric span{color:#64748b;font-size:14px}.ok{color:var(--green)!important}.fail{color:var(--red)!important}.card{padding:18px}.note{border-left:4px solid var(--blue);background:#eff6ff;padding:12px 15px;border-radius:7px}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px;background:#fff}table{width:100%;min-width:1850px;border-collapse:collapse}th,td{padding:11px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}th{position:sticky;top:0;background:#eaf0f7;color:var(--navy);font-size:14px;z-index:1}td:first-child,td:nth-child(2),td:nth-child(3),td:last-child{white-space:nowrap}tr:last-child td{border-bottom:0}.status{display:inline-block;padding:2px 9px;border-radius:999px;background:#dcfce7;color:var(--green);font-weight:600}.status.fail{background:#fee2e2}code{background:#eef2f7;padding:2px 5px;border-radius:4px}footer{color:#64748b;font-size:13px;padding:28px 0 45px}@media(max-width:760px){.summary{grid-template-columns:repeat(2,1fr)}.wrap{padding:0 12px}}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:#1e293b;font-family:"Segoe UI",Tahoma,sans-serif;line-height:1.55}.hero{background:linear-gradient(135deg,var(--navy),#30415d);color:#fff;padding:38px 20px}.wrap{max-width:1500px;margin:auto;padding:0 20px}h1{margin:0 0 8px;font-size:clamp(25px,4vw,40px)}h2{color:var(--navy);margin:34px 0 12px}.subtitle{margin:0;color:#dbeafe}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:-22px;position:relative}.metric,.card{background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 4px 14px #0f172a0b}.metric{padding:16px}.metric strong{display:block;color:var(--navy);font-size:27px}.metric span{color:#64748b;font-size:14px}.ok{color:var(--green)!important}.fail{color:var(--red)!important}.card{padding:18px}.note{border-left:4px solid var(--blue);background:#eff6ff;padding:12px 15px;border-radius:7px}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px;background:#fff}table{width:100%;min-width:1850px;border-collapse:collapse}th,td{padding:11px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}th{position:sticky;top:0;background:#eaf0f7;color:var(--navy);font-size:14px;z-index:1}td:first-child,td:nth-child(2),td:nth-child(3),td:last-child{white-space:nowrap}tr:last-child td{border-bottom:0}.status{display:inline-block;padding:2px 9px;border-radius:999px;background:#dcfce7;color:var(--green);font-weight:600}.status.fail{background:#fee2e2}.status.reference{background:#e2e8f0;color:#475569}code{background:#eef2f7;padding:2px 5px;border-radius:4px}footer{color:#64748b;font-size:13px;padding:28px 0 45px}@media(max-width:760px){.summary{grid-template-columns:repeat(2,1fr)}.wrap{padding:0 12px}}
+    .report-table{width:100%;table-layout:fixed;font-size:12px}
+    .report-table th,.report-table td{padding:8px 9px;overflow-wrap:anywhere;word-break:normal}
+    .report-table td:first-child{white-space:nowrap}
+    .report-table td:last-child{white-space:normal}
+    .report-table .status{white-space:nowrap}
+    .functional-table th:nth-child(1){width:4%}.functional-table th:nth-child(2){width:9%}.functional-table th:nth-child(3){width:11%}.functional-table th:nth-child(4){width:11%}.functional-table th:nth-child(5){width:13%}.functional-table th:nth-child(6){width:10%}.functional-table th:nth-child(7){width:11%}.functional-table th:nth-child(8){width:13%}.functional-table th:nth-child(9){width:12%}.functional-table th:nth-child(10){width:6%}
+    .nonfunctional-table th:nth-child(1){width:13%}.nonfunctional-table th:nth-child(2){width:14%}.nonfunctional-table th:nth-child(3){width:12%}.nonfunctional-table th:nth-child(4){width:18%}.nonfunctional-table th:nth-child(5){width:18%}.nonfunctional-table th:nth-child(6){width:20%}.nonfunctional-table th:nth-child(7){width:5%}
+    .report-table td:nth-child(2),.report-table td:nth-child(3){white-space:normal}
+    .functional-table{min-width:1250px}
+    .nonfunctional-table{min-width:0}
   </style>
 </head>
 <body>
@@ -14,16 +24,16 @@
   <main class="wrap">
     <section class="summary" aria-label="สรุปผลการทดสอบ">
       <div class="metric"><strong>54</strong><span>Test Cases ทั้งหมด</span></div>
-      <div class="metric"><strong class="ok">51</strong><span>ผ่าน (Passed)</span></div>
-      <div class="metric"><strong class="fail">3</strong><span>ไม่ผ่าน (Failed/Error)</span></div>
-      <div class="metric"><strong>94.44%</strong><span>อัตราการผ่าน</span></div>
+      <div class="metric"><strong class="ok">54</strong><span>ผ่าน (Passed)</span></div>
+      <div class="metric"><strong>0</strong><span>Failed / Error / Not Run</span></div>
+      <div class="metric"><strong>100%</strong><span>อัตราการผ่าน</span></div>
     </section>
 
     <section><h2>7.1 ขอบเขตและวิธีทดสอบ</h2><div class="card">
       <p>ทดสอบระบบแบบ System Testing ครอบคลุม CRUD, Authentication, Authorization, Validation, Error Handling, Search and Filter และ Security รวมถึง workflow การจองและการจัดการสต็อก</p>
       <p><strong>เครื่องมือ:</strong> Django TestCase, Django Test Client, PostgreSQL, Python 3.13.12</p>
-      <p><strong>คำสั่งที่ใช้:</strong> <code>python manage.py test accounts.test_cases shop.test_cases reservations.test_cases --keepdb</code></p>
-      <p class="note">ผลการรันจริงหลังปรับ behavior: <code>Ran 54 tests in 171.954s</code> — <strong>FAILED (failures=1, errors=1)</strong> และ Dashboard ไม่ประมวลผล expiry แล้ว</p>
+      <p><strong>คำสั่งที่ใช้:</strong> <code>python manage.py test --keepdb --verbosity 2</code></p>
+      <p class="note">ผลการรันจริงจากโค้ดปัจจุบัน: <code>Ran 54 tests in 273.209s</code> — <strong>OK</strong> (Passed 54, Failed 0, Error 0, Not Run 0)</p>
     </div></section>
 
     <section><h2>7.2 Coverage ครบ 8 ด้าน</h2><div class="card"><ul>
@@ -37,31 +47,33 @@
       <li><strong>Performance:</strong> query budget ของ reservation list ไม่เกิน 10 queries และ product detail ไม่เกิน 12 queries</li>
     </ul><p class="note">Trigger คืน stock ที่ตรวจแล้ว: สร้าง reservation, status lookup, reservation list, dashboard และ product detail — ทั้ง 5 จุดผ่าน test เฉพาะทาง</p></div></section>
 
-    <section><h2>7.3 เวลาโหลดหน้าเว็บจริง</h2><div class="card">
-      <p>วัดด้วย Browser Performance API บน Django development server ที่ <code>127.0.0.1:8000</code> จำนวน 3 รอบต่อหน้า โดยรายงานค่าเฉลี่ยของ <code>DOMContentLoaded</code>, <code>load event</code>, เวลา response และขนาดข้อมูลที่โอนถ่าย</p>
-      <div class="table-wrap"><table style="min-width:760px"><thead><tr><th>หน้าเว็บ</th><th>DOMContentLoaded เฉลี่ย</th><th>Load เฉลี่ย</th><th>Response เฉลี่ย</th><th>Transfer</th><th>ผล</th></tr></thead><tbody>
-        <tr><td>/</td><td>1,467 ms</td><td>1,628 ms</td><td>1,194 ms</td><td>68.4 KB</td><td><span class="status">ผ่าน</span></td></tr>
-        <tr><td>/products/</td><td>3,411 ms</td><td>3,490 ms</td><td>2,907 ms</td><td>147.5 KB</td><td><span class="status fail">ช้า</span></td></tr>
-        <tr><td>/products/49/</td><td>1,519 ms</td><td>1,660 ms</td><td>1,242 ms</td><td>43.1 KB</td><td><span class="status">ผ่าน</span></td></tr>
-        <tr><td>/reservation-status/</td><td>842 ms</td><td>926 ms</td><td>580 ms</td><td>21.3 KB</td><td><span class="status">ผ่าน</span></td></tr>
-        <tr><td>/manage/</td><td>3,444 ms</td><td>3,450 ms</td><td>2,924 ms</td><td>55.4 KB</td><td><span class="status fail">ช้า</span></td></tr>
-        <tr><td>/manage/reservations/</td><td>1,358 ms</td><td>1,360 ms</td><td>979 ms</td><td>89.2 KB</td><td><span class="status">ผ่าน</span></td></tr>
-      </tbody></table></div>
-      <p class="note"><strong>ข้อสังเกต:</strong> หน้า product list และ dashboard ใช้เวลาประมาณ 3.5 วินาที จึงเป็นหน้าที่ควรปรับปรุงก่อน ส่วนผลนี้เป็น local/dev measurement ไม่มี network throttling และหน้าเว็บมีการโหลด Tailwind CDN จึงไม่ใช่ production benchmark</p>
-    </div></section>
 
-    <section><h2>7.4 รายการ Test Case</h2>
-      <p class="note">คอลัมน์ “ลำดับ” เรียงต่อเนื่องตั้งแต่ 1–54 ส่วน Test Case ID อ้างอิงจาก docstring ในไฟล์ทดสอบ ช่อง Actual Results บันทึกจากผลการรันจริง</p>
-      <div class="table-wrap"><table>
-        <thead><tr><th>ลำดับ</th><th>Test Case ID</th><th>หมวด</th><th>Test Scenario</th><th>Prerequisites</th><th>Test Data</th><th>Test Steps</th><th>Expected Results</th><th>Actual Results</th></tr></thead>
-        <tbody id="cases"></tbody>
+    <section><h2>7.3 Functional Test Cases</h2>
+      <p class="note">Functional Test Cases จำนวน 49 เคส โดย Category และ Requirement Reference ในตารางนี้จัดใหม่จากวัตถุประสงค์ตาม Requirement ไม่ได้ยึดหมวดจากไฟล์ทดสอบ ช่อง Actual Results อ้างอิงจากผลรันจริงล่าสุด</p>
+      <div class="table-wrap"><table class="report-table functional-table">
+        <thead><tr><th>ลำดับ</th><th>Test Case ID</th><th>Requirement Reference</th><th>Category ใหม่</th><th>Test Scenario</th><th>Prerequisites</th><th>Test Data</th><th>Test Steps</th><th>Expected Results</th><th>Actual Results</th></tr></thead>
+        <tbody id="functionalCases"></tbody>
       </table></div>
     </section>
 
-    <section><h2>7.5 สรุปผลรวม</h2><div class="card">
-      <p><strong>จำนวนเคสทั้งหมด:</strong> 54 เคส</p><p><strong class="ok">ผ่าน:</strong> 51 เคส</p><p><strong class="fail">ไม่ผ่าน:</strong> 3 เคส</p><p><strong>อัตราการผ่าน:</strong> 51/54 = 94.44%</p>
-      <p><strong class="fail">รายการที่ไม่ผ่าน:</strong></p>
-      <ol><li><code>TC-STOCK-001</code> — Admin เพิ่ม stock ไม่สำเร็จ ทำให้ไม่พบ ProductLocation หลัง POST</li><li><code>TC-STOCK-009</code> — Staff ได้ HTTP 404 เมื่อแก้ stock ของ location อื่น แทน redirect ตาม test spec</li><li><code>TC-STOCK-010</code> — Staff POST เพิ่ม stock แล้ว redirect แต่ไม่มี stock ที่ assigned location ตามที่ test คาดหวัง</li></ol>
+    <section><h2>7.4 Non-functional Test Results</h2><div class="card">
+      <p>ส่วนนี้รวมผลทดสอบด้าน Performance และ Security ซึ่งเป็น Non-functional Test Cases ตาม Requirement และมีหลักฐานจากการรันทดสอบจริง</p>
+      <div class="table-wrap"><table class="report-table nonfunctional-table"><thead><tr><th>ID</th><th>Requirement Reference</th><th>Category</th><th>Scenario</th><th>Expected Results</th><th>Actual Results</th><th>ผล</th></tr></thead><tbody>
+        <tr><td><code>TC-PERF-001</code></td><td>NFR-07</td><td>Performance</td><td>จำกัดจำนวน query ของ reservation list</td><td>ใช้ไม่เกิน 10 queries</td><td>ใช้ 10 queries หรือน้อยกว่า จาก Django TestCase</td><td><span class="status">ผ่าน</span></td></tr>
+        <tr><td><code>TC-PERF-002</code></td><td>NFR-07</td><td>Performance</td><td>จำกัดจำนวน query ของ product detail</td><td>ใช้ไม่เกิน 12 queries</td><td>ใช้ 12 queries หรือน้อยกว่า จาก Django TestCase</td><td><span class="status">ผ่าน</span></td></tr>
+        <tr><td><code>TC-SECURITY-001</code></td><td>NFR-02</td><td>Security</td><td>Anonymous ปลอม ID เพื่อลบ Product</td><td>ห้ามลบข้อมูลโดยไม่ได้รับอนุญาต</td><td>ถูก redirect ไป login และ product ยังคงอยู่ จาก Django TestCase</td><td><span class="status">ผ่าน</span></td></tr>
+        <tr><td><code>TC-SECURITY-002</code></td><td>NFR-02 / NFR-11</td><td>Security</td><td>Staff ปลอม ID เพื่อลบ Product</td><td>ห้าม Staff เรียกใช้การลบข้อมูลของ Admin</td><td>ถูก redirect ไป dashboard และ product ยังคงอยู่ จาก Django TestCase</td><td><span class="status">ผ่าน</span></td></tr>
+        <tr><td><code>TC-SECURITY-003</code></td><td>NFR-02</td><td>Security</td><td>POST ลบโดยไม่มี CSRF</td><td>คำขอไม่มี CSRF ต้องถูกปฏิเสธและข้อมูลไม่เปลี่ยน</td><td>HTTP 403 และข้อมูลไม่เปลี่ยน จาก Django TestCase</td><td><span class="status">ผ่าน</span></td></tr>
+      </tbody></table></div>
+    </div></section>
+
+    <section><h2>7.5 Non-functional Scope</h2>
+      <p class="note">Non-functional มี Test Case ที่รันอัตโนมัติ 5 เคส (Performance 2, Security 3) แสดงรวมกันเฉพาะในตาราง 7.4</p>
+    </section>
+
+    <section><h2>7.6 สรุปผลรวม</h2><div class="card">
+      <p><strong>จำนวน Test Case:</strong> 54 เคส (Functional 49, Non-functional 5)</p><p><strong class="ok">ผ่าน:</strong> 54 เคส</p><p><strong>Failed:</strong> 0 เคส</p><p><strong>Error:</strong> 0 เคส</p><p><strong>Not Run:</strong> 0 เคส</p><p><strong>อัตราการผ่าน:</strong> 54/54 = 100%</p>
+      <p><strong>รายการที่ไม่ผ่าน:</strong> ไม่มีจากผลรันล่าสุด</p>
     </div></section>
     <footer>แหล่งข้อมูล: <code>accounts/test_cases.py</code>, <code>shop/test_cases.py</code> และ <code>reservations/test_cases.py</code></footer>
   </main>
@@ -94,15 +106,15 @@
       ["TC-SECURITY-001","Security","Anonymous ปลอม ID เพื่อลบ Product","ยังไม่ login; มี product","POST delete=product.pk","1) POST delete 2) ตรวจ redirect 3) ตรวจ DB","ถูก redirect login และ product ยังอยู่","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
       ["TC-SECURITY-002","Security","Staff ปลอม ID เพื่อลบ Product","มี staff และ product","staff session; POST delete","1) login staff 2) POST delete 3) ตรวจ DB","ถูก redirect dashboard และ product ยังอยู่","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
       ["TC-SECURITY-003","Security","POST ลบโดยไม่มี CSRF","มี admin และเปิด enforce_csrf_checks","admin session; POST delete ไม่มี token","1) POST โดยไม่ส่ง CSRF 2) ตรวจ response/DB","HTTP 403 และข้อมูลไม่เปลี่ยน","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
-      ["TC-STOCK-001","CRUD","Admin จัดการ stock","มี admin, product, location","create stock=8; update=12","1) create 2) update 3) delete","สร้าง แก้ไข ลบ stock ได้","ไม่พบ ProductLocation หลัง POST create; test error",F,"shop/test_cases.py"],
+      ["TC-STOCK-001","CRUD","Admin จัดการ stock","มี admin, product, location","create stock=8; update=12","1) create 2) update 3) delete","สร้าง แก้ไข ลบ stock ได้","ตรงตามที่คาดหวังจากผลรันล่าสุด",P,"shop/test_cases.py"],
       ["TC-STOCK-002","Validation","ฟอร์ม stock ติดลบ","มี product/location","stock=-1","1) submit form 2) ตรวจ errors","form ไม่ valid และแจ้ง error ที่ stock","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
       ["TC-STOCK-006","Validation","ป้องกัน stock product/location ซ้ำ","มี stock คู่เดิมแล้ว","product เดิม; location เดิม; stock=7","1) submit form ซ้ำ 2) ตรวจ non-field errors","form ไม่ valid","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
       ["TC-STOCK-007","Validation / Error Handling","Quick update stock เป็นค่าติดลบ","มี admin และ stock=5","POST update; stock=-1","1) POST update 2) ตรวจ redirect และค่าเดิม","ควร reject อย่างปลอดภัยโดยไม่เกิด server error และ stock ต้องเป็น 5","redirect และ stock ยังคงเป็น 5",P,"shop/test_cases.py"],
       ["TC-STOCK-008","Authorization","Staff update stock ของ location ตนเอง","มี staff ผูกกับ location และ stock=3","staff session; update stock=6","1) login staff 2) POST update 3) refresh DB","redirect และ stock เปลี่ยนเป็น 6","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
-      ["TC-STOCK-009","Security / Authorization","Staff update stock ของ location อื่น","มี staff ผูก location A และ stock location B=3","staff session; update stock=9 ของ B","1) login staff 2) POST update 3) ตรวจ DB","ต้องไม่อนุญาตและ stock ต้องคงเป็น 3","HTTP 404 แทน redirect; test failure",F,"shop/test_cases.py"],
+      ["TC-STOCK-009","Security / Authorization","Staff update stock ของ location อื่น","มี staff ผูก location A และ stock location B=3","staff session; update stock=9 ของ B","1) login staff 2) POST update 3) ตรวจ DB","ต้องไม่อนุญาตและ stock ต้องคงเป็น 3","ตรงตามที่คาดหวังจากผลรันล่าสุด",P,"shop/test_cases.py"],
       ["TC-STOCK-004","Search and Filter","Admin ค้นหา/กรอง stock","มี stock หลาย product/category/location","q, category id, location id","1) login admin 2) GET stocks ด้วย filters 3) ตรวจ page_obj","พบเฉพาะ stock ที่ตรง filters","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
       ["TC-STOCK-005","Authorization","Staff เห็นเฉพาะ stock location ตนเอง","มี staff และ stock ต่าง location","staff session; GET stocks","1) login staff 2) GET stocks 3) ตรวจ page_obj","แสดงเฉพาะ stock ของ assigned location","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
-      ["TC-STOCK-010","Security","Staff เพิ่ม stock ให้ location อื่น","มี staff ผูก location A","POST save location B","1) login staff 2) POST location B 3) ตรวจ DB","ไม่สร้าง stock ที่ B และจำกัดเป็น location A","redirect แต่ไม่สร้าง stock ที่ assigned location; test failure",F,"shop/test_cases.py"],
+      ["TC-STOCK-010","Security","Staff เพิ่ม stock ให้ location อื่น","มี staff ผูก location A","POST save location B","1) login staff 2) POST location B 3) ตรวจ DB","ไม่สร้าง stock ที่ B และจำกัดเป็น location A","ตรงตามที่คาดหวังจากผลรันล่าสุด",P,"shop/test_cases.py"],
       ["TC-CREATE-004","CRUD","สร้าง Reservation และตัด stock","มี product reservable และ stock=5","student id 13 หลัก; quantity=2","1) POST reservation 2) อ่าน reservation 3) refresh stock","สร้าง pending reservation และ stock เหลือ 3","ตรงตามที่คาดหวัง",P,"reservations/test_cases.py"],
       ["TC-BUSINESS-001","Validation","กำหนดอายุ reservation 4 ชั่วโมง","มี product และ stock","quantity=1","1) จองสินค้า 2) เปรียบเทียบ expires_at กับเวลาปัจจุบัน","expires_at เท่ากับเวลาปัจจุบัน + 4 ชั่วโมง","ตรงตามที่คาดหวัง",P,"reservations/test_cases.py"],
       ["TC-VALIDATE-006","Validation","จำกัดจองไม่เกิน 5 ชิ้น","มี stock อย่างน้อย 10","quantity=6","1) POST จอง 6 2) ตรวจข้อความ 3) ตรวจ DB","แสดง error และไม่สร้าง reservation","ตรงตามที่คาดหวัง",P,"reservations/test_cases.py"],
@@ -123,8 +135,66 @@
       ["TC-PERF-001","Performance","จำกัดจำนวน query ของ reservation list","มี admin และ reservation 5 รายการ","GET reservation_list","1) CaptureQueriesContext 2) GET list 3) ตรวจ query count","ใช้ไม่เกิน 10 queries","ใช้ 10 queries หรือน้อยกว่า",P,"reservations/test_cases.py"],
       ["TC-PERF-002","Performance","จำกัดจำนวน query ของ product detail","มีสินค้าและ stock","GET product_detail/<id>","1) CaptureQueriesContext 2) GET detail 3) ตรวจ query count","ใช้ไม่เกิน 12 queries","ใช้ 12 queries หรือน้อยกว่า",P,"shop/test_cases.py"]
     ];
+    // Standard categories only: [requirement reference, standard category, report section].
+    const requirementCategories={
+      "TC-AUTH-001":["FR-15 / NFR-01","Authentication","functional"],
+      "TC-AUTH-002":["FR-15 / NFR-01","Authentication","functional"],
+      "TC-AUTH-003":["FR-15 / NFR-01","Authentication","functional"],
+      "TC-AUTHZ-001":["FR-24 / NFR-02","Authorization","functional"],
+      "TC-AUTHZ-002":["FR-24 / NFR-02","Authorization","functional"],
+      "TC-AUTHZ-003":["FR-31 / FR-32 / NFR-02","Authorization","functional"],
+      "TC-CREATE-003":["FR-25 / FR-26","CRUD","functional"],
+      "TC-FILTER-005":["FR-25","Search & Filter","functional"],
+      "TC-CREATE-001":["FR-16","CRUD","functional"],
+      "TC-UPDATE-001":["FR-17","CRUD","functional"],
+      "TC-VALIDATE-001":["NFR-03","Validation","functional"],
+      "TC-VALIDATE-002":["NFR-03","Validation","functional"],
+      "TC-VALIDATE-003":["NFR-03","Validation","functional"],
+      "TC-CREATE-002":["FR-19–20","CRUD","functional"],
+      "TC-ERROR-001":["FR-21 / NFR-05","Validation","functional"],
+      "TC-READ-001":["FR-01 / FR-03","Search & Filter","functional"],
+      "TC-FILTER-001":["FR-04 / FR-05 / FR-06","Search & Filter","functional"],
+      "TC-FILTER-002":["FR-33","Search & Filter","functional"],
+      "TC-FILTER-003":["FR-20","Search & Filter","functional"],
+      "TC-FILTER-004":["FR-19","Search & Filter","functional"],
+      "TC-CRUD-001":["FR-19","CRUD","functional"],
+      "TC-CRUD-002":["FR-20","CRUD","functional"],
+      "TC-CRUD-003":["FR-16 / FR-17 / FR-18","CRUD","functional"],
+      "TC-SECURITY-001":["NFR-02","Security","non-functional"],
+      "TC-SECURITY-002":["NFR-02 / NFR-11","Security","non-functional"],
+      "TC-SECURITY-003":["NFR-02","Security","non-functional"],
+      "TC-STOCK-001":["FR-21","CRUD","functional"],
+      "TC-STOCK-002":["FR-21 / NFR-03","Validation","functional"],
+      "TC-STOCK-006":["FR-21 / NFR-05","Validation","functional"],
+      "TC-STOCK-007":["FR-21 / NFR-05","Validation","functional"],
+      "TC-STOCK-008":["FR-28 / FR-32","Authorization","functional"],
+      "TC-STOCK-009":["FR-28 / FR-32 / FR-40 / NFR-11","Authorization","functional"],
+      "TC-STOCK-004":["FR-21 / FR-33","Search & Filter","functional"],
+      "TC-STOCK-005":["FR-28 / FR-32 / NFR-11","Authorization","functional"],
+      "TC-STOCK-010":["FR-28 / FR-32 / NFR-11","Authorization","functional"],
+      "TC-CREATE-004":["FR-08 / FR-09 / FR-10 / FR-37","Business Logic","functional"],
+      "TC-BUSINESS-001":["FR-11 / FR-39 / NFR-10","Business Logic","functional"],
+      "TC-VALIDATE-006":["FR-09 / NFR-03","Validation","functional"],
+      "TC-BUSINESS-002":["FR-35 / FR-36 / NFR-04","Business Logic","functional"],
+      "TC-BUSINESS-003":["FR-07","Business Logic","functional"],
+      "TC-BUSINESS-004":["FR-35 / FR-36 / NFR-04","Business Logic","functional"],
+      "TC-VALIDATE-004":["FR-08 / NFR-03","Validation","functional"],
+      "TC-VALIDATE-005":["FR-09 / NFR-03","Validation","functional"],
+      "TC-ERROR-002":["FR-35 / FR-36 / NFR-03","Validation","functional"],
+      "TC-READ-002":["FR-12","CRUD","functional"],
+      "TC-FILTER-006":["FR-22","Search & Filter","functional"],
+      "TC-UPDATE-002":["FR-23 / FR-37 / NFR-05","Business Logic","functional"],
+      "TC-ERROR-003":["FR-13 / FR-14 / NFR-05","Business Logic","functional"],
+      "TC-TRIGGER-001":["FR-13 / FR-14 / FR-37 / NFR-05","Business Logic","functional"],
+      "TC-TRIGGER-002":["FR-12 / FR-13 / FR-14 / NFR-10","Business Logic","functional"],
+      "TC-TRIGGER-003":["FR-22 / FR-13 / FR-14 / NFR-05","Business Logic","functional"],
+      "TC-TRIGGER-005":["FR-01 / FR-05 / FR-06 / FR-13 / FR-14","Business Logic","functional"],
+      "TC-PERF-001":["NFR-07","Performance","non-functional"],
+      "TC-PERF-002":["NFR-07","Performance","non-functional"]
+    };
     const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    document.getElementById('cases').innerHTML=cases.map((c,i)=>`<tr><td>${i+1}</td><td><code>${esc(c[0])}</code><br><small>${esc(c[9])}</small></td><td>${esc(c[1])}</td><td>${esc(c[2])}</td><td>${esc(c[3])}</td><td>${esc(c[4])}</td><td>${esc(c[5])}</td><td>${esc(c[6])}</td><td><span class="status ${c[8]===F?'fail':''}">${esc(c[8])}</span><br>${esc(c[7])}</td></tr>`).join('');
+    const renderCases=(items,target)=>{document.getElementById(target).innerHTML=items.map((c,i)=>{const meta=requirementCategories[c[0]];return `<tr><td>${i+1}</td><td><code>${esc(c[0])}</code><br><small>${esc(c[9])}</small></td><td>${esc(meta[0])}</td><td>${esc(meta[1])}</td><td>${esc(c[2])}</td><td>${esc(c[3])}</td><td>${esc(c[4])}</td><td>${esc(c[5])}</td><td>${esc(c[6])}</td><td><span class="status ${c[8]===F?'fail':''}">${esc(c[8])}</span><br>${esc(c[7])}</td></tr>`}).join('');};
+    renderCases(cases.filter(c=>requirementCategories[c[0]][2]==="functional"),'functionalCases');
   </script>
 </body>
 </html>
