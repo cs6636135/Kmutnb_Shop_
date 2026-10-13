@@ -227,26 +227,37 @@ def reservation_confirmation(request, reservation_code):
 	})
 
 
+
 def reservation_status(request):
-	reservation = None
-	error = None
+    reservations = None
+    error = None
 
-	if request.method == "POST":
-		reservation_code = request.POST.get("reservation_code", "").strip()
-		if reservation_code:
-			reservation = Reservation.objects.filter(
-				reservation_code=reservation_code
-			).select_related("product", "location").first()
-			if reservation is None:
-				error = "ไม่พบรายการจองจากรหัสที่ระบุ"
-			else:
-				# อัปเดตสถานะก่อนแสดงผลการตรวจการจอง
-				expire_overdue_reservations(product_id=reservation.product_id)
-				reservation.refresh_from_db()
-		else:
-			error = "กรุณากรอกรหัสการจอง"
+    if request.method == "POST":
+        customer_id = request.POST.get("reservation_code", "").strip()
 
-	return render(request, "reservations/status.html", {
-		"reservation": reservation,
-		"error": error,
-	})
+        if not customer_id:
+            error = "กรุณากรอกรหัสลูกค้าของคุณ"
+        else:
+            reservations = Reservation.objects.filter(
+                customer_id=customer_id
+            ).select_related("product", "location").order_by("-reserved_at")
+
+            if not reservations.exists():
+                error = "ไม่พบรายการจองจากรหัสลูกค้าที่ระบุ"
+                reservations = None
+            else:
+                # อัปเดตสถานะรายการจองที่หมดอายุ
+                for reservation in reservations:
+                    expire_overdue_reservations(
+                        product_id=reservation.product_id
+                    )
+
+                # โหลดข้อมูลใหม่หลังอัปเดตสถานะ
+                reservations = Reservation.objects.filter(
+                    customer_id=customer_id
+                ).select_related("product", "location").order_by("-reserved_at")
+
+    return render(request, "reservations/status.html", {
+        "reservations": reservations,
+        "error": error,
+    })
