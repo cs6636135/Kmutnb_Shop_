@@ -114,7 +114,7 @@ class ProductLocationForm(ModelForm):
             "stock": {
                 "required": "กรุณากรอกจำนวนสินค้า",
                 "invalid": "กรุณากรอกจำนวนสินค้าเป็นตัวเลข",
-                "min_value": "จำนวนสินค้าต้องไม่ติดลบ",
+                "min_value": "จำนวนสินค้าต้องเป็นจำนวนเต็มที่ไม่ติดลบ",
             },
         }
 
@@ -124,6 +124,8 @@ class ProductLocationForm(ModelForm):
         self.fields["location"].empty_label = "กรุณาเลือกจุดจำหน่าย"
 
         if user and user.role == "staff":
+            if not user.location_id:
+                raise ValidationError("คุณไม่มีสิทธิ์เข้าถึงฟังก์ชันนี้")
             self.fields["location"].queryset = Location.objects.filter(
                 pk=user.location_id
             )
