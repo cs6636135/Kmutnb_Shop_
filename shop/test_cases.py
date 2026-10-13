@@ -2,7 +2,9 @@
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.db import connection
 from django.test import Client, TestCase
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
 from .form import (
@@ -114,6 +116,52 @@ class ShopPublicAndCrudTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(list(response.context["products"]), [product])
         self.assertEqual(response.context["selected_location"], str(location.pk))
+
+    def test_product_detail_triggers_expiry_and_restores_stock(self):
+        """TC-TRIGGER-005: product detail triggers expiry before showing stock."""
+        from datetime import timedelta
+        from django.utils import timezone
+        from reservations.models import Reservation
+
+        location = Location.objects.create(name="จุดคืนสต็อก", building="อาคาร 1")
+        product = Product.objects.create(
+            name="สินค้าทดสอบ trigger", price=100, category=self.category
+        )
+        stock = ProductLocation.objects.create(product=product, location=location, stock=3)
+        reservation = Reservation.objects.create(
+            reservation_code="TRIGGER-DETAIL-001",
+            customer_id="1234567890123",
+            product=product,
+            location=location,
+            quantity=2,
+            expires_at=timezone.now() - timedelta(minutes=1),
+        )
+
+        response = self.client.get(reverse("product_detail", args=[product.pk]))
+
+        self.assertEqual(response.status_code, 200)
+        reservation.refresh_from_db()
+        stock.refresh_from_db()
+        self.assertEqual(reservation.status, Reservation.Status.EXPIRED)
+        self.assertEqual(stock.stock, 5)
+
+    def test_product_detail_stays_within_query_budget(self):
+        """TC-PERF-002: product detail stays within the measured query budget."""
+        location = Location.objects.create(name="จุด performance", building="อาคาร 1")
+        product = Product.objects.create(
+            name="สินค้าทดสอบ performance", price=100, category=self.category
+        )
+        ProductLocation.objects.create(product=product, location=location, stock=3)
+
+        with CaptureQueriesContext(connection) as queries:
+            response = self.client.get(reverse("product_detail", args=[product.pk]))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertLessEqual(
+            len(queries),
+            12,
+            f"product detail used {len(queries)} queries; expected <= 12",
+        )
 
     def test_admin_product_list_searches_and_filters_by_category(self):
         """TC-FILTER-002: admin product page combines name search with category filter."""

@@ -5,180 +5,126 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>บทที่ 7 การทดสอบระบบ | KMUTNB Shop</title>
   <style>
-    :root { --navy:#17233c; --blue:#2563eb; --green:#15803d; --green-bg:#dcfce7; --muted:#64748b; --line:#e2e8f0; --bg:#f8fafc; --card:#fff; }
-    * { box-sizing:border-box; }
-    body { margin:0; background:var(--bg); color:#1e293b; font-family:"Segoe UI",Tahoma,sans-serif; line-height:1.65; }
-    .hero { background:linear-gradient(135deg,var(--navy),#30415d); color:#fff; padding:42px 20px; }
-    .wrap { max-width:1180px; margin:auto; padding:0 20px; }
-    h1 { margin:0 0 8px; font-size:clamp(26px,4vw,42px); }
-    h2 { color:var(--navy); margin-top:38px; border-bottom:2px solid var(--line); padding-bottom:8px; }
-    h3 { margin:0; color:var(--navy); }
-    .subtitle { margin:0; color:#dbeafe; }
-    .summary { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:-25px; position:relative; }
-    .metric, .card { background:var(--card); border:1px solid var(--line); border-radius:14px; box-shadow:0 4px 14px #0f172a0b; }
-    .metric { padding:18px; }
-    .metric strong { display:block; color:var(--navy); font-size:28px; }
-    .metric span { color:var(--muted); font-size:14px; }
-    .ok { color:var(--green)!important; }
-    .section { margin:30px 0; }
-    .tools { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
-    .tag { background:#eff6ff; color:#1d4ed8; border-radius:999px; padding:5px 12px; font-size:13px; }
-    .table-wrap { overflow-x:auto; border:1px solid var(--line); border-radius:12px; }
-    table { width:100%; border-collapse:collapse; min-width:820px; background:#fff; }
-    th, td { padding:13px 14px; text-align:left; vertical-align:top; border-bottom:1px solid var(--line); }
-    th { background:#f1f5f9; color:var(--navy); font-size:14px; }
-    tr:last-child td { border-bottom:0; }
-    .status { display:inline-block; color:var(--green); background:var(--green-bg); border-radius:999px; padding:2px 10px; font-size:13px; font-weight:600; white-space:nowrap; }
-    .status.fail { color:#b91c1c; background:#fee2e2; }
-    code { background:#f1f5f9; padding:2px 6px; border-radius:5px; color:#334155; }
-    .note { border-left:4px solid var(--blue); background:#eff6ff; padding:14px 16px; border-radius:8px; }
-    footer { color:var(--muted); font-size:13px; padding:30px 0 50px; }
-    @media (max-width:760px) { .summary { grid-template-columns:repeat(2,1fr); } .metric strong { font-size:23px; } }
+    :root{--navy:#17233c;--blue:#2563eb;--green:#15803d;--red:#b91c1c;--line:#dbe3ee;--bg:#f8fafc}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:#1e293b;font-family:"Segoe UI",Tahoma,sans-serif;line-height:1.55}.hero{background:linear-gradient(135deg,var(--navy),#30415d);color:#fff;padding:38px 20px}.wrap{max-width:1500px;margin:auto;padding:0 20px}h1{margin:0 0 8px;font-size:clamp(25px,4vw,40px)}h2{color:var(--navy);margin:34px 0 12px}.subtitle{margin:0;color:#dbeafe}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:-22px;position:relative}.metric,.card{background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 4px 14px #0f172a0b}.metric{padding:16px}.metric strong{display:block;color:var(--navy);font-size:27px}.metric span{color:#64748b;font-size:14px}.ok{color:var(--green)!important}.fail{color:var(--red)!important}.card{padding:18px}.note{border-left:4px solid var(--blue);background:#eff6ff;padding:12px 15px;border-radius:7px}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px;background:#fff}table{width:100%;min-width:1850px;border-collapse:collapse}th,td{padding:11px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}th{position:sticky;top:0;background:#eaf0f7;color:var(--navy);font-size:14px;z-index:1}td:first-child,td:nth-child(2),td:nth-child(3),td:last-child{white-space:nowrap}tr:last-child td{border-bottom:0}.status{display:inline-block;padding:2px 9px;border-radius:999px;background:#dcfce7;color:var(--green);font-weight:600}.status.fail{background:#fee2e2}code{background:#eef2f7;padding:2px 5px;border-radius:4px}footer{color:#64748b;font-size:13px;padding:28px 0 45px}@media(max-width:760px){.summary{grid-template-columns:repeat(2,1fr)}.wrap{padding:0 12px}}
   </style>
 </head>
 <body>
-  <header class="hero">
-    <div class="wrap">
-      <h1>บทที่ 7 การทดสอบระบบ</h1>
-      <p class="subtitle">รายงานผลการทดสอบระบบ KMUTNB Shop</p>
-    </div>
-  </header>
-
+  <header class="hero"><div class="wrap"><h1>บทที่ 7 การทดสอบระบบ</h1><p class="subtitle">รายงานผลการทดสอบระบบ KMUTNB Shop</p></div></header>
   <main class="wrap">
-    <div class="summary" aria-label="สรุปผลการทดสอบ">
-      <div class="metric"><strong>48</strong><span>กรณีทดสอบทั้งหมด</span></div>
-      <div class="metric"><strong class="ok">46</strong><span>ผ่าน (Passed)</span></div>
-      <div class="metric"><strong class="fail">2</strong><span>ไม่ผ่าน (Failed)</span></div>
-      <div class="metric"><strong>95.83%</strong><span>อัตราการผ่าน</span></div>
-    </div>
-
-    <section class="section">
-      <h2>7.1 วัตถุประสงค์และขอบเขตการทดสอบ</h2>
-      <p>ทดสอบการทำงานสำคัญของระบบร้านค้า ได้แก่ การจัดการสินค้า หมวดหมู่ จุดจำหน่าย บัญชีผู้ใช้ การเข้าสู่ระบบ สิทธิ์การใช้งาน และกระบวนการจองสินค้า ตั้งแต่การสร้าง แสดง แก้ไข ลบ ตรวจสอบข้อมูล ไปจนถึงการจัดการข้อผิดพลาดและสต็อกคงเหลือ</p>
+    <section class="summary" aria-label="สรุปผลการทดสอบ">
+      <div class="metric"><strong>54</strong><span>Test Cases ทั้งหมด</span></div>
+      <div class="metric"><strong class="ok">52</strong><span>ผ่าน (Passed)</span></div>
+      <div class="metric"><strong class="fail">2</strong><span>ไม่ผ่าน (Failed/Error)</span></div>
+      <div class="metric"><strong>96.30%</strong><span>อัตราการผ่าน</span></div>
     </section>
 
-    <section class="section">
-      <h2>7.2 สภาพแวดล้อมและเครื่องมือที่ใช้ทดสอบ</h2>
-      <div class="card" style="padding:18px">
-        <div class="tools"><span class="tag">Django 6.1.1</span><span class="tag">Python 3.13.12</span><span class="tag">PostgreSQL</span><span class="tag">Django TestCase</span><span class="tag">Django Test Client</span></div>
-        <p>คำสั่งที่ใช้: <code>python manage.py test --keepdb</code></p>
-        <p class="note">ผลการตรวจสอบระบบเบื้องต้นด้วย <code>manage.py check</code> ไม่พบปัญหา ส่วน warning เรื่องโฟลเดอร์ <code>staticfiles</code> ไม่มี ไม่กระทบผลการทดสอบระบบ</p>
-      </div>
+    <section><h2>7.1 ขอบเขตและวิธีทดสอบ</h2><div class="card">
+      <p>ทดสอบระบบแบบ System Testing ครอบคลุม CRUD, Authentication, Authorization, Validation, Error Handling, Search and Filter และ Security รวมถึง workflow การจองและการจัดการสต็อก</p>
+      <p><strong>เครื่องมือ:</strong> Django TestCase, Django Test Client, PostgreSQL, Python 3.13.12</p>
+      <p><strong>คำสั่งที่ใช้:</strong> <code>python manage.py test accounts.test_cases shop.test_cases reservations.test_cases --keepdb</code></p>
+      <p class="note">ผลการรันจริงหลังปรับ behavior: <code>Ran 54 tests in 171.954s</code> — <strong>FAILED (failures=1, errors=1)</strong> และ Dashboard ไม่ประมวลผล expiry แล้ว</p>
+    </div></section>
+
+    <section><h2>7.2 Coverage ครบ 8 ด้าน</h2><div class="card"><ul>
+      <li><strong>CRUD:</strong> create, read, update และ delete สินค้า หมวดหมู่ จุดจำหน่าย สต็อก บัญชี และ reservation</li>
+      <li><strong>Authentication:</strong> login สำเร็จ/ผิดพลาด และ logout</li>
+      <li><strong>Authorization:</strong> anonymous, staff และ admin รวมถึงการจำกัด stock ตาม location</li>
+      <li><strong>Validation:</strong> ราคา category รหัสนักศึกษา quantity และ stock ติดลบ/ซ้ำ</li>
+      <li><strong>Error Handling:</strong> location ผิด, reservation หมดอายุ และฐานข้อมูลปฏิเสธค่าติดลบ</li>
+      <li><strong>Search and Filter:</strong> สินค้า staff stock reservation category และ location</li>
+      <li><strong>Security:</strong> CSRF, ปลอม ID ลบข้อมูล และแก้ stock ข้าม location</li>
+      <li><strong>Performance:</strong> query budget ของ reservation list ไม่เกิน 10 queries และ product detail ไม่เกิน 12 queries</li>
+    </ul><p class="note">Trigger คืน stock ที่ตรวจแล้ว: สร้าง reservation, status lookup, reservation list, dashboard และ product detail — ทั้ง 5 จุดผ่าน test เฉพาะทาง</p></div></section>
+
+    <section><h2>7.3 เวลาโหลดหน้าเว็บจริง</h2><div class="card">
+      <p>วัดด้วย Browser Performance API บน Django development server ที่ <code>127.0.0.1:8000</code> จำนวน 3 รอบต่อหน้า โดยรายงานค่าเฉลี่ยของ <code>DOMContentLoaded</code>, <code>load event</code>, เวลา response และขนาดข้อมูลที่โอนถ่าย</p>
+      <div class="table-wrap"><table style="min-width:760px"><thead><tr><th>หน้าเว็บ</th><th>DOMContentLoaded เฉลี่ย</th><th>Load เฉลี่ย</th><th>Response เฉลี่ย</th><th>Transfer</th><th>ผล</th></tr></thead><tbody>
+        <tr><td>/</td><td>1,467 ms</td><td>1,628 ms</td><td>1,194 ms</td><td>68.4 KB</td><td><span class="status">ผ่าน</span></td></tr>
+        <tr><td>/products/</td><td>3,411 ms</td><td>3,490 ms</td><td>2,907 ms</td><td>147.5 KB</td><td><span class="status fail">ช้า</span></td></tr>
+        <tr><td>/products/49/</td><td>1,519 ms</td><td>1,660 ms</td><td>1,242 ms</td><td>43.1 KB</td><td><span class="status">ผ่าน</span></td></tr>
+        <tr><td>/reservation-status/</td><td>842 ms</td><td>926 ms</td><td>580 ms</td><td>21.3 KB</td><td><span class="status">ผ่าน</span></td></tr>
+        <tr><td>/manage/</td><td>3,444 ms</td><td>3,450 ms</td><td>2,924 ms</td><td>55.4 KB</td><td><span class="status fail">ช้า</span></td></tr>
+        <tr><td>/manage/reservations/</td><td>1,358 ms</td><td>1,360 ms</td><td>979 ms</td><td>89.2 KB</td><td><span class="status">ผ่าน</span></td></tr>
+      </tbody></table></div>
+      <p class="note"><strong>ข้อสังเกต:</strong> หน้า product list และ dashboard ใช้เวลาประมาณ 3.5 วินาที จึงเป็นหน้าที่ควรปรับปรุงก่อน ส่วนผลนี้เป็น local/dev measurement ไม่มี network throttling และหน้าเว็บมีการโหลด Tailwind CDN จึงไม่ใช่ production benchmark</p>
+    </div></section>
+
+    <section><h2>7.4 รายการ Test Case</h2>
+      <p class="note">คอลัมน์ “ลำดับ” เรียงต่อเนื่องตั้งแต่ 1–54 ส่วน Test Case ID อ้างอิงจาก docstring ในไฟล์ทดสอบ ช่อง Actual Results บันทึกจากผลการรันจริง</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>ลำดับ</th><th>Test Case ID</th><th>หมวด</th><th>Test Scenario</th><th>Prerequisites</th><th>Test Data</th><th>Test Steps</th><th>Expected Results</th><th>Actual Results</th></tr></thead>
+        <tbody id="cases"></tbody>
+      </table></div>
     </section>
 
-    <section class="section">
-      <h2>7.3 การใช้ AI ช่วยสร้าง Test Cases</h2>
-      <p>ใช้ AI ช่วยวิเคราะห์ models, forms, views, URLs และ permission ของระบบ แล้วสร้างกรณีทดสอบตามเส้นทางการทำงานจริง โดยทุกกรณีมี docstring/comment ใน source code อธิบายวัตถุประสงค์และผลลัพธ์ที่คาดหวัง จากนั้นรันกับฐานข้อมูลทดสอบจริงของ Django เพื่อยืนยันผล</p>
-    </section>
-
-    <section class="section">
-      <h2>7.4 หลักเกณฑ์การออกแบบกรณีทดสอบ</h2>
-      <ul>
-        <li>ครอบคลุมข้อมูลถูกต้อง ข้อมูลว่าง ข้อมูลผิดรูปแบบ และค่าที่อยู่นอกขอบเขต</li>
-        <li>ตรวจสอบทั้งผลลัพธ์ที่แสดง สถานะ HTTP การ redirect ฐานข้อมูล และสต็อก</li>
-        <li>แยกทดสอบ Authentication และ Authorization ตามบทบาท Admin, Staff และผู้ใช้ที่ยังไม่เข้าสู่ระบบ</li>
-        <li>ใช้ข้อมูลทดสอบแยกจากข้อมูลจริง และให้แต่ละเคสทำงานซ้ำได้</li>
-      </ul>
-    </section>
-
-    <section class="section">
-      <h2>7.5 รายการกรณีทดสอบ (Test Cases)</h2>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>ID</th><th>หมวด</th><th>จุดที่ทดสอบ</th><th>คอมเมนต์/สิ่งที่ตรวจสอบ</th><th>ผล</th></tr></thead>
-          <tbody>
-            <tr><td>TC-CREATE-001</td><td>Shop</td><td>สร้างสินค้า</td><td>ตรวจว่าข้อมูลสินค้าที่ถูกต้องสร้าง record ในฐานข้อมูลได้</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-UPDATE-001</td><td>Shop</td><td>แก้ไขสินค้า</td><td>ตรวจว่าราคาเปลี่ยนและไม่สร้างสินค้า duplicate</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-VALIDATE-001</td><td>Validation</td><td>ราคาติดลบ</td><td>ตรวจว่าฟอร์มปฏิเสธราคาที่น้อยกว่า 0</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-VALIDATE-002</td><td>Validation</td><td>หมวดหมู่ไม่ถูกต้อง</td><td>ตรวจว่า category ID ที่ไม่มีอยู่จริงถูกปฏิเสธ</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-VALIDATE-003</td><td>Validation</td><td>ช่องว่างชื่อสินค้า</td><td>ตรวจว่าช่องว่างหัวท้ายของชื่อสินค้าถูกจัดการตาม validation มาตรฐาน</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-CREATE-002</td><td>Shop</td><td>สร้าง Location/Category</td><td>ตรวจว่าฟอร์มข้อมูลจุดจำหน่ายและหมวดหมู่ที่ถูกต้องใช้งานได้</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-ERROR-001</td><td>Business Rule</td><td>สต็อกซ้ำคู่เดิม</td><td>ตรวจว่าหนึ่งสินค้าต่อหนึ่งจุดจำหน่ายมีแถวสต็อกได้เพียงรายการเดียว</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-READ-001</td><td>Read</td><td>ค้นหาสินค้า</td><td>ตรวจหน้ารายการสินค้าสาธารณะและการค้นหาด้วยชื่อ</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-FILTER-001</td><td>Filter</td><td>กรองสินค้า</td><td>ตรวจกรองสินค้าสาธารณะด้วยหมวดหมู่และจุดรับสินค้า</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-FILTER-002</td><td>Search/Filter</td><td>สินค้าหลังร้าน</td><td>ตรวจค้นหาชื่อสินค้าและกรองตามหมวดหมู่พร้อมกัน</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-FILTER-003</td><td>Search</td><td>จุดจำหน่าย</td><td>ตรวจค้นหาจุดจำหน่ายจากชื่อ</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-FILTER-004</td><td>Search</td><td>หมวดหมู่</td><td>ตรวจค้นหาหมวดหมู่จากชื่อ</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-FILTER-005</td><td>Search</td><td>Staff</td><td>ตรวจค้นหา Staff จาก username, ชื่อ, เบอร์โทร และจุดจำหน่าย</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-FILTER-006</td><td>Filter</td><td>รายการจอง</td><td>ตรวจกรองรายการจองตามสถานะ</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-CRUD-001</td><td>CRUD</td><td>จัดการ Category</td><td>ตรวจสร้าง แก้ไข และลบหมวดหมู่โดย Admin</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-CRUD-002</td><td>CRUD</td><td>จัดการ Location</td><td>ตรวจสร้าง แก้ไข และลบจุดจำหน่ายโดย Admin</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-CRUD-003</td><td>CRUD</td><td>จัดการ Product</td><td>ตรวจสร้าง แก้ไข และลบสินค้าโดย Admin</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-AUTH-001</td><td>Authentication</td><td>Login สำเร็จ</td><td>ตรวจว่าข้อมูลถูกต้องเข้าสู่ระบบและไป Dashboard</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-AUTH-002</td><td>Authentication</td><td>Login ไม่สำเร็จ</td><td>ตรวจว่า password ผิดไม่สร้าง session และแสดง error</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-AUTH-003</td><td>Authentication</td><td>Logout</td><td>ตรวจ session ถูกล้างและ redirect ไปหน้า Login</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-AUTHZ-001</td><td>Authorization</td><td>Anonymous</td><td>ตรวจผู้ใช้ที่ยังไม่ login เข้า protected page ไม่ได้</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-AUTHZ-002</td><td>Authorization</td><td>Staff เข้า Admin page</td><td>ตรวจ Staff ถูก redirect เมื่อเข้าหน้าจัดการบัญชี</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-AUTHZ-003</td><td>Authorization</td><td>Staff เข้า Shared page</td><td>ตรวจ Staff เข้า Dashboard ที่ได้รับอนุญาตได้</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-SECURITY-001</td><td>Security</td><td>Anonymous ปลอม ID ลบสินค้า</td><td>ตรวจผู้ที่ยังไม่ login ไม่สามารถส่ง POST เพื่อลบสินค้าได้</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-SECURITY-002</td><td>Security</td><td>Staff ปลอม ID ลบสินค้า</td><td>ตรวจ Staff ไม่สามารถใช้คำสั่งลบของ Admin และข้อมูลยังอยู่</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-SECURITY-003</td><td>Security</td><td>POST ไม่มี CSRF</td><td>ตรวจคำขอลบที่ไม่มี CSRF Token ถูกปฏิเสธและข้อมูลไม่เปลี่ยนแปลง</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-STOCK-001</td><td>Stock</td><td>CRUD สต็อก</td><td>ตรวจ Admin เพิ่ม แก้ไข และลบข้อมูลสต็อกสินค้าได้</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-STOCK-002</td><td>Validation</td><td>สต็อกติดลบ</td><td>ตรวจฟอร์มปฏิเสธจำนวนสต็อกที่น้อยกว่า 0</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-STOCK-003</td><td>Search/Filter</td><td>รายการสต็อก</td><td>ตรวจค้นหาสินค้าและกรองตามหมวดหมู่กับจุดจำหน่าย</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-STOCK-004</td><td>Authorization</td><td>ขอบเขตสต็อกของ Staff</td><td>ตรวจ Staff เห็นเฉพาะสต็อกของจุดจำหน่ายที่ตนเองรับผิดชอบ</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-STOCK-005</td><td>Security</td><td>Staff เลือกจุดจำหน่ายอื่น</td><td>ตรวจ Staff ไม่สามารถปลอมจุดจำหน่ายอื่นตอนเพิ่มสต็อก</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-STOCK-006</td><td>Validation</td><td>เพิ่มสินค้า/สาขาซ้ำ</td><td>ตรวจไม่ให้สร้างคู่สินค้าและจุดจำหน่ายซ้ำ</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-STOCK-007</td><td>Validation</td><td>อัปเดตสต็อกติดลบ</td><td>ตรวจคำสั่งอัปเดตจำนวน -1 ไม่ทำให้ Server Error และไม่เปลี่ยนข้อมูล</td><td><span class="status fail">ไม่ผ่าน</span></td></tr>
-            <tr><td>TC-STOCK-008</td><td>Authorization</td><td>Staff อัปเดตสาขาตัวเอง</td><td>ตรวจ Staff แก้ไข Stock ของสาขาที่รับผิดชอบได้</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-STOCK-009</td><td>Security</td><td>Staff อัปเดตสาขาอื่น</td><td>ตรวจ Staff ไม่สามารถแก้ไข Stock ของสาขาอื่นได้</td><td><span class="status fail">ไม่ผ่าน</span></td></tr>
-            <tr><td>TC-STOCK-010</td><td>Security</td><td>Staff เพิ่มสาขาอื่น</td><td>ตรวจ Staff ไม่สามารถปลอมจุดจำหน่ายอื่นตอนเพิ่มสต็อก</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-CREATE-003</td><td>Accounts</td><td>สร้าง Staff</td><td>ตรวจ Admin สร้าง Staff พร้อมจุดจำหน่ายได้</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-CREATE-004</td><td>Reservation</td><td>สร้างการจอง</td><td>ตรวจสร้าง reservation สถานะ pending และตัดสต็อก</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-BUSINESS-001</td><td>Business Rule</td><td>อายุการจอง</td><td>ตรวจว่าการจองหมดอายุภายใน 4 ชั่วโมง</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-VALIDATE-006</td><td>Business Rule</td><td>จำกัดจำนวนต่อรายการ</td><td>ตรวจว่าจองเกิน 5 ชิ้นไม่ได้ แม้สต็อกจะมีมากกว่า 5 ชิ้น</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-BUSINESS-002</td><td>Business Rule</td><td>จำนวนกับสต็อก</td><td>ตรวจว่าจำนวนจองไม่เกินสต็อกที่จุดรับสินค้า</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-BUSINESS-003</td><td>Business Rule</td><td>สินค้าที่จองไม่ได้</td><td>ตรวจสินค้าที่ปิดการจองไม่สามารถสร้างรายการจอง</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-BUSINESS-004</td><td>Business Rule</td><td>สินค้าหมด</td><td>ตรวจสินค้าที่ไม่มีสต็อกไม่สามารถสร้างรายการจอง</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-VALIDATE-004</td><td>Validation</td><td>รหัสนักศึกษา</td><td>ตรวจรหัสนักศึกษาต้องเป็นตัวเลข 13 หลัก</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-VALIDATE-005</td><td>Validation</td><td>จำนวนสินค้า</td><td>ตรวจจำนวน 0, ค่าติดลบ และตัวอักษรถูกปฏิเสธ</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-ERROR-002</td><td>Error</td><td>จุดรับสินค้าไม่ถูกต้อง</td><td>ตรวจไม่สร้างการจองและไม่เปลี่ยนสต็อกเมื่อเลือก location ผิด</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-READ-002</td><td>Read</td><td>ตรวจสอบสถานะจอง</td><td>ตรวจแสดงรายการที่มีอยู่และ error เมื่อไม่พบรหัส</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-UPDATE-002</td><td>Update</td><td>ยกเลิกการจอง</td><td>ตรวจเปลี่ยนสถานะเป็น cancelled และคืนสต็อก</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>TC-ERROR-003</td><td>Business Rule</td><td>Reservation หมดอายุ</td><td>ตรวจเปลี่ยนเป็น expired และคืนสต็อกเพียงครั้งเดียว</td><td><span class="status">ผ่าน</span></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="section">
-      <h2>7.6–7.13 สรุปผลตามประเภทการทดสอบ</h2>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>หัวข้อ</th><th>ขอบเขต</th><th>ผล</th></tr></thead>
-          <tbody>
-            <tr><td>7.6 Create</td><td>สร้าง Product, Location, Category, Staff และ Reservation</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>7.7 Read</td><td>แสดงรายการสินค้าและตรวจสอบสถานะการจอง</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>7.8 Update</td><td>แก้ไขสินค้าและยกเลิกการจองพร้อมคืนสต็อก</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>7.9 Delete</td><td>ลบ Product, Location และ Category</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>7.10 Validation</td><td>ราคา, category, ชื่อ, รหัสนักศึกษา, จำนวน และ location</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>7.11 Authentication</td><td>Login สำเร็จ/ไม่สำเร็จ และ Logout</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>7.12 Authorization</td><td>สิทธิ์ Anonymous, Staff และ Admin</td><td><span class="status">ผ่าน</span></td></tr>
-            <tr><td>7.13 Error Cases</td><td>ข้อมูลซ้ำ, location ผิด, หมดอายุ และการคืนสต็อก</td><td><span class="status">ผ่าน</span></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="section">
-      <h2>7.14 ผลการทดสอบและหลักฐานประกอบ</h2>
-      <p>หลักฐานคือผลลัพธ์จาก Django test runner: พบ 48 test cases โดยมี 2 กรณีที่ยังไม่ผ่านตามข้อจำกัดของโค้ดปัจจุบัน</p>
-      <pre class="card" style="padding:16px; overflow:auto">Found 48 test(s).
-System check identified no issues (0 silenced).
-Ran 48 tests
-FAILED (1 failure, 1 error)</pre>
-    </section>
-
-    <section class="section">
-      <h2>7.15 สรุปจำนวนกรณีทดสอบที่ผ่านและไม่ผ่าน</h2>
-      <div class="card" style="padding:18px">
-        <p><strong class="ok">ผ่าน 46 กรณี</strong> จากทั้งหมด 48 กรณี</p>
-        <p><strong class="fail">ไม่ผ่าน 2 กรณี</strong></p>
-        <p><strong>คิดเป็น 95.83%</strong></p>
-      </div>
-    </section>
-
-    <footer>จัดทำจากชุดทดสอบใน <code>shop/test_cases.py</code>, <code>accounts/test_cases.py</code> และ <code>reservations/test_cases.py</code></footer>
+    <section><h2>7.5 สรุปผลรวม</h2><div class="card">
+      <p><strong>จำนวนเคสทั้งหมด:</strong> 54 เคส</p><p><strong class="ok">ผ่าน:</strong> 52 เคส</p><p><strong class="fail">ไม่ผ่าน:</strong> 2 เคส</p><p><strong>อัตราการผ่าน:</strong> 52/54 = 96.30%</p>
+      <p><strong class="fail">รายการที่ไม่ผ่าน:</strong></p>
+      <ol><li><code>TC-STOCK-007</code> — ส่งจำนวนสต็อก -1 แล้วเกิด <code>django.db.utils.IntegrityError</code> จากฐานข้อมูล แทนที่จะ redirect และคงค่าเดิม</li><li><code>TC-STOCK-009</code> — Staff แก้ไขสต็อกของ location อื่นได้ ทำให้ค่าจาก 3 เปลี่ยนเป็น 9</li></ol>
+    </div></section>
+    <footer>แหล่งข้อมูล: <code>accounts/test_cases.py</code>, <code>shop/test_cases.py</code> และ <code>reservations/test_cases.py</code></footer>
   </main>
+  <script>
+    const P="ผ่าน", F="ไม่ผ่าน";
+    const cases=[
+      ["TC-AUTH-001","Authentication","Login ด้วยข้อมูลถูกต้อง","มีผู้ใช้ admin และระบบพร้อมใช้งาน","username=admin; password=Strong-pass-123","1) POST ไป login 2) ตรวจ redirect 3) ตรวจสถานะผู้ใช้","เข้าสู่ระบบสำเร็จ redirect ไป dashboard และ authenticated","redirect ไป dashboard; authenticated=true",P,"accounts/test_cases.py"],
+      ["TC-AUTH-002","Authentication","Login ด้วยรหัสผ่านผิด","มีผู้ใช้ admin","username=admin; password=wrong","1) POST ไป login 2) ตรวจข้อความผิดพลาด 3) ตรวจ session","ไม่สร้าง session และแสดงข้อความ Username หรือ Password ไม่ถูกต้อง","ตรงตามที่คาดหวัง",P,"accounts/test_cases.py"],
+      ["TC-AUTH-003","Authentication","Logout","ผู้ใช้ admin login แล้ว","admin session","1) GET logout 2) ตรวจ redirect 3) ตรวจ authentication","ล้าง session และ redirect ไป login","ตรงตามที่คาดหวัง",P,"accounts/test_cases.py"],
+      ["TC-AUTHZ-001","Authorization","Anonymous เข้า staff management","ยังไม่ login","GET staffs","1) เรียก protected page 2) ตรวจ redirect","ถูก redirect ไป login","ตรงตามที่คาดหวัง",P,"accounts/test_cases.py"],
+      ["TC-AUTHZ-002","Authorization","Staff เข้า admin-only page","มีผู้ใช้ role=staff","staff session; GET staffs","1) login แบบ staff 2) เรียก staffs","ถูก redirect ไป dashboard","ตรงตามที่คาดหวัง",P,"accounts/test_cases.py"],
+      ["TC-AUTHZ-003","Authorization","Staff เข้า shared dashboard","มีผู้ใช้ role=staff","staff session; GET dashboard","1) login แบบ staff 2) เรียก dashboard","ได้รับอนุญาตและ HTTP 200","ตรงตามที่คาดหวัง",P,"accounts/test_cases.py"],
+      ["TC-CREATE-003","CRUD / Authorization","Admin สร้าง Staff พร้อม location","มี admin และ location","newstaff; password; role=staff; location","1) login admin 2) POST สร้าง staff 3) ค้นหา record","redirect กลับ staffs และมีบัญชีใหม่","ตรงตามที่คาดหวัง",P,"accounts/test_cases.py"],
+      ["TC-FILTER-005","Search and Filter","ค้นหา staff หลายฟิลด์","มี admin, staff และ location","username, ชื่อ, เบอร์โทร, ชื่อ location","1) login admin 2) ค้นหาทีละ query 4 แบบ","พบ staff เป้าหมายทุก query","ตรงตามที่คาดหวัง",P,"accounts/test_cases.py"],
+      ["TC-CREATE-001","CRUD","สร้าง Product","มี category และ form พร้อมใช้","name=เมาส์ไร้สาย; price=299; category","1) สร้าง form 2) validate 3) save","สร้าง product 1 record ด้วยข้อมูลถูกต้อง","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
+      ["TC-UPDATE-001","CRUD","แก้ไข Product","มี product เดิม","price จาก 299 เป็น 349","1) bind form กับ instance 2) validate 3) save","แก้ไข record เดิม ไม่สร้าง duplicate","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
+      ["TC-VALIDATE-001","Validation","ปฏิเสธราคาติดลบ","มี category","price=-1","1) submit form 2) ตรวจ errors","form ไม่ valid และแจ้ง error ที่ price","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
+      ["TC-VALIDATE-002","Validation","ปฏิเสธ category ที่ไม่มีอยู่จริง","มี form พร้อมใช้","category=999999","1) submit form 2) ตรวจ errors","form ไม่ valid และแจ้ง error ที่ category","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
+      ["TC-VALIDATE-003","Validation","ตัด whitespace ชื่อสินค้า","มี category","name='  เมาส์ไร้สาย  '","1) submit form 2) อ่าน cleaned_data","ชื่อถูกตัด whitespace หัวและท้าย","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
+      ["TC-CREATE-002","CRUD","สร้าง Location และ Category ด้วยข้อมูลถูกต้อง","ระบบมี forms พร้อมใช้","ชื่อจุดรับ, อาคาร, ชื่อหมวดหมู่","1) สร้าง 2 forms 2) validate","ทั้งสอง form valid","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
+      ["TC-ERROR-001","Error Handling","ป้องกัน stock คู่ product/location ซ้ำ","มี product และ location พร้อม stock เดิม","product เดิม; location เดิม; stock=3","1) สร้าง stock ซ้ำ 2) validate constraints","เกิด ValidationError","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
+      ["TC-READ-001","Read / Search","แสดงและค้นหาสินค้าสาธารณะ","มี admin และสินค้า 2 รายการ","q=คีย์บอร์ด","1) GET public products 2) ตรวจผลลัพธ์","พบเฉพาะสินค้าที่ตรงคำค้น","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
+      ["TC-FILTER-001","Search and Filter","กรองสินค้าด้วย category/location","มีสินค้าและ stock ที่ location","category และ location id","1) GET พร้อม filter 2) ตรวจ context","พบเฉพาะสินค้าที่ตรงทั้งสอง filter","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
+      ["TC-FILTER-002","Search and Filter","ค้นหาและกรองสินค้าในหลังร้าน","admin login แล้ว","q=เกมมิ่ง; category id","1) GET products 2) ตรวจ page_obj","พบ product ที่ตรงชื่อและหมวดหมู่","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
+      ["TC-FILTER-003","Search and Filter","ค้นหา Location","admin login แล้ว","q=วิศวกรรม","1) GET locations 2) ตรวจ page_obj","พบเฉพาะ location ที่ตรงคำค้น","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
+      ["TC-FILTER-004","Search and Filter","ค้นหา Category","admin login แล้ว","q=เครื่องดื่ม","1) GET categories 2) ตรวจ page_obj","พบเฉพาะ category ที่ตรงคำค้น","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
+      ["TC-CRUD-001","CRUD","สร้าง แก้ไข ลบ Category","admin login แล้ว","name=ใหม่/แก้ไข","1) POST create 2) POST update 3) POST delete","ครบทั้ง create/update/delete","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
+      ["TC-CRUD-002","CRUD","สร้าง แก้ไข ลบ Location","admin login แล้ว","ชื่อและอาคาร","1) POST create 2) POST update 3) POST delete","ครบทั้ง create/update/delete","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
+      ["TC-CRUD-003","CRUD","สร้าง แก้ไข ลบ Product","admin login แล้ว","ชื่อสินค้า; price; category","1) POST create 2) POST update 3) POST delete","ครบทั้ง create/update/delete","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
+      ["TC-SECURITY-001","Security","Anonymous ปลอม ID เพื่อลบ Product","ยังไม่ login; มี product","POST delete=product.pk","1) POST delete 2) ตรวจ redirect 3) ตรวจ DB","ถูก redirect login และ product ยังอยู่","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
+      ["TC-SECURITY-002","Security","Staff ปลอม ID เพื่อลบ Product","มี staff และ product","staff session; POST delete","1) login staff 2) POST delete 3) ตรวจ DB","ถูก redirect dashboard และ product ยังอยู่","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
+      ["TC-SECURITY-003","Security","POST ลบโดยไม่มี CSRF","มี admin และเปิด enforce_csrf_checks","admin session; POST delete ไม่มี token","1) POST โดยไม่ส่ง CSRF 2) ตรวจ response/DB","HTTP 403 และข้อมูลไม่เปลี่ยน","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
+      ["TC-STOCK-001","CRUD","Admin จัดการ stock","มี admin, product, location","create stock=8; update=12","1) create 2) update 3) delete","สร้าง แก้ไข ลบ stock ได้","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
+      ["TC-STOCK-002","Validation","ฟอร์ม stock ติดลบ","มี product/location","stock=-1","1) submit form 2) ตรวจ errors","form ไม่ valid และแจ้ง error ที่ stock","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
+      ["TC-STOCK-006","Validation","ป้องกัน stock product/location ซ้ำ","มี stock คู่เดิมแล้ว","product เดิม; location เดิม; stock=7","1) submit form ซ้ำ 2) ตรวจ non-field errors","form ไม่ valid","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
+      ["TC-STOCK-007","Validation / Error Handling","Quick update stock เป็นค่าติดลบ","มี admin และ stock=5","POST update; stock=-1","1) POST update 2) ตรวจ redirect และค่าเดิม","ควร reject อย่างปลอดภัยโดยไม่เกิด server error และ stock ต้องเป็น 5","เกิด django.db.utils.IntegrityError จาก check constraint; test error",F,"shop/test_cases.py"],
+      ["TC-STOCK-008","Authorization","Staff update stock ของ location ตนเอง","มี staff ผูกกับ location และ stock=3","staff session; update stock=6","1) login staff 2) POST update 3) refresh DB","redirect และ stock เปลี่ยนเป็น 6","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
+      ["TC-STOCK-009","Security / Authorization","Staff update stock ของ location อื่น","มี staff ผูก location A และ stock location B=3","staff session; update stock=9 ของ B","1) login staff 2) POST update 3) ตรวจ DB","ต้องไม่อนุญาตและ stock ต้องคงเป็น 3","stock เปลี่ยนเป็น 9; test failure",F,"shop/test_cases.py"],
+      ["TC-STOCK-004","Search and Filter","Admin ค้นหา/กรอง stock","มี stock หลาย product/category/location","q, category id, location id","1) login admin 2) GET stocks ด้วย filters 3) ตรวจ page_obj","พบเฉพาะ stock ที่ตรง filters","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
+      ["TC-STOCK-005","Authorization","Staff เห็นเฉพาะ stock location ตนเอง","มี staff และ stock ต่าง location","staff session; GET stocks","1) login staff 2) GET stocks 3) ตรวจ page_obj","แสดงเฉพาะ stock ของ assigned location","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
+      ["TC-STOCK-010","Security","Staff เพิ่ม stock ให้ location อื่น","มี staff ผูก location A","POST save location B","1) login staff 2) POST location B 3) ตรวจ DB","ไม่สร้าง stock ที่ B และจำกัดเป็น location A","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
+      ["TC-CREATE-004","CRUD","สร้าง Reservation และตัด stock","มี product reservable และ stock=5","student id 13 หลัก; quantity=2","1) POST reservation 2) อ่าน reservation 3) refresh stock","สร้าง pending reservation และ stock เหลือ 3","ตรงตามที่คาดหวัง",P,"reservations/test_cases.py"],
+      ["TC-BUSINESS-001","Validation","กำหนดอายุ reservation 4 ชั่วโมง","มี product และ stock","quantity=1","1) จองสินค้า 2) เปรียบเทียบ expires_at กับเวลาปัจจุบัน","expires_at เท่ากับเวลาปัจจุบัน + 4 ชั่วโมง","ตรงตามที่คาดหวัง",P,"reservations/test_cases.py"],
+      ["TC-VALIDATE-006","Validation","จำกัดจองไม่เกิน 5 ชิ้น","มี stock อย่างน้อย 10","quantity=6","1) POST จอง 6 2) ตรวจข้อความ 3) ตรวจ DB","แสดง error และไม่สร้าง reservation","ตรงตามที่คาดหวัง",P,"reservations/test_cases.py"],
+      ["TC-BUSINESS-002","Validation","จำนวนจองเกิน stock","มี stock=2","quantity=3","1) POST จอง 3 2) ตรวจข้อความ/DB","แสดง stock ที่มีและไม่สร้าง reservation","ตรงตามที่คาดหวัง",P,"reservations/test_cases.py"],
+      ["TC-BUSINESS-003","Validation","สินค้าที่ปิดการจอง","product.reservable=False","quantity=2","1) POST จอง 2 2) ตรวจข้อความ/DB","แสดงว่าสินค้าไม่เปิดให้จองและไม่สร้างรายการ","ตรงตามที่คาดหวัง",P,"reservations/test_cases.py"],
+      ["TC-BUSINESS-004","Validation","จองสินค้าหมด","stock=0","quantity=2","1) POST จอง 2 2) ตรวจข้อความ/DB","แสดงสินค้าหมดและไม่สร้างรายการ","ตรงตามที่คาดหวัง",P,"reservations/test_cases.py"],
+      ["TC-VALIDATE-004","Validation","รหัสนักศึกษาไม่ครบ 13 หลัก","มี product และ stock","customer_id=123","1) POST จอง 2) ตรวจข้อความ/DB","ปฏิเสธรหัสและไม่สร้าง reservation","ตรงตามที่คาดหวัง",P,"reservations/test_cases.py"],
+      ["TC-VALIDATE-005","Validation","quantity เป็น 0, ติดลบ, ตัวอักษร","มี product และ stock","quantity=0,-1,abc","1) POST ทีละค่า 2) ตรวจ response/DB","ทุกค่าถูกปฏิเสธและไม่สร้างรายการ","ตรงตามที่คาดหวัง",P,"reservations/test_cases.py"],
+      ["TC-ERROR-002","Error Handling","เลือก location ที่ไม่ใช่ของ product","มี product/stock คนละ location","location=999999","1) POST จอง 2) ตรวจข้อความ 3) ตรวจ stock","แสดงไม่พบจุดรับและ stock ไม่เปลี่ยน","ตรงตามที่คาดหวัง",P,"reservations/test_cases.py"],
+      ["TC-READ-002","Read / Error Handling","ตรวจ status ด้วย code ถูก/ผิด","มี reservation code READ-001","code=READ-001 และ missing","1) POST status ด้วย code ถูก 2) POST ด้วย code ผิด","พบ record เมื่อ code ถูก และแสดง error เมื่อไม่พบ","ตรงตามที่คาดหวัง",P,"reservations/test_cases.py"],
+      ["TC-FILTER-006","Search and Filter","กรอง reservation ตาม status","มี reservation pending และ cancelled; admin login","status=cancelled","1) login admin 2) GET reservation list 3) ตรวจ page_obj","แสดงเฉพาะรายการ cancelled","ตรงตามที่คาดหวัง",P,"reservations/test_cases.py"],
+      ["TC-UPDATE-002","CRUD","ยกเลิก reservation และคืน stock","มี pending reservation quantity=2 และ stock=3","POST status=cancelled","1) login admin 2) POST เปลี่ยนสถานะ 3) refresh DB","status=cancelled และ stock กลับเป็น 5","ตรงตามที่คาดหวัง",P,"reservations/test_cases.py"],
+      ["TC-ERROR-003","Error Handling","หมดอายุ reservation และคืน stockครั้งเดียว","มี reservation หมดอายุและ stock=3","expires_at เมื่อ 1 นาทีก่อน","1) expire ครั้งที่ 1 2) expire ซ้ำ 3) ตรวจ status/stock","เปลี่ยนเป็น expired คืน stock เป็น 5 เพียงครั้งเดียว","ตรงตามที่คาดหวัง",P,"reservations/test_cases.py"],
+      ["TC-TRIGGER-001","Trigger / Stock","สร้าง reservation แล้ว trigger expiry เดิมก่อนใช้ stock","มี pending reservation หมดอายุและ stock=3","reservation เดิม quantity=2; จองใหม่ quantity=1","1) สร้างรายการเดิมที่หมดอายุ 2) POST จองใหม่ 3) ตรวจสถานะ/stock","รายการเดิมเป็น expired, คืน stock ก่อน แล้วจองใหม่สำเร็จ stock เหลือ 4","ตรงตามที่คาดหวัง",P,"reservations/test_cases.py"],
+      ["TC-TRIGGER-002","Trigger / Stock","เปิดหน้า status แล้ว trigger expiry","มี reservation หมดอายุและ stock=3","reservation_code=TRIGGER-STATUS-001","1) POST ตรวจ status 2) ตรวจ reservation 3) ตรวจ stock","เปลี่ยนเป็น expired และ stock กลับเป็น 5","ตรงตามที่คาดหวัง",P,"reservations/test_cases.py"],
+      ["TC-TRIGGER-003","Trigger / Stock","เปิดหน้า reservation list แล้ว trigger expiry","มี admin, reservation หมดอายุ และ stock=3","admin session; GET reservation_list","1) login admin 2) GET list 3) ตรวจ reservation/stock","เปลี่ยนเป็น expired และ stock กลับเป็น 5","ตรงตามที่คาดหวัง",P,"reservations/test_cases.py"],
+      ["TC-TRIGGER-005","Trigger / Stock","เปิด product detail แล้ว trigger expiry","มีสินค้า, reservation หมดอายุ และ stock=3","GET product_detail/<id>","1) GET product detail 2) ตรวจ reservation/stock","เปลี่ยนเป็น expired และ stock ที่แสดงกลับเป็น 5","ตรงตามที่คาดหวัง",P,"shop/test_cases.py"],
+      ["TC-PERF-001","Performance","จำกัดจำนวน query ของ reservation list","มี admin และ reservation 5 รายการ","GET reservation_list","1) CaptureQueriesContext 2) GET list 3) ตรวจ query count","ใช้ไม่เกิน 10 queries","ใช้ 10 queries หรือน้อยกว่า",P,"reservations/test_cases.py"],
+      ["TC-PERF-002","Performance","จำกัดจำนวน query ของ product detail","มีสินค้าและ stock","GET product_detail/<id>","1) CaptureQueriesContext 2) GET detail 3) ตรวจ query count","ใช้ไม่เกิน 12 queries","ใช้ 12 queries หรือน้อยกว่า",P,"shop/test_cases.py"]
+    ];
+    const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    document.getElementById('cases').innerHTML=cases.map((c,i)=>`<tr><td>${i+1}</td><td><code>${esc(c[0])}</code><br><small>${esc(c[9])}</small></td><td>${esc(c[1])}</td><td>${esc(c[2])}</td><td>${esc(c[3])}</td><td>${esc(c[4])}</td><td>${esc(c[5])}</td><td>${esc(c[6])}</td><td><span class="status ${c[8]===F?'fail':''}">${esc(c[8])}</span><br>${esc(c[7])}</td></tr>`).join('');
+  </script>
 </body>
 </html>

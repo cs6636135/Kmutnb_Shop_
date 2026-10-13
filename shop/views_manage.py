@@ -9,7 +9,6 @@ from django.db import transaction, IntegrityError
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
 from django.utils import timezone
-from reservations.services import expire_overdue_reservations
 from datetime import timedelta
 from django.http import Http404
 
@@ -341,10 +340,6 @@ def dashboard(request):
     user = request.user
     is_admin = user.role == "admin"
     user_location = user.location
-
-    # อัปเดตสถานะรายการจองที่หมดอายุสำหรับ Admin
-    if is_admin:
-        expire_overdue_reservations()
 
     # เตรียม QuerySet ของสต็อกและรายการจอง
     stocks = ProductLocation.objects.all()

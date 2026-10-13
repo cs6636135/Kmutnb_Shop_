@@ -3,7 +3,9 @@
 from datetime import timedelta
 
 from django.contrib.auth import get_user_model
+from django.db import connection
 from django.test import TestCase
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 from django.utils import timezone
 
@@ -41,6 +43,96 @@ class ReservationWorkflowTests(TestCase):
         self.assertEqual(reservation.status, Reservation.Status.PENDING)
         self.stock.refresh_from_db()
         self.assertEqual(self.stock.stock, 3)
+
+    def test_create_reservation_expires_old_reservation_before_using_stock(self):
+        """TC-TRIGGER-001: reservation create triggers expiry and restores stock first."""
+        old_reservation = Reservation.objects.create(
+            reservation_code="TRIGGER-CREATE-001",
+            customer_id="1234567890123",
+            product=self.product,
+            location=self.location,
+            quantity=2,
+            expires_at=timezone.now() - timedelta(minutes=1),
+        )
+        self.stock.stock = 3
+        self.stock.save(update_fields=["stock"])
+
+        response = self.post_reservation(quantity="1")
+
+        self.assertEqual(response.status_code, 302)
+        old_reservation.refresh_from_db()
+        self.stock.refresh_from_db()
+        self.assertEqual(old_reservation.status, Reservation.Status.EXPIRED)
+        self.assertEqual(self.stock.stock, 4)
+
+    def test_status_page_triggers_expiry_and_restores_stock(self):
+        """TC-TRIGGER-002: status lookup triggers expiry before displaying the reservation."""
+        reservation = Reservation.objects.create(
+            reservation_code="TRIGGER-STATUS-001",
+            customer_id="1234567890123",
+            product=self.product,
+            location=self.location,
+            quantity=2,
+            expires_at=timezone.now() - timedelta(minutes=1),
+        )
+        self.stock.stock = 3
+        self.stock.save(update_fields=["stock"])
+
+        response = self.client.post(
+            reverse("reservation_status"),
+            {"reservation_code": reservation.reservation_code},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        reservation.refresh_from_db()
+        self.stock.refresh_from_db()
+        self.assertEqual(reservation.status, Reservation.Status.EXPIRED)
+        self.assertEqual(self.stock.stock, 5)
+
+    def test_reservation_list_triggers_expiry_and_restores_stock(self):
+        """TC-TRIGGER-003: opening the reservation list runs expiry processing."""
+        reservation = Reservation.objects.create(
+            reservation_code="TRIGGER-LIST-001",
+            customer_id="1234567890123",
+            product=self.product,
+            location=self.location,
+            quantity=2,
+            expires_at=timezone.now() - timedelta(minutes=1),
+        )
+        self.stock.stock = 3
+        self.stock.save(update_fields=["stock"])
+        self.client.force_login(self.admin)
+
+        response = self.client.get(reverse("reservation_list"))
+
+        self.assertEqual(response.status_code, 200)
+        reservation.refresh_from_db()
+        self.stock.refresh_from_db()
+        self.assertEqual(reservation.status, Reservation.Status.EXPIRED)
+        self.assertEqual(self.stock.stock, 5)
+
+    def test_reservation_list_stays_within_query_budget(self):
+        """TC-PERF-001: reservation list stays within the measured query budget."""
+        for index in range(5):
+            Reservation.objects.create(
+                reservation_code=f"PERF-{index:03d}",
+                customer_id="1234567890123",
+                product=self.product,
+                location=self.location,
+                quantity=1,
+                expires_at=timezone.now() + timedelta(hours=1),
+            )
+        self.client.force_login(self.admin)
+
+        with CaptureQueriesContext(connection) as queries:
+            response = self.client.get(reverse("reservation_list"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertLessEqual(
+            len(queries),
+            10,
+            f"reservation list used {len(queries)} queries; expected <= 10",
+        )
 
     def test_reservation_expiry_is_set_to_four_hours(self):
         """TC-BUSINESS-001: a successful reservation expires exactly four hours later."""
