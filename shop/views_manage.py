@@ -32,10 +32,10 @@ def products(request):
             pk = request.POST.get("save")
             product = get_object_or_404(Product, pk=pk) if pk else None
             form = ProductModelForm(request.POST,request.FILES or None, instance=product)
-            #instance คือ
+            #instance คือ ให้ฟอร์มใช้ข้อมูลเดิม เพื่อแก้ไขรายการนั้น
             if form.is_valid():
                 try:
-                    with transaction.atomic(): #ถ้าล้มจะไปต่อได้
+                    with transaction.atomic(): 
                         form.save() #ในรุปถ้าเรียกแบบไม่มีค่า commit = true
                 except ValidationError as e:
                     # error จาก model (เช่น full_clean ใน save()) ใช้ข้อความจริง

@@ -252,7 +252,7 @@ def reservation_status(request):
                 # อัปเดตสถานะรายการจองที่หมดอายุ
                 for reservation in reservations:
                     expire_overdue_reservations(
-                        product_id=reservation.product_id
+                      product_id=reservation.product_id
                     )
 
                 # โหลดข้อมูลใหม่หลังอัปเดตสถานะ

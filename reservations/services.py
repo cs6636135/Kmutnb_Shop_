@@ -5,13 +5,6 @@ from shop.models import ProductLocation
 from .models import Reservation
 
 
-from django.db import transaction
-from django.utils import timezone
-
-from shop.models import ProductLocation
-from .models import Reservation
-
-
 def expire_overdue_reservations(product_id=None):
     """เปลี่ยนรายการจองที่หมดเวลาเป็น expired และคืนสต็อก"""
     now = timezone.now()
