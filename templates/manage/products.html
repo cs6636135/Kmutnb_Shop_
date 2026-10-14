@@ -78,13 +78,17 @@
                                 <td class="whitespace-nowrap px-5 py-4 text-right align-middle font-semibold">
                                     {{ p.price|floatformat:2 }} ฿
                                 </td>
-                                <td class="whitespace-nowrap px-5 py-4 align-middle">
-                                    {% if p.reservable %}
-                                        <span class="rounded-full bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">จองได้</span>
-                                    {% else %}
-                                        <span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">จองไม่ได้</span>
-                                    {% endif %}
-                                </td>
+                                <div class="grid grid-cols-2 gap-3">
+    {% if p.reservable %}
+        <div class="flex items-center justify-center rounded-xl border border-green-200 bg-green-50 px-3 py-4 text-sm font-semibold text-green-700">
+            จองได้
+        </div>
+    {% else %}
+        <div class="flex items-center justify-center rounded-xl border border-slate-200 bg-slate-100 px-3 py-4 text-sm font-semibold text-slate-600">
+            จองไม่ได้
+        </div>
+    {% endif %}
+</div>
                                 <td class="whitespace-nowrap px-5 py-4 align-middle text-xs text-[#30415D]/60">
                                     {{ p.created_at|date:"d/m/Y" }}<br>{{ p.created_at|date:"H:i" }}
                                 </td>
