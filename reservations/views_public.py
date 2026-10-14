@@ -10,6 +10,7 @@ from django.utils import timezone
 from shop.models import Product, ProductLocation
 from .models import Reservation
 from .services import expire_overdue_reservations
+from django.db.models import Q 
 
 def reservation_create(request, product_id):
     # คืนสต็อกจากรายการจองที่หมดอายุก่อนตรวจสอบสต็อก
@@ -238,9 +239,11 @@ def reservation_status(request):
         if not customer_id:
             error = "กรุณากรอกรหัสลูกค้าของคุณ"
         else:
-            reservations = Reservation.objects.filter(
-                customer_id=customer_id
-            ).select_related("product", "location").order_by("-reserved_at")
+            query = Q(reservation_code=customer_id) | Q(customer_id=customer_id)
+
+            reservations = Reservation.objects.filter(query).select_related(
+                "product", "location"
+            ).order_by("-reserved_at")
 
             if not reservations.exists():
                 error = "ไม่พบรายการจองจากรหัสลูกค้าที่ระบุ"
@@ -253,9 +256,10 @@ def reservation_status(request):
                     )
 
                 # โหลดข้อมูลใหม่หลังอัปเดตสถานะ
-                reservations = Reservation.objects.filter(
-                    customer_id=customer_id
-                ).select_related("product", "location").order_by("-reserved_at")
+                reservations = Reservation.objects.filter(query).select_related(
+                    "product", "location"
+                ).order_by("-reserved_at")
+
 
     return render(request, "reservations/status.html", {
         "reservations": reservations,

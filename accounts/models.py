@@ -8,7 +8,7 @@ class User(AbstractUser):
         ADMIN = "admin", "Admin"
         STAFF = "staff", "Staff"
      phone = models.CharField(max_length=20, blank=True)
-     role = models.CharField(max_length=30, choices=Role.choices, default=Role.STAFF) #แอดมินเพิ่มสต๊าฟเข้าระบบ 
+     role = models.CharField(max_length=30, choices=Role.choices, default=Role.STAFF) #แอดมินเพิ่มคนได้ 
      location = models.ForeignKey("shop.Location",on_delete=models.PROTECT, null=True, blank=True)
 
      def clean(self):                                          #Staff ต้องมีสถานที่หรือจุดจำหน่าย

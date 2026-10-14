@@ -18,7 +18,7 @@ class Location(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    description = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True)
 
     parent = models.ForeignKey("self", on_delete=models.PROTECT,null=True,blank=True,related_name="children")
 
