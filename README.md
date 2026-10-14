@@ -22,7 +22,7 @@ KMUTNB Shop เป็นเว็บไซต์สำหรับค้นห�
 
 ## เว็บไซต์
 https://kmutnb-shop-ktnr.onrender.com
-## Test Case
+## ผลการทดสอบระบบ
 https://kmutnb-shop-ktnr.onrender.com/test-report/
 
 ## ผู้จัดทำ
