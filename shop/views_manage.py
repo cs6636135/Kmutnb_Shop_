@@ -230,13 +230,13 @@ def locations(request):
     if request.method == "POST":
 
         if "add" in request.POST:
-            return render(request, "manage/product_location_form.html", {
+            return render(request, "manage/location_form.html", {
                 "form": LocationModelForm(),
             })
 
         elif "edit" in request.POST:
             location = get_object_or_404(Location, pk=request.POST["edit"])
-            return render(request, "manage/product_location_form.html", {
+            return render(request, "manage/location_form.html", {
                 "form": LocationModelForm(instance=location),
                 "location": location,
             })
@@ -258,7 +258,7 @@ def locations(request):
                     messages.success(request, "บันทึกจุดจำหน่ายเรียบร้อยแล้ว")
                     return redirect("locations")
 
-            return render(request, "manage/product_location_form.html", {
+            return render(request, "manage/location_form.html", {
                 "form": form,
                 "location": location,
             })
