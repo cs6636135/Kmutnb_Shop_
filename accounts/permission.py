@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from functools import wraps
 
-#ไว้เชคสิทธิ์ permission หลังร้าน
+#ไว้เช็คสิทธิ์ permission หลังร้าน
 def role_required(*roles):
     def decorator(view_func):
         @wraps(view_func)
@@ -23,4 +23,3 @@ def role_required(*roles):
         return wrapper
 
     return decorator
-#permission หน้าบ้าน ถ้าในอนาคตมีหน้าบ้านที่ต้อง login ก็สามารถเอาไปใช้ได้ (เผื่อนะ)

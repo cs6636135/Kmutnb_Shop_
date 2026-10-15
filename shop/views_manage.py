@@ -32,11 +32,11 @@ def products(request):
             pk = request.POST.get("save")
             product = get_object_or_404(Product, pk=pk) if pk else None
             form = ProductModelForm(request.POST,request.FILES or None, instance=product)
-            #instance คือ ให้ฟอร์มใช้ข้อมูลเดิม เพื่อแก้ไขรายการนั้น
+    
             if form.is_valid():
                 try:
                     with transaction.atomic(): 
-                        form.save() #ในรุปถ้าเรียกแบบไม่มีค่า commit = true
+                        form.save() 
                 except ValidationError as e:
                     # error จาก model (เช่น full_clean ใน save()) ใช้ข้อความจริง
                     form.add_error(None, e)
@@ -48,7 +48,7 @@ def products(request):
                     messages.success(request, "บันทึกสินค้าเรียบร้อยแล้ว")
                     return redirect("products")      # redirect เฉพาะสำเร็จ
             print("FORM ERRORS:", form.errors)
-                # มาถึงตรงนี้ = มี error ทุกชนิดรวมอยู่ใน form.errors แล้ว
+        
             return render(request, "manage/product_form.html", {
                     "form": form,
                     "product": product,
@@ -83,7 +83,7 @@ def products(request):
                 category_query = ""
 
     paginator = Paginator(qs, 10)                            # หน้าละ 10 อัน
-    page_obj = paginator.get_page(request.GET.get("page"))   # เลขหน้าจากลิงก์ ?page=2
+    page_obj = paginator.get_page(request.GET.get("page"))   # เลขหน้า
 
     return render(request, "manage/products.html", {
         "page_obj": page_obj,
@@ -142,11 +142,11 @@ def stocks(request):
                     return redirect("stocks")
 
             form = ProductLocationForm(request.POST, request.FILES or None, instance=product, user=request.user)
-            #instance คือ
+
             if form.is_valid():
                 try:
-                    with transaction.atomic(): #ถ้าล้มจะไปต่อได้
-                        form.save() #ในรุปถ้าเรียกแบบไม่มีค่า commit = true
+                    with transaction.atomic(): 
+                        form.save() 
                 except ValidationError as e:
                     # error จาก model (เช่น full_clean ใน save()) ใช้ข้อความจริง
                     form.add_error(None, e)
@@ -158,7 +158,7 @@ def stocks(request):
                     messages.success(request, "บันทึกสินค้าเรียบร้อยแล้ว")
                     return redirect("stocks")      # redirect เฉพาะสำเร็จ
             print("FORM ERRORS:", form.errors)
-                # มาถึงตรงนี้ = มี error ทุกชนิดรวมอยู่ใน form.errors แล้ว
+                
             return render(request, "manage/stock_form.html", {
                     "form": form,
                     "product": product,
@@ -213,7 +213,7 @@ def stocks(request):
         qs = qs.filter(location_id=request.user.location.id)
 
     paginator = Paginator(qs, 10)                            # หน้าละ 10 อัน
-    page_obj = paginator.get_page(request.GET.get("page"))   # เลขหน้าจากลิงก์ ?page=2
+    page_obj = paginator.get_page(request.GET.get("page"))   # เลขหน้า
 
     return render(request, "manage/stocks.html", {
         "page_obj": page_obj,

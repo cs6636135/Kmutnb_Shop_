@@ -22,7 +22,7 @@ def shrink_image(file, max_side=1200):
 def upload_image(file, folder="products"):
     data = shrink_image(file)
     path = f"{folder}/{uuid.uuid4().hex}.jpg"   # ย่อแล้วเป็น jpg เสมอ
-    #ใช้ uuid เพราะสร้างชื่อไม่ซ้ำได้ทันทีโดยไม่ต้องตรวจสอบกับฐานข้อมูล ถ้าเปน pk เอกสารsupabase บอกว่าจะมีปัญหา
+    #ใช้ uuid เพราะสร้างชื่อไม่ซ้ำได้ทันทีโดยไม่ต้องตรวจสอบกับฐานข้อมูล 
     supabase.storage.from_(BUCKET).upload(
         path=path,
         file=data,
